@@ -1,0 +1,22 @@
+# -------------------------------- Service ---------------------------
+#
+service:
+  name: game
+  port: 19121
+  #
+  # registered in the service center [zookeepr or etcd], exposed to the
+  # external address information
+  #
+  address:
+  #
+  # service lbs strategy options[polling,hashing]
+  #
+  lbs: hashing
+# -------------------------------- Database ---------------------------
+database:
+  address: 127.0.0.1:27017
+  name: aliens_game
+# -------------------------------- Cache ---------------------------
+cache:
+  address: 127.0.0.1:6379
+  password:

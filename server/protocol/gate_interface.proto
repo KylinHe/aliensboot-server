@@ -1,0 +1,30 @@
+syntax = "proto3";
+package protocol;
+
+import "gate_model.proto";
+
+message kickOut {
+    int64 authID = 1;
+    KickType kickType = 2;
+}
+
+//推送消息
+message pushMessage {
+    int64 authID = 1; //推送的authid -1 代表全服广播
+    bytes data = 2;  //推送内容
+    string service = 3; //服务名
+}
+
+//绑定服务 定向转发
+message bindService {
+    int64 authID = 1;
+    map<string, string> binds = 2;  //绑定的服务-绑定的服务节点名
+}
+
+message bindServiceRet {
+    bool result = 1;
+}
+
+message heartBeat {
+
+}

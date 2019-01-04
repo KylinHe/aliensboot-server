@@ -1,0 +1,25 @@
+# -------------------------------- Service ---------------------------
+#
+service:
+  name: passport
+  port: 19120
+  #
+  # registered in the service center [zookeepr or etcd], exposed to the
+  # external address information
+  #
+  address:
+  #
+  # service lbs strategy options[polling,hashing]
+  #
+  lbs: polling
+# -------------------------------- Database ---------------------------
+database:
+  address: 127.0.0.1:27017
+  name: aliens_passport
+# -------------------------------- Cache ---------------------------
+cache:
+  address: 127.0.0.1:6379
+  password:
+# -------------------------------- Custom ---------------------------
+default_channel_password: 11111111
+appkey: e434e639ff7247aea5622f339b383c

@@ -1,0 +1,36 @@
+syntax = "proto3";
+package protocol;
+
+enum Code {
+    Success = 0;     //请求成功
+    InvalidRequest = 1; //无效的请求
+    ServerException = 2; //服务器处理异常  内部抛异常
+    DBExcetpion = 3; //数据库异常
+    ConfigException = 4; //配置表异常 未加载到
+    InternalException = 5; //服务内部处理失败
+
+    //game
+    ValidateException = 9; //验证用户失败、需要重新登录校验
+
+    //room
+    appIDNotFound = 50; //游戏配置未找到
+    playerNotFound = 51; //玩家未找到
+
+    roomNotFound = 60; //房间未找到
+    roomMaxPlayer = 61; //房间人数已满
+    roomAlreadyExist = 62; //房间已经存在
+
+    gameNotFound = 101; //游戏未找到
+    gameAlreadyStart = 103; //游戏已经开始、无效的操作
+    gameInvalidMsgFormat = 104; //无效的游戏消息格式
+
+    //scene
+    entityNotFound = 200;
+    invalidEntityCall = 201; //无效的方法调用
+
+    InvalidService = 1000; //服务不可用
+
+
+
+
+}

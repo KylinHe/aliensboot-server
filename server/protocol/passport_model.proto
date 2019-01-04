@@ -1,0 +1,39 @@
+syntax = "proto3";
+package protocol;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+//import "google/protobuf/timestamp.proto";
+
+//服务端不允许login文件名存在,特改为bblogin
+//登录相关通讯协议
+enum LoginResult {
+    loginSuccess = 0;				//登录成功
+    invalidUser = 1;				//用户不存在
+    invalidPwd = 2;					//验证密码失败
+    forbiddenUser = 3;				//封号
+    tokenExpire = 4;                //token过期
+    //invalidMaintain = 5; 		    //游戏正在维护
+    //invalidGameServer = 6;          //连接游戏服务器失败
+}
+
+enum RegisterResult {
+    registerSuccess = 0;		    //注册成功
+    userExists = 1;				    //用户名已经存在
+    invalidFormat = 2;				//用户名格式不符合规范
+    //invalidServer = 6;              //连接游戏服务器失败
+}
+
+
+message User {
+    int64 id = 1 [(gogoproto.moretags) = "bson:\"_id\" gorm:\"AUTO_INCREMENT\""];
+    string username = 2 [(gogoproto.moretags) = "bson:\"username\" unique:\"true\""];
+    string password = 3 [(gogoproto.moretags) = "bson:\"password\""];
+    string salt = 4 [(gogoproto.moretags) = "bson:\"salt\""];
+    string channeluid = 5 [(gogoproto.moretags) = "bson:\"cuid\""];
+    string channel = 6 [(gogoproto.moretags) = "bson:\"channel\""];
+    string avatar = 7 [(gogoproto.moretags) = "bson:\"avatar\""];
+    string mobile = 8 [(gogoproto.moretags) = "bson:\"mobile\"  rorm:\"-\""];
+    string openid = 9 [(gogoproto.moretags) = "bson:\"openid\""];
+    int32 status = 10 [(gogoproto.moretags) = "bson:\"status\""];
+    int64 regTime = 11 [(gogoproto.moretags) = "bson:\"regtime\""];
+}

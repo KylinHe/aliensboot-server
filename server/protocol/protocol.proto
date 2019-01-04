@@ -1,0 +1,165 @@
+syntax = "proto3";
+package protocol;
+
+import "resultcode.proto";
+import "gate_model.proto";
+
+import "gate_interface.proto";
+import "passport_interface.proto";
+import "game_interface.proto";
+import "room_interface.proto";
+import "hall_interface.proto";
+import "scene_interface.proto";
+
+
+//TODO 支持接口权限声明 是否支持客户端调用， 是否支持内部调用
+
+//request
+message Request {
+    int32 session = 1;     //消息序号
+
+    //----------------网关模块接口-----------
+    oneof gate {
+
+        heartBeat heartBeat = 8; //心跳消息
+
+        bindService bindService = 9; //绑定服务-定向转发
+        //push
+        kickOut kickOut = 10; //T人
+
+        pushMessage pushMessage = 11; //推送消息
+    }
+
+    //-----------------登录模块接口---------------
+
+    oneof passport {
+        userRegister userRegister = 20;
+        userLogin userLogin = 21;
+        tokenLogin tokenLogin = 22; //token登录
+    }
+
+    //-----------------游戏模块接口---------------
+    oneof game {
+        getRoleInfo getRoleInfo = 50; //获取角色基础信息
+        loginRole loginRole = 51;
+        changeNickname changeNickname = 52;
+    }
+
+
+    //-----------------房间服务器接口-------------
+    oneof room {
+        showUser showUser = 100;
+        getRoomInfo getRoomInfo = 101;
+        joinRoom joinRoom = 102;
+        roomCreate roomCreate = 103;
+        getBigoData getBigoData = 104;
+        onPlayerStateChange onPlayerStateChange = 105;
+        onGameStateChange onGameStateChange = 106;
+
+        //push
+        //gameInit gameInit = 120;
+        gameReady gameReady = 121;
+        gameData gameData = 122;
+        frameData frameData = 123;
+        uploadGameResult uploadGameResult = 124;
+        updateBigoData updateBigoData = 125;
+        continueJoinGame continueJoinGame = 127;
+        preJoinGame preJoinGame = 128;
+
+        requestJoinGame requestJoinGame = 129;
+        respondJoinGame respondJoinGame = 130;
+        broadcastViewer broadcastViewer = 131;
+
+
+
+    }
+
+    oneof hall {
+        //push
+        quickMatch quickMatch = 200;
+    }
+
+
+    oneof scene {
+        entityCall entityCall = 300; //调用服务端实体方法
+        loginScene loginScene = 301; //玩家登录到场景
+        moveScene moveScene = 302;  //玩家移动到新的场景
+        migrateIn migrateIn = 303; //数据迁入
+        migrateOut migrateOut = 304; //数据迁出
+    }
+
+
+}
+
+//response
+message Response {
+    int32 session = 1;
+
+    Code code = 2; //错误码
+
+    //-----------------网关模块响应接口---------------
+    oneof gate {
+        heartBeat heartBeat = 8; //心跳消息
+
+        //push
+        KickType kick = 1005; //T人
+    }
+
+    oneof passport {
+        userRegisterRet userRegisterRet = 20;
+        userLoginRet userLoginRet = 21;
+        tokenLoginRet tokenLoginRet = 22; //token登录
+    }
+
+    //-----------------游戏模块接口---------------
+    oneof game {
+        getRoleInfoRet getRoleInfoRet = 50; //获取角色基础信息
+        loginRoleRet loginRoleRet = 51;
+        changeNicknameRet changeNicknameRet = 52;
+    }
+
+    oneof room {
+        showUserRet showUserRet = 100;
+        getRoomInfoRet getRoomInfoRet = 101;
+        joinRoomRet joinRoomRet = 102;
+        roomCreateRet roomCreateRet = 103;
+        getBigoDataRet getBigoDataRet = 104;
+        onPlayerStateChangeRet onPlayerStateChangeRet = 105;
+        onGameStateChangeRet onGameStateChangeRet = 106;
+
+        //push
+
+        gameStartRet gameStartRet = 1101;
+        gameDataRet gameDataRet = 1102;
+        frameDataRet frameDataRet = 1103;
+        leaveRet leaveRet = 1104;
+        networkRet networkRet = 1105;
+        voiceRet voiceRet = 1106;
+        gameResetRet gameResetRet = 1107;
+        playerLeaveRet playerLeaveRet = 1108;
+        playerJoinRet playerJoinRet = 1109;
+        updateBigoDataRet updateBigoDataRet = 1110;
+        continueJoinGameReq continueJoinGameReq = 1111;
+        preJoinGameReq preJoinGameReq = 1112;
+        broadcastViewerRet broadcastViewerRet = 1113;
+        endGameRet endGameRet = 1114;
+
+
+    }
+
+    oneof hall {
+        //push
+        quickMatchRet quickMatchRet = 1200;
+    }
+
+
+    //场景服务
+    oneof scene {
+        entityCall entityCall = 1300; //调用客户端实体方法
+        entityPush entityPush = 1301; //推送实体变更属性信息
+        scenePush scenePush = 1302; //登陆到场景数据返回
+    }
+
+
+
+}

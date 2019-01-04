@@ -1,0 +1,13 @@
+syntax = "proto3";
+package protocol;
+
+import "hall_model.proto";
+
+message quickMatch {
+    string appid  = 1; //匹配的游戏id
+}
+
+message quickMatchRet {
+    string roomid = 1; //房间id //
+    string node = 2; //服务器节点id
+}

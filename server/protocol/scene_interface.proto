@@ -1,0 +1,50 @@
+syntax = "proto3";
+package protocol;
+
+import "scene_model.proto";
+
+//内部接口玩家登录场景
+message loginScene {
+    int64 authID = 1;
+    string gateID = 2;
+    string spaceID = 3;
+}
+
+//移动到场景
+message moveScene {
+    string spaceID = 3;
+}
+
+//entity
+message migrateOut {
+    string entityID = 1;
+    string toSpaceID = 2;
+}
+
+//entity
+message migrateIn {
+    string spaceID = 1;
+    string entityID = 2;
+    bytes data = 3;
+}
+
+//调用实体方法
+message entityCall {
+    string entityID = 1; //调用的实体对象
+    string method = 2; //调用的实体方法
+    repeated bytes args = 3;  //参数
+}
+
+
+//场景变更推送
+message scenePush {
+    string spaceID = 1; //玩家所处的空间
+    Entity entity = 2; //玩家实体信息
+}
+
+
+//entity数据变更推送
+message entityPush {
+    repeated Entity neighbors = 1; //变更属性或新增的实体
+    repeated string distoryEntities = 2; //销毁的实体
+}

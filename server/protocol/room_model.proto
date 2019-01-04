@@ -1,0 +1,39 @@
+syntax = "proto3";
+package protocol;
+
+//enum GameEvent {
+//    None = 0;           //无
+//    //PlayerJoin = 1;     //加入游戏
+//    PlayerLeave = 2;    //离开游戏
+//    PlayerOffline = 3;  //玩家离线
+//    PlayerData = 4;     //玩家发送自定义数据
+//    GameOver = 5;       //
+//}
+
+//游戏结算分为1v1、2v2结算，data.resultDisplay用于客户端结算面板的显示，data.resultData用户后台上报。游戏分胜利，失败，平局，逃跑四种结果。
+enum GameResult {
+    Win  = 0; //胜利
+    Lose = 1; //失败
+    Equal = 2; //平局
+    Escape = 3; //逃跑（离开）
+}
+
+message PlayerResult {
+    int64 playerid = 1;
+    Record record = 3;
+}
+
+message Record {
+    GameResult result = 1;
+    int32 score  = 2;
+    string unit = 3;
+}
+
+message Player {
+    int64 playerid = 1;
+    int32 groupId = 2;
+    int32 seat = 3; // 1v1为1-2，2v2为1-4
+    string nickname = 4;
+    string headurl = 5;
+    string gender = 6; // 0：未知，1：男，2：女
+}
