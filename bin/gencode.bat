@@ -1,7 +1,7 @@
 call env.bat
 
 :生成protobuf go协议代码
-cd %PROJECT_PATH%/src/github.com/KylinHe/aliensboot-server/protocol/
+cd %PROJECT_PATH%/server/protocol/
 set GOGOPATH=%GOPATH%/src
 protoc --proto_path=%GOPATH%;%GOGOPATH%;./; --gogofast_out=plugins=grpc:. *.proto
 
@@ -13,4 +13,4 @@ for %%i in (%modules%) do (
     aliensbot.exe module gen %%i
 )
 
-cd copy/bin
+cd bin
