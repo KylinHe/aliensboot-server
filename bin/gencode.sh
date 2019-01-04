@@ -11,5 +11,5 @@ cd ${PROJECT_PATH}
 modules=(game gate passport hall room scene)
 
 for i in "${!modules[@]}"; do
-	aliensbot module gen ${modules[$i]}
+	aliensboot module gen ${modules[$i]}
 done

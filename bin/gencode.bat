@@ -10,7 +10,7 @@ cd %PROJECT_PATH%
 set modules=game gate passport hall room scene
 
 for %%i in (%modules%) do (
-    aliensbot.exe module gen %%i
+    aliensboot module gen %%i
 )
 
 cd bin
