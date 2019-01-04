@@ -3,14 +3,16 @@
 package service
 
 import (
-	"github.com/KylinHe/aliensboot-core/chanrpc"
-	"github.com/KylinHe/aliensboot-core/cluster/center"
-	"github.com/KylinHe/aliensboot-core/cluster/center/service"
-	"github.com/KylinHe/aliensboot-core/exception"
-	"github.com/KylinHe/aliensboot-core/protocol/base"
-	"github.com/KylinHe/aliensboot-server/module/game/conf"
-	"github.com/KylinHe/aliensboot-server/protocol"
+
 	"github.com/gogo/protobuf/proto"
+    "github.com/KylinHe/aliensboot-core/chanrpc"
+    "github.com/KylinHe/aliensboot-core/exception"
+    "github.com/KylinHe/aliensboot-core/cluster/center/service"
+    "github.com/KylinHe/aliensboot-core/cluster/center"
+    "github.com/KylinHe/aliensboot-core/protocol/base"
+    "github.com/KylinHe/aliensboot-server/protocol"
+    "github.com/KylinHe/aliensboot-server/module/game/conf"
+
 )
 
 var instance service.IService = nil
@@ -22,6 +24,7 @@ func Init(chanRpc *chanrpc.Server) {
 func Close() {
 	center.ReleaseService(instance)
 }
+
 
 func handle(request *base.Any) (response *base.Any) {
 	requestProxy := &protocol.Request{}
@@ -41,8 +44,8 @@ func handle(request *base.Any) (response *base.Any) {
 			}
 		}
 		if !isResponse {
-			return
-		}
+            return
+        }
 		data, _ := proto.Marshal(responseProxy)
 		responseProxy.Session = requestProxy.GetSession()
 		response.Value = data
@@ -56,28 +59,30 @@ func handle(request *base.Any) (response *base.Any) {
 }
 
 func handleRequest(authID int64, gateID string, request *protocol.Request, response *protocol.Response) bool {
-
+	
 	if request.GetGetRoleInfo() != nil {
 		messageRet := &protocol.GetRoleInfoRet{}
 		handleGetRoleInfo(authID, gateID, request.GetGetRoleInfo(), messageRet)
 		response.Game = &protocol.Response_GetRoleInfoRet{messageRet}
 		return true
 	}
-
+	
 	if request.GetLoginRole() != nil {
 		messageRet := &protocol.LoginRoleRet{}
 		handleLoginRole(authID, gateID, request.GetLoginRole(), messageRet)
 		response.Game = &protocol.Response_LoginRoleRet{messageRet}
 		return true
 	}
-
+	
 	if request.GetChangeNickname() != nil {
 		messageRet := &protocol.ChangeNicknameRet{}
 		handleChangeNickname(authID, gateID, request.GetChangeNickname(), messageRet)
 		response.Game = &protocol.Response_ChangeNicknameRet{messageRet}
 		return true
 	}
-
+	
+	
 	response.Code = protocol.Code_InvalidRequest
 	return true
 }
+

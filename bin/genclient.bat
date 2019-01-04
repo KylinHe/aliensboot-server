@@ -1,2 +1,2 @@
 call env.bat
-python %ALIENSBOT_HOME%/bin/protoToJs.py %PROJECT_PATH%/server/protocol/ %JS_CLIENT_PATH%
+python %ALIENSBOT_HOME%/bin/protoToJs.py %SRC_PATH%/protocol/ %JS_CLIENT_PATH%

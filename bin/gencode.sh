@@ -3,7 +3,7 @@
 source ./env.sh
 
 #生成protobuf go协议代码
-cd ${PROJECT_PATH}/server/protocol/
+cd ${SRC_PATH}/protocol/
 GOGOPATH=${GOPATH}/src; protoc --proto_path=${GOPATH}:${GOGOPATH}:./ --gogofast_out=plugins=grpc:. *.proto
 
 #生成服务代码

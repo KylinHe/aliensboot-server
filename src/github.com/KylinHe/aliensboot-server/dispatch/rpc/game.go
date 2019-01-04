@@ -6,16 +6,18 @@ import (
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-var Game = &gameRPCHandler{&rpcHandler{name: "game"}}
+var Game = &gameRPCHandler{&rpcHandler{name:"game"}}
+
 
 type gameRPCHandler struct {
 	*rpcHandler
 }
 
+
 func (this *gameRPCHandler) GetRoleInfo(node string, request *protocol.GetRoleInfo) *protocol.GetRoleInfoRet {
 	message := &protocol.Request{
-		Game: &protocol.Request_GetRoleInfo{
-			GetRoleInfo: request,
+		Game:&protocol.Request_GetRoleInfo{
+			GetRoleInfo:request,
 		},
 	}
 	messageRet := this.Request(node, message)
@@ -24,8 +26,8 @@ func (this *gameRPCHandler) GetRoleInfo(node string, request *protocol.GetRoleIn
 
 func (this *gameRPCHandler) LoginRole(node string, request *protocol.LoginRole) *protocol.LoginRoleRet {
 	message := &protocol.Request{
-		Game: &protocol.Request_LoginRole{
-			LoginRole: request,
+		Game:&protocol.Request_LoginRole{
+			LoginRole:request,
 		},
 	}
 	messageRet := this.Request(node, message)
@@ -34,10 +36,12 @@ func (this *gameRPCHandler) LoginRole(node string, request *protocol.LoginRole) 
 
 func (this *gameRPCHandler) ChangeNickname(node string, request *protocol.ChangeNickname) *protocol.ChangeNicknameRet {
 	message := &protocol.Request{
-		Game: &protocol.Request_ChangeNickname{
-			ChangeNickname: request,
+		Game:&protocol.Request_ChangeNickname{
+			ChangeNickname:request,
 		},
 	}
 	messageRet := this.Request(node, message)
 	return messageRet.GetChangeNicknameRet()
 }
+
+

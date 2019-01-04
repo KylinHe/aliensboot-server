@@ -6,16 +6,20 @@ import (
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-var Hall = &hallRPCHandler{&rpcHandler{name: "hall"}}
+var Hall = &hallRPCHandler{&rpcHandler{name:"hall"}}
+
 
 type hallRPCHandler struct {
 	*rpcHandler
 }
 
+
+
+
 func (this *hallRPCHandler) QuickMatch(node string, request *protocol.QuickMatch) error {
 	message := &protocol.Request{
-		Hall: &protocol.Request_QuickMatch{
-			QuickMatch: request,
+		Hall:&protocol.Request_QuickMatch{
+			QuickMatch:request,
 		},
 	}
 	return this.Send(node, message)

@@ -3,15 +3,16 @@
 package service
 
 import (
-	"github.com/KylinHe/aliensboot-core/chanrpc"
-	"github.com/KylinHe/aliensboot-core/cluster/center"
-	"github.com/KylinHe/aliensboot-core/cluster/center/service"
-	"github.com/KylinHe/aliensboot-core/exception"
-	"github.com/KylinHe/aliensboot-core/log"
-	"github.com/KylinHe/aliensboot-core/protocol/base"
-	"github.com/KylinHe/aliensboot-server/module/passport/conf"
-	"github.com/KylinHe/aliensboot-server/protocol"
+
 	"github.com/gogo/protobuf/proto"
+    "github.com/KylinHe/aliensboot-core/chanrpc"
+    "github.com/KylinHe/aliensboot-core/exception"
+    "github.com/KylinHe/aliensboot-core/cluster/center/service"
+    "github.com/KylinHe/aliensboot-core/cluster/center"
+    "github.com/KylinHe/aliensboot-core/protocol/base"
+    "github.com/KylinHe/aliensboot-core/log"
+    "github.com/KylinHe/aliensboot-server/protocol"
+    "github.com/KylinHe/aliensboot-server/module/passport/conf"
 )
 
 var instance service.IService = nil
@@ -43,12 +44,12 @@ func handle(request *base.Any) (response *base.Any) {
 		}
 		data, _ := proto.Marshal(responseProxy)
 		responseProxy.Session = requestProxy.GetSession()
-		response.AuthId = authID
+        response.AuthId = authID
 		response.Value = data
 	}()
 	error := proto.Unmarshal(request.Value, requestProxy)
 	if error != nil {
-		log.Debug(error)
+	    log.Debug(error)
 		exception.GameException(protocol.Code_InvalidRequest)
 	}
 	authID = handleRequest(requestProxy, responseProxy)
@@ -56,28 +57,29 @@ func handle(request *base.Any) (response *base.Any) {
 }
 
 func handleRequest(request *protocol.Request, response *protocol.Response) int64 {
-
+	
 	if request.GetUserRegister() != nil {
 		messageRet := &protocol.UserRegisterRet{}
 		result := handleUserRegister(request.GetUserRegister(), messageRet)
 		response.Passport = &protocol.Response_UserRegisterRet{messageRet}
 		return result
 	}
-
+	
 	if request.GetUserLogin() != nil {
 		messageRet := &protocol.UserLoginRet{}
 		result := handleUserLogin(request.GetUserLogin(), messageRet)
 		response.Passport = &protocol.Response_UserLoginRet{messageRet}
 		return result
 	}
-
+	
 	if request.GetTokenLogin() != nil {
 		messageRet := &protocol.TokenLoginRet{}
 		result := handleTokenLogin(request.GetTokenLogin(), messageRet)
 		response.Passport = &protocol.Response_TokenLoginRet{messageRet}
 		return result
 	}
-
+	
 	response.Code = protocol.Code_InvalidRequest
 	return 0
 }
+
