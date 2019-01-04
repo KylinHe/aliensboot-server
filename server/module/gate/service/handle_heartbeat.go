@@ -4,7 +4,6 @@ package service
 
 import "github.com/KylinHe/aliensboot-server/protocol"
 
-
 //
 func handleHeartBeat(request *protocol.HeartBeat) {
 

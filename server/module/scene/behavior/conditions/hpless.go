@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015, 2017 aliens idea(xiamen) Corporation and others.
- * All rights reserved. 
+ * All rights reserved.
  * Date:
  *     2018/12/13
  * Contributors:
@@ -20,7 +20,7 @@ import (
 type HpLess struct {
 	b3core.Condition
 
-	rate float32  //血量低于百分比
+	rate float32 //血量低于百分比
 }
 
 func (this *HpLess) Initialize(setting *b3config.BTNodeCfg) {

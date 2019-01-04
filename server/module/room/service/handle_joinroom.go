@@ -7,12 +7,9 @@ import (
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-
 //
 func handleJoinRoom(authID int64, gateID string, request *protocol.JoinRoom, response *protocol.JoinRoomRet) {
 	room := core.RoomManager.JoinRoom(request.GetAppID(), request.GetRoomID(), authID)
 	response.RoomID = room.GetID()
 	response.Players = []*protocol.Player{room.GetViewer(authID).Player}
 }
-
-

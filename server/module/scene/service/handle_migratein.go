@@ -8,9 +8,6 @@ import (
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-
-
-
 //
 func handleMigrateIn(authID int64, gateID string, request *protocol.MigrateIn) {
 	err := mmo.MigrateIn(mmo.EntityID(request.GetSpaceID()), mmo.EntityID(request.GetEntityID()), request.GetData())

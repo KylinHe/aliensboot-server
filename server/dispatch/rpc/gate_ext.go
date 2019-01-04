@@ -21,7 +21,7 @@ func (this *gateRPCHandler) BindService1(node string, authID int64, service stri
 	binds[service] = center.ClusterCenter.GetNodeID()
 	request := &protocol.BindService{
 		AuthID: authID,
-		Binds:binds,
+		Binds:  binds,
 	}
 	this.BindService(node, request)
 	return nil

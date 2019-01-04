@@ -4,10 +4,7 @@ package service
 
 import "github.com/KylinHe/aliensboot-server/protocol"
 
-
 //
 func handleGetRoomInfo(authID int64, gateID string, request *protocol.GetRoomInfo, response *protocol.GetRoomInfoRet) {
 
 }
-
-

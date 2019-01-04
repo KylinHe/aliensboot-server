@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015, 2017 aliens idea(xiamen) Corporation and others.
- * All rights reserved. 
+ * All rights reserved.
  * Date:
  *     2018/12/4
  * Contributors:
@@ -25,7 +25,6 @@ import (
 
 const (
 	TypePlayer mmo.EntityType = "Player"
-
 )
 
 func GetPlayerID(authID int64) mmo.EntityID {
@@ -34,27 +33,24 @@ func GetPlayerID(authID int64) mmo.EntityID {
 
 //
 type Player struct {
+	mmo.Entity // Entity type should always inherit entity.Entity
 
-	mmo.Entity   // Entity type should always inherit entity.Entity
-
-	syncTimerID mmo.EntityTimerID
+	syncTimerID    mmo.EntityTimerID
 	releaseTimerID mmo.EntityTimerID
-
 }
 
 func (player *Player) DescribeEntityType(desc *core.EntityDesc) {
 	//视野范围
 	desc.SetUseAOI(true, 500)
 
-	desc.DefineAttr(constant.AttrUid, core.AttrAllClient| core.AttrPersist) //用户id
-	desc.DefineAttr(constant.AttrGateid, core.AttrClient)	//网关id
-	desc.DefineAttr(constant.AttrLevel, core.AttrAllClient| core.AttrPersist)
-	desc.DefineAttr(constant.AttrHp, core.AttrAllClient| core.AttrPersist)
-	desc.DefineAttr(constant.AttrMaxHp, core.AttrAllClient| core.AttrPersist)
+	desc.DefineAttr(constant.AttrUid, core.AttrAllClient|core.AttrPersist) //用户id
+	desc.DefineAttr(constant.AttrGateid, core.AttrClient)                  //网关id
+	desc.DefineAttr(constant.AttrLevel, core.AttrAllClient|core.AttrPersist)
+	desc.DefineAttr(constant.AttrHp, core.AttrAllClient|core.AttrPersist)
+	desc.DefineAttr(constant.AttrMaxHp, core.AttrAllClient|core.AttrPersist)
 	desc.DefineAttr(constant.AttrAction, core.AttrAllClient)
 
 }
-
 
 func (player *Player) OnMigrateOut() {
 	log.Debugf("handler migrateOut %v: %v - %v", player.GetSpaceID(), player.GetUid(), player.GetGateID())
@@ -63,9 +59,8 @@ func (player *Player) OnMigrateOut() {
 func (player *Player) OnMigrateIn() {
 	log.Debugf("handler migrateIn %v: %v - %v", player.GetSpaceID(), player.GetUid(), player.GetGateID())
 	player.onLoad()
-	player.syncTimerID = player.AddTimer(200 * time.Millisecond, true, "SyncData")
+	player.syncTimerID = player.AddTimer(200*time.Millisecond, true, "SyncData")
 }
-
 
 func (player *Player) Login(authID int64, gateID string) {
 	log.Debugf("handler login %v - %v", authID, gateID)
@@ -77,7 +72,7 @@ func (player *Player) Login(authID int64, gateID string) {
 	//取消定时释放
 	player.CancelTimer(player.releaseTimerID)
 	//玩家每100ms同步一次数据
-	player.syncTimerID = player.AddTimer(200 * time.Millisecond, true, "SyncData")
+	player.syncTimerID = player.AddTimer(200*time.Millisecond, true, "SyncData")
 }
 
 func (player *Player) Logout() {
@@ -85,17 +80,17 @@ func (player *Player) Logout() {
 	player.CancelTimer(player.syncTimerID)
 
 	//开启1分钟释放
-	player.releaseTimerID = player.AddTimer(10 * time.Second, false, "Release")
+	player.releaseTimerID = player.AddTimer(10*time.Second, false, "Release")
 }
 
 func (player *Player) onLoad() {
 	gateID := player.GetGateID()
 	authID := player.GetUid()
 	syncMessage := &protocol.Response{
-		Scene:&protocol.Response_ScenePush {
-			ScenePush:&protocol.ScenePush{
-				SpaceID:string(player.GetSpaceID()),
-				Entity:utils.BuildEntity(player.Entity, true),
+		Scene: &protocol.Response_ScenePush{
+			ScenePush: &protocol.ScenePush{
+				SpaceID: string(player.GetSpaceID()),
+				Entity:  utils.BuildEntity(player.Entity, true),
 			},
 		},
 	}
@@ -107,7 +102,7 @@ func (player *Player) onLoad() {
 }
 
 func (player *Player) Move_Client(x string, y string) {
-	player.SetPosition(unit.Vector{X:unit.Coord(util.StringToFloat32(x)), Y:unit.Coord(util.StringToFloat32(y)), Z:0})
+	player.SetPosition(unit.Vector{X: unit.Coord(util.StringToFloat32(x)), Y: unit.Coord(util.StringToFloat32(y)), Z: 0})
 }
 
 //释放玩家内存
@@ -127,13 +122,13 @@ func (player *Player) SyncData() {
 	index := 0
 	for entity, _ := range interest {
 		entities[index] = utils.BuildEntity(*entity, entity.GetID() == player.GetID())
-		index ++
+		index++
 	}
 
 	syncMessage := &protocol.Response{
-		Scene:&protocol.Response_EntityPush{
-			EntityPush:&protocol.EntityPush{
-				Neighbors:entities,
+		Scene: &protocol.Response_EntityPush{
+			EntityPush: &protocol.EntityPush{
+				Neighbors: entities,
 			},
 		},
 	}

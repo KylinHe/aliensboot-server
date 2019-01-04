@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015, 2017 aliens idea(xiamen) Corporation and others.
- * All rights reserved. 
+ * All rights reserved.
  * Date:
  *     2018/12/4
  * Contributors:
@@ -10,6 +10,8 @@
 package handler
 
 import (
+	"errors"
+	"fmt"
 	"github.com/KylinHe/aliensboot-core/common/util"
 	"github.com/KylinHe/aliensboot-core/mmo"
 	"github.com/KylinHe/aliensboot-core/module/base"
@@ -18,10 +20,7 @@ import (
 	"github.com/KylinHe/aliensboot-server/module/scene/conf"
 	"github.com/KylinHe/aliensboot-server/module/scene/entity"
 	"github.com/KylinHe/aliensboot-server/protocol"
-	"errors"
-	"fmt"
 )
-
 
 type AliensEntityHandler struct {
 	timerManager *util.TimerManager
@@ -48,9 +47,9 @@ func (*AliensEntityHandler) CallRemote(entityID mmo.EntityID, method string, arg
 		return errors.New(fmt.Sprintf("call remote entity err, entity %v is not found", entityID))
 	}
 	rpc.Scene.EntityCall(node, &protocol.EntityCall{
-		EntityID:string(entityID),
-		Method:method,
-		Args:args,
+		EntityID: string(entityID),
+		Method:   method,
+		Args:     args,
 	})
 	return nil
 }
@@ -66,9 +65,9 @@ func (*AliensEntityHandler) MigrateRemote(spaceID mmo.EntityID, entityID mmo.Ent
 	}
 
 	rpc.Scene.MigrateIn(node, &protocol.MigrateIn{
-		SpaceID:space,
-		EntityID:string(entityID),
-		Data:data,
+		SpaceID:  space,
+		EntityID: string(entityID),
+		Data:     data,
 	})
 	return nil
 }
@@ -76,7 +75,6 @@ func (*AliensEntityHandler) MigrateRemote(spaceID mmo.EntityID, entityID mmo.Ent
 func (handler *AliensEntityHandler) GetTimerManager() *util.TimerManager {
 	return handler.timerManager
 }
-
 
 func InitSpace() {
 	space, _ := mmo.CreateSpace(entity.TypeGameSpace, mmo.EntityID(conf.Config.Space))
@@ -92,7 +90,7 @@ func Init(skeleton *base.Skeleton) {
 	timerManager := util.NewTimerManager()
 	skeleton.SetTick(timerManager.Tick)
 
-	mmo.RegisterEntityHandler(&AliensEntityHandler{timerManager:timerManager})
+	mmo.RegisterEntityHandler(&AliensEntityHandler{timerManager: timerManager})
 	mmo.RegisterSpace(&entity.GameSpace{})
 	mmo.RegisterEntity(&entity.Monster{})
 	mmo.RegisterEntity(&entity.Player{})

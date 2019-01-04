@@ -14,13 +14,13 @@ import (
 )
 
 const (
-	spaceNodeKey = "space:"
+	spaceNodeKey  = "space:"
 	entityNodeKey = "entity:"
 )
 
 //设置空间所在的服务节点信息
 func (this *cacheManager) SetSpaceNode(spaceID string) error {
-	return this.redisClient.SetData(spaceNodeKey + spaceID, center.ClusterCenter.GetNodeID())
+	return this.redisClient.SetData(spaceNodeKey+spaceID, center.ClusterCenter.GetNodeID())
 }
 
 //获取空间所在的服务节点信息
@@ -30,7 +30,7 @@ func (this *cacheManager) GetSpaceNode(spaceID string) (string, error) {
 
 //设置entity所在的服务节点信息
 func (this *cacheManager) SetEntityNode(entityID string) error {
-	return this.redisClient.SetData(entityNodeKey + entityID, center.ClusterCenter.GetNodeID())
+	return this.redisClient.SetData(entityNodeKey+entityID, center.ClusterCenter.GetNodeID())
 }
 
 //获取entity所在的服务节点信息

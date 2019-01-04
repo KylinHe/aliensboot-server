@@ -22,8 +22,8 @@ import (
 
 var RoomManager = &roomManager{
 	gameFactories: make(map[reflect.Type]game.Factory),
-	rooms: make(map[string]*Room),
-	players: make(map[int64]string),
+	rooms:         make(map[string]*Room),
+	players:       make(map[int64]string),
 }
 
 func init() {
@@ -90,7 +90,6 @@ func (this *roomManager) EnsureRoom(roomID string) *Room {
 	return game
 }
 
-
 //玩家加入房间
 func (this *roomManager) JoinRoom(appID string, roomID string, playerID int64) *Room {
 	room := this.EnsureRoom(roomID)
@@ -106,7 +105,6 @@ func (this *roomManager) JoinRoom(appID string, roomID string, playerID int64) *
 //	return room
 //}
 
-
 //房主创建新房间
 func (this *roomManager) CreateRoom(appID string, playerID int64, roomID string, force bool, maxSeat int32) *Room {
 	if roomID != "" && force {
@@ -116,8 +114,8 @@ func (this *roomManager) CreateRoom(appID string, playerID int64, roomID string,
 
 	if maxSeat > 0 {
 		roomConfig = &config.RoomConfig{
-			AppID:roomConfig.AppID,
-			MaxSeat:int(maxSeat),
+			AppID:   roomConfig.AppID,
+			MaxSeat: int(maxSeat),
 		}
 	}
 	room := this.newRoom(roomConfig, roomID)
@@ -151,7 +149,7 @@ func (this *roomManager) newRoom(config *config.RoomConfig, roomID string) *Room
 	}
 
 	result := &Room{
-		id:roomID,
+		id:     roomID,
 		config: config,
 		Seats:  NewSeats(config.MaxSeat),
 		viewer: make(map[int64]*Player),
@@ -173,4 +171,3 @@ func (this *roomManager) newRoom(config *config.RoomConfig, roomID string) *Room
 	}
 	return result
 }
-

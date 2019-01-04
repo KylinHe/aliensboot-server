@@ -41,7 +41,6 @@ func TestLoadTree(t *testing.T) {
 		tree := loader.CreateBevTreeFromConfig(treeConfig, maps)
 		tree.Print()
 
-
 		//输入板
 		//board := NewBlackboard()
 		////循环每一帧

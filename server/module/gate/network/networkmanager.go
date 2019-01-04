@@ -153,6 +153,5 @@ func (this *networkManager) auth(authID int64, network *Network) {
 		}
 	}
 
-
 	//cache.ClusterCache.SetAuthGateID(authID, center.ClusterCenter.GetNodeID())
 }

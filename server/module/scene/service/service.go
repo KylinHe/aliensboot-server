@@ -3,16 +3,14 @@
 package service
 
 import (
-
+	"github.com/KylinHe/aliensboot-core/chanrpc"
+	"github.com/KylinHe/aliensboot-core/cluster/center"
+	"github.com/KylinHe/aliensboot-core/cluster/center/service"
+	"github.com/KylinHe/aliensboot-core/exception"
+	"github.com/KylinHe/aliensboot-core/protocol/base"
+	"github.com/KylinHe/aliensboot-server/module/scene/conf"
+	"github.com/KylinHe/aliensboot-server/protocol"
 	"github.com/gogo/protobuf/proto"
-    "github.com/KylinHe/aliensboot-core/chanrpc"
-    "github.com/KylinHe/aliensboot-core/exception"
-    "github.com/KylinHe/aliensboot-core/cluster/center/service"
-    "github.com/KylinHe/aliensboot-core/cluster/center"
-    "github.com/KylinHe/aliensboot-core/protocol/base"
-    "github.com/KylinHe/aliensboot-server/protocol"
-    "github.com/KylinHe/aliensboot-server/module/scene/conf"
-
 )
 
 var instance service.IService = nil
@@ -24,7 +22,6 @@ func Init(chanRpc *chanrpc.Server) {
 func Close() {
 	center.ReleaseService(instance)
 }
-
 
 func handle(request *base.Any) (response *base.Any) {
 	requestProxy := &protocol.Request{}
@@ -44,8 +41,8 @@ func handle(request *base.Any) (response *base.Any) {
 			}
 		}
 		if !isResponse {
-            return
-        }
+			return
+		}
 		data, _ := proto.Marshal(responseProxy)
 		responseProxy.Session = requestProxy.GetSession()
 		response.Value = data
@@ -59,34 +56,32 @@ func handle(request *base.Any) (response *base.Any) {
 }
 
 func handleRequest(authID int64, gateID string, request *protocol.Request, response *protocol.Response) bool {
-	
-	
-    if request.GetEntityCall() != nil {
-    	handleEntityCall(authID, gateID, request.GetEntityCall())
-    	return false
-    }
-    
-    if request.GetLoginScene() != nil {
-    	handleLoginScene(authID, gateID, request.GetLoginScene())
-    	return false
-    }
-    
-    if request.GetMoveScene() != nil {
-    	handleMoveScene(authID, gateID, request.GetMoveScene())
-    	return false
-    }
-    
-    if request.GetMigrateIn() != nil {
-    	handleMigrateIn(authID, gateID, request.GetMigrateIn())
-    	return false
-    }
-    
-    if request.GetMigrateOut() != nil {
-    	handleMigrateOut(authID, gateID, request.GetMigrateOut())
-    	return false
-    }
-    
+
+	if request.GetEntityCall() != nil {
+		handleEntityCall(authID, gateID, request.GetEntityCall())
+		return false
+	}
+
+	if request.GetLoginScene() != nil {
+		handleLoginScene(authID, gateID, request.GetLoginScene())
+		return false
+	}
+
+	if request.GetMoveScene() != nil {
+		handleMoveScene(authID, gateID, request.GetMoveScene())
+		return false
+	}
+
+	if request.GetMigrateIn() != nil {
+		handleMigrateIn(authID, gateID, request.GetMigrateIn())
+		return false
+	}
+
+	if request.GetMigrateOut() != nil {
+		handleMigrateOut(authID, gateID, request.GetMigrateOut())
+		return false
+	}
+
 	response.Code = protocol.Code_InvalidRequest
 	return true
 }
-

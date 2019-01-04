@@ -14,7 +14,6 @@ import (
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-
 //
 func handleLoginScene(authID int64, gateID string, request *protocol.LoginScene) {
 	//获取空间所在的服务器节点
@@ -37,7 +36,7 @@ func handleLoginScene(authID int64, gateID string, request *protocol.LoginScene)
 			mmo.EntityID(request.GetSpaceID()),
 			entity.TypePlayer,
 			playerID,
-			unit.Vector{X:0,Y:0,Z:0})
+			unit.Vector{X: 0, Y: 0, Z: 0})
 		if err != nil {
 			log.Errorf("enter space error : %v", err)
 			return
@@ -49,5 +48,3 @@ func handleLoginScene(authID int64, gateID string, request *protocol.LoginScene)
 	}
 
 }
-
-

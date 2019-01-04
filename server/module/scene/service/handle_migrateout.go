@@ -6,9 +6,6 @@ import (
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-
-
-
 //
 func handleMigrateOut(authID int64, gateID string, request *protocol.MigrateOut) {
 

@@ -1,9 +1,9 @@
 package conf
 
 import (
+	"encoding/json"
 	"github.com/KylinHe/aliensboot-core/cluster/center"
 	"github.com/KylinHe/aliensboot-server/data"
-	"encoding/json"
 )
 
 func Init() {

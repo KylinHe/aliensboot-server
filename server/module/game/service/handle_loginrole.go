@@ -27,9 +27,9 @@ func handleLoginRole(authID int64, gateID string, request *protocol.LoginRole, r
 
 	//通知场景服务器加载数据
 	err := rpc.Scene.LoginScene("", &protocol.LoginScene{
-		SpaceID:"space1",
-		AuthID:authID,
-		GateID:gateID,
+		SpaceID: "space1",
+		AuthID:  authID,
+		GateID:  gateID,
 	})
 
 	//场景服务不可用

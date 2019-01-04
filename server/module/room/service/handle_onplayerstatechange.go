@@ -7,10 +7,7 @@ import (
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-
 //
 func handleOnPlayerStateChange(authID int64, gateID string, request *protocol.OnPlayerStateChange, response *protocol.OnPlayerStateChangeRet) {
-	response.Code =  core.RoomManager.ChangePlayerState(authID, request.GetPlayerID(), request.GetState())
+	response.Code = core.RoomManager.ChangePlayerState(authID, request.GetPlayerID(), request.GetState())
 }
-
-

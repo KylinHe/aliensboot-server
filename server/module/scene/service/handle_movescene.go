@@ -9,9 +9,6 @@ import (
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-
-
-
 //
 func handleMoveScene(authID int64, gateID string, request *protocol.MoveScene) {
 	//获取空间所在的服务器节点

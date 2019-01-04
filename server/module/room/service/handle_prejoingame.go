@@ -4,9 +4,6 @@ package service
 
 import "github.com/KylinHe/aliensboot-server/protocol"
 
-
-
-
 //
 func handlePreJoinGame(authID int64, gateID string, request *protocol.PreJoinGame) {
 

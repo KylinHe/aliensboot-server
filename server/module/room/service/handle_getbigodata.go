@@ -7,11 +7,8 @@ import (
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-
 //
 func handleGetBigoData(authID int64, gateID string, request *protocol.GetBigoData, response *protocol.GetBigoDataRet) {
 	room := core.RoomManager.GetRoomByPlayerID(authID)
 	room.AcceptPlayerMessage(authID, request, response)
 }
-
-

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015, 2017 aliens idea(xiamen) Corporation and others.
- * All rights reserved. 
+ * All rights reserved.
  * Date:
  *     2018/11/22
  * Contributors:
@@ -8,7 +8,6 @@
  *     jialin.he <kylinh@gmail.com>
  *******************************************************************************/
 package core
-
 
 //座位编号从0
 type Seats []*Player
@@ -43,7 +42,7 @@ func (seats Seats) Get(playerID int64) *Player {
 
 func (seats Seats) Delete(playerID int64) *Player {
 	for index, seat := range seats {
-		if seat != nil && seat.GetPlayerid() == playerID{
+		if seat != nil && seat.GetPlayerid() == playerID {
 			seats[index] = nil
 			return seat
 		}
@@ -64,7 +63,6 @@ func (seats Seats) IsFull() bool {
 	return true
 }
 
-
 func (seats Seats) Clean() {
 	for index, _ := range seats {
 		seats[index] = nil
@@ -81,14 +79,9 @@ func (seats Seats) Foreach(callback func(player *Player)) {
 
 func (seats Seats) IsAllReady() bool {
 	for _, seat := range seats {
-		if seat == nil || !seat.IsReady(){
+		if seat == nil || !seat.IsReady() {
 			return false
 		}
 	}
 	return true
 }
-
-
-
-
-

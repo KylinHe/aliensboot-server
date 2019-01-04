@@ -23,9 +23,9 @@ import (
 type Seat int32
 
 const (
-	RoomStateReady int32 = 0
-	RoomState int32 = 1
-	RoomStateOver  int32 = 2
+	RoomStateReady     int32 = 0
+	RoomState          int32 = 1
+	RoomStateOver      int32 = 2
 	RoomStateRoundOver int32 = 3
 
 	PlayerStateJoin int32 = 0
@@ -33,7 +33,6 @@ const (
 )
 
 type Room struct {
-
 	id string //房间id
 
 	Seats //桌子,数组下标为座位编号
@@ -52,8 +51,6 @@ func (room *Room) GetID() string {
 	return room.id
 }
 
-
-
 func (room *Room) AcceptJoinGame(author int64, acceptID int64) {
 	player := room.viewer[acceptID]
 	if player == nil {
@@ -65,8 +62,8 @@ func (room *Room) AcceptJoinGame(author int64, acceptID int64) {
 
 	//通知关注加入游戏
 	push := &protocol.Response{Room: &protocol.Response_PlayerJoinRet{PlayerJoinRet: &protocol.PlayerJoinRet{
-		RoomID:room.GetID(),
-		Player:player.Player,
+		RoomID: room.GetID(),
+		Player: player.Player,
 	}}}
 	player.SendProtoMsg(push)
 
@@ -74,7 +71,7 @@ func (room *Room) AcceptJoinGame(author int64, acceptID int64) {
 
 func (room *Room) JoinGame(playerID int64) {
 	player := room.viewer[playerID]
-	if player == nil || player.GroupId != constant.RoleGuest{
+	if player == nil || player.GroupId != constant.RoleGuest {
 		exception.GameException(protocol.Code_playerNotFound)
 	}
 
@@ -83,7 +80,7 @@ func (room *Room) JoinGame(playerID int64) {
 
 	//通知主播加入游戏
 	push := &protocol.Response{Room: &protocol.Response_PreJoinGameReq{PreJoinGameReq: &protocol.PreJoinGameReq{
-		Player:player.Player,
+		Player: player.Player,
 	}}}
 	room.SendToAnchor(push)
 }
@@ -100,7 +97,7 @@ func (room *Room) RequestJoinGame(playerID int64) {
 		exception.GameException(protocol.Code_playerNotFound)
 	}
 	push := &protocol.Response{Room: &protocol.Response_ContinueJoinGameReq{ContinueJoinGameReq: &protocol.ContinueJoinGameReq{
-		PlayerID:playerID,
+		PlayerID: playerID,
 	}}}
 	room.SendToAnchor(push)
 }
@@ -108,11 +105,11 @@ func (room *Room) RequestJoinGame(playerID int64) {
 //新增玩家
 func (room *Room) AddPlayer(playerID int64, groupID int32) *Player {
 	player := &protocol.Player{
-		Playerid:playerID,
-		Nickname:"蛇皮" + util.Int64ToString(playerID),
-		GroupId:groupID,
+		Playerid: playerID,
+		Nickname: "蛇皮" + util.Int64ToString(playerID),
+		GroupId:  groupID,
 	}
-	result := &Player{Player:player}
+	result := &Player{Player: player}
 	if groupID == constant.RoleViewer {
 		room.viewer[playerID] = result
 	} else {
@@ -126,7 +123,6 @@ func (room *Room) AddPlayerToGame(player *Player) {
 	if !ok {
 		exception.GameException(protocol.Code_roomMaxPlayer)
 	}
-
 
 	//room.BroadcastOtherPlayer(-1, push)
 }
@@ -157,7 +153,7 @@ func (room *Room) Close(callback func(playerID int64)) {
 //获取所有玩家数据
 func (room *Room) GetAllPlayerData() []*protocol.Player {
 	results := []*protocol.Player{}
-	room.Foreach(func (player *Player) {
+	room.Foreach(func(player *Player) {
 		results = append(results, player.Player)
 	})
 	return results
@@ -210,7 +206,6 @@ func (room *Room) EnsureGame() game.Game {
 	}
 	return room.game
 }
-
 
 //T人
 func (room *Room) kickPlayer(playerID int64) *Player {

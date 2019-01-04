@@ -12,10 +12,10 @@ package game
 import "github.com/gogo/protobuf/proto"
 
 type Game interface {
-	Start()                                       //启动游戏
-	IsStart() bool                                //是否启动游戏
-	Stop()                                        //结束游戏
-	AcceptPlayerData(playerID int64, data string) //接收玩家数据
+	Start()                                                                        //启动游戏
+	IsStart() bool                                                                 //是否启动游戏
+	Stop()                                                                         //结束游戏
+	AcceptPlayerData(playerID int64, data string)                                  //接收玩家数据
 	AcceptPlayerMessage(playerID int64, request interface{}, response interface{}) //接收玩家发送的消息
 }
 

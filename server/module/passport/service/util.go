@@ -10,9 +10,9 @@
 package service
 
 import (
-	"github.com/KylinHe/aliensboot-core/common/util"
 	"crypto/md5"
 	"encoding/hex"
+	"github.com/KylinHe/aliensboot-core/common/util"
 )
 
 func MD5Hash(str string) string {

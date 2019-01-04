@@ -7,14 +7,11 @@ import (
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-
-
-
 //
 func handleBroadcastViewer(authID int64, gateID string, request *protocol.BroadcastViewer) {
 	room := core.RoomManager.GetRoomByPlayerID(authID)
 	push := &protocol.Response{Room: &protocol.Response_BroadcastViewerRet{BroadcastViewerRet: &protocol.BroadcastViewerRet{
-		Data:request.GetData(),
+		Data: request.GetData(),
 	}}}
 	room.BroadcastViewer(push)
 }

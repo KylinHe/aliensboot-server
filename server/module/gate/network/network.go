@@ -66,20 +66,18 @@ func (this *Network) KickOut(kickType protocol.KickType) {
 	this.agent.Close()
 }
 
-
 func (this *Network) OnClose() {
 	if !this.IsAuth() {
 		return
 	}
 	offlineMsg := &base.Any{
-		Id:constant.MsgOffline,
-		AuthId:this.authID,
+		Id:     constant.MsgOffline,
+		AuthId: this.authID,
 	}
 	for service, node := range this.bindServices {
 		dispatch.RequestNode(service, node, offlineMsg)
 	}
 }
-
 
 //func (this *Network) requestCallback(request *base.Any, err error) {
 //	Manager.acceptResponse(this, request, err)
@@ -197,4 +195,3 @@ func (this *Network) IsHeartbeatTimeout() bool {
 func (this *Network) HeartBeat() {
 	this.heartbeatTime = time.Now()
 }
-

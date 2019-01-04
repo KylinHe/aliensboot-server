@@ -12,14 +12,9 @@ package constant
 const (
 	TestAppID = "0"
 
-
 	//1-主播，2-上麦嘉宾，3-观众
 
 	RoleAnchor int32 = 1
-	RoleGuest int32 = 2
+	RoleGuest  int32 = 2
 	RoleViewer int32 = 3
-
-
-
-
 )

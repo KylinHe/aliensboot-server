@@ -17,7 +17,6 @@ import (
 )
 
 type Player struct {
-
 	*protocol.Player
 
 	gateID string //是否绑定了网关、玩家是否连接到服务器
@@ -41,8 +40,8 @@ func (player *Player) SendProtoMsg(message proto.Message) {
 
 func (player *Player) kick(kickType protocol.KickType) {
 	rpc.Gate.KickOut("", &protocol.KickOut{
-		AuthID:player.GetPlayerid(),
-		KickType:kickType,
+		AuthID:   player.GetPlayerid(),
+		KickType: kickType,
 	})
 }
 

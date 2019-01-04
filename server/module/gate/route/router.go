@@ -10,12 +10,12 @@
 package route
 
 import (
+	"errors"
+	"fmt"
 	"github.com/KylinHe/aliensboot-core/cluster/center/service"
 	"github.com/KylinHe/aliensboot-core/protocol/base"
 	"github.com/KylinHe/aliensboot-server/dispatch"
 	"github.com/KylinHe/aliensboot-server/module/gate/conf"
-	"errors"
-	"fmt"
 )
 
 //requestID - service

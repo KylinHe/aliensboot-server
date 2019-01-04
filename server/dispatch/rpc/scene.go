@@ -6,20 +6,16 @@ import (
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-var Scene = &sceneRPCHandler{&rpcHandler{name:"scene"}}
-
+var Scene = &sceneRPCHandler{&rpcHandler{name: "scene"}}
 
 type sceneRPCHandler struct {
 	*rpcHandler
 }
 
-
-
-
 func (this *sceneRPCHandler) EntityCall(node string, request *protocol.EntityCall) error {
 	message := &protocol.Request{
-		Scene:&protocol.Request_EntityCall{
-			EntityCall:request,
+		Scene: &protocol.Request_EntityCall{
+			EntityCall: request,
 		},
 	}
 	return this.Send(node, message)
@@ -27,8 +23,8 @@ func (this *sceneRPCHandler) EntityCall(node string, request *protocol.EntityCal
 
 func (this *sceneRPCHandler) LoginScene(node string, request *protocol.LoginScene) error {
 	message := &protocol.Request{
-		Scene:&protocol.Request_LoginScene{
-			LoginScene:request,
+		Scene: &protocol.Request_LoginScene{
+			LoginScene: request,
 		},
 	}
 	return this.Send(node, message)
@@ -36,8 +32,8 @@ func (this *sceneRPCHandler) LoginScene(node string, request *protocol.LoginScen
 
 func (this *sceneRPCHandler) MoveScene(node string, request *protocol.MoveScene) error {
 	message := &protocol.Request{
-		Scene:&protocol.Request_MoveScene{
-			MoveScene:request,
+		Scene: &protocol.Request_MoveScene{
+			MoveScene: request,
 		},
 	}
 	return this.Send(node, message)
@@ -45,8 +41,8 @@ func (this *sceneRPCHandler) MoveScene(node string, request *protocol.MoveScene)
 
 func (this *sceneRPCHandler) MigrateIn(node string, request *protocol.MigrateIn) error {
 	message := &protocol.Request{
-		Scene:&protocol.Request_MigrateIn{
-			MigrateIn:request,
+		Scene: &protocol.Request_MigrateIn{
+			MigrateIn: request,
 		},
 	}
 	return this.Send(node, message)
@@ -54,8 +50,8 @@ func (this *sceneRPCHandler) MigrateIn(node string, request *protocol.MigrateIn)
 
 func (this *sceneRPCHandler) MigrateOut(node string, request *protocol.MigrateOut) error {
 	message := &protocol.Request{
-		Scene:&protocol.Request_MigrateOut{
-			MigrateOut:request,
+		Scene: &protocol.Request_MigrateOut{
+			MigrateOut: request,
 		},
 	}
 	return this.Send(node, message)

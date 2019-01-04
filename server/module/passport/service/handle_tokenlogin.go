@@ -13,7 +13,6 @@ import (
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-
 //
 func handleTokenLogin(request *protocol.TokenLogin, response *protocol.TokenLoginRet) int64 {
 	return 0

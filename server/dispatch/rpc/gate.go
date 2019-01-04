@@ -6,30 +6,26 @@ import (
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-var Gate = &gateRPCHandler{&rpcHandler{name:"gate"}}
-
+var Gate = &gateRPCHandler{&rpcHandler{name: "gate"}}
 
 type gateRPCHandler struct {
 	*rpcHandler
 }
 
-
 func (this *gateRPCHandler) HeartBeat(node string, request *protocol.HeartBeat) *protocol.HeartBeat {
 	message := &protocol.Request{
-		Gate:&protocol.Request_HeartBeat{
-			HeartBeat:request,
+		Gate: &protocol.Request_HeartBeat{
+			HeartBeat: request,
 		},
 	}
 	messageRet := this.Request(node, message)
 	return messageRet.GetHeartBeat()
 }
 
-
-
 func (this *gateRPCHandler) BindService(node string, request *protocol.BindService) error {
 	message := &protocol.Request{
-		Gate:&protocol.Request_BindService{
-			BindService:request,
+		Gate: &protocol.Request_BindService{
+			BindService: request,
 		},
 	}
 	return this.Send(node, message)
@@ -37,8 +33,8 @@ func (this *gateRPCHandler) BindService(node string, request *protocol.BindServi
 
 func (this *gateRPCHandler) KickOut(node string, request *protocol.KickOut) error {
 	message := &protocol.Request{
-		Gate:&protocol.Request_KickOut{
-			KickOut:request,
+		Gate: &protocol.Request_KickOut{
+			KickOut: request,
 		},
 	}
 	return this.Send(node, message)
@@ -46,8 +42,8 @@ func (this *gateRPCHandler) KickOut(node string, request *protocol.KickOut) erro
 
 func (this *gateRPCHandler) PushMessage(node string, request *protocol.PushMessage) error {
 	message := &protocol.Request{
-		Gate:&protocol.Request_PushMessage{
-			PushMessage:request,
+		Gate: &protocol.Request_PushMessage{
+			PushMessage: request,
 		},
 	}
 	return this.Send(node, message)

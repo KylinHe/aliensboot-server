@@ -10,10 +10,10 @@
 package msg
 
 import (
-	"github.com/KylinHe/aliensboot-core/chanrpc"
-	"github.com/KylinHe/aliensboot-core/protocol/base"
 	"encoding/binary"
 	"errors"
+	"github.com/KylinHe/aliensboot-core/chanrpc"
+	"github.com/KylinHe/aliensboot-core/protocol/base"
 )
 
 var Processor = NewMsgProcessor() //protobuf.NewProcessor()

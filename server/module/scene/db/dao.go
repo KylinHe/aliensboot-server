@@ -12,7 +12,7 @@ package db
 import "github.com/KylinHe/aliensboot-core/mmo"
 
 type Entity struct {
-	ID 		mmo.EntityID  `bson:"_id"`
-	Type 	mmo.EntityType  `bson:"type"`
-	Data 	[]byte  `bson:"data"`
+	ID   mmo.EntityID   `bson:"_id"`
+	Type mmo.EntityType `bson:"type"`
+	Data []byte         `bson:"data"`
 }
