@@ -14,7 +14,6 @@ import (
 	"github.com/KylinHe/aliensboot-core/exception"
 	"github.com/KylinHe/aliensboot-server/constant"
 	"github.com/KylinHe/aliensboot-server/dispatch/rpc"
-	"github.com/KylinHe/aliensboot-server/module/hall/conf"
 	"github.com/KylinHe/aliensboot-server/protocol"
 	"github.com/eapache/queue"
 )
@@ -38,8 +37,10 @@ func (this *manager) Add(appID string, authID int64) {
 
 func (this *manager) TryMatch() {
 	for appID, queue := range this.queues {
-		configData := conf.GameData[appID]
-		count := int(configData.MaxSeat)
+		//configData := conf.GameData[appID]
+		//count := int(configData.MaxSeat)
+
+		count := 2
 
 		if count > 0 && queue.Length() >= count {
 			results := make([]*protocol.Player, count)
