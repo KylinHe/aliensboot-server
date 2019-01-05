@@ -2,7 +2,7 @@
 #
 service:
   name: scene
-  port: 19118
+  port: 19125
   #
   # registered in the service center [zookeepr or etcd], exposed to the
   # external address information

@@ -8,6 +8,7 @@ import (
 	"github.com/KylinHe/aliensboot-server/module/hall"
 	"github.com/KylinHe/aliensboot-server/module/passport"
 	"github.com/KylinHe/aliensboot-server/module/room"
+	"github.com/KylinHe/aliensboot-server/module/scene"
 )
 
 func init() {
@@ -23,5 +24,6 @@ func main() {
 		room.Module,
 		passport.Module,
 		game.Module,
+		scene.Module,
 	)
 }
