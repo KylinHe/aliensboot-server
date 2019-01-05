@@ -3,19 +3,19 @@
 package service
 
 import (
-
-	"github.com/gogo/protobuf/proto"
     "github.com/KylinHe/aliensboot-core/chanrpc"
-    "github.com/KylinHe/aliensboot-core/exception"
     "github.com/KylinHe/aliensboot-core/cluster/center/service"
     "github.com/KylinHe/aliensboot-core/cluster/center"
+    "github.com/KylinHe/aliensboot-core/exception"
     "github.com/KylinHe/aliensboot-core/protocol/base"
-    "github.com/KylinHe/aliensboot-server/protocol"
     "github.com/KylinHe/aliensboot-server/module/scene/conf"
-
+    "github.com/KylinHe/aliensboot-server/protocol"
+    "github.com/gogo/protobuf/proto"
 )
 
 var instance service.IService = nil
+
+var handlers = make(map[uint16]func(request *base.Any)*base.Any)
 
 func Init(chanRpc *chanrpc.Server) {
 	instance = center.PublicService(conf.Config.Service, service.NewRpcHandler(chanRpc, handle))
@@ -26,7 +26,25 @@ func Close() {
 }
 
 
+//register self handler
+func RegisteHandler(msgID uint16, handler func(request *base.Any)*base.Any) {
+	handlers[msgID] = handler
+}
+
+func handleInternal(request *base.Any) (bool, *base.Any) {
+	handler := handlers[request.Id]
+	if handler == nil {
+		return false, nil
+	}
+	response := handler(request)
+	return true, response
+}
+
 func handle(request *base.Any) (response *base.Any) {
+    ok, response := handleInternal(request)
+	if ok {
+		return response
+	}
 	requestProxy := &protocol.Request{}
 	responseProxy := &protocol.Response{}
 	response = &base.Any{}

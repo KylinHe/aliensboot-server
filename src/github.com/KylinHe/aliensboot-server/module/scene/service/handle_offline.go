@@ -4,10 +4,17 @@ package service
 
 import (
 	"github.com/KylinHe/aliensboot-core/mmo"
+	"github.com/KylinHe/aliensboot-core/protocol/base"
+	"github.com/KylinHe/aliensboot-server/constant"
 	"github.com/KylinHe/aliensboot-server/module/scene/entity"
 )
 
+func init() {
+	RegisteHandler(constant.MsgOffline, handleOffline)
+}
+
 //
-func handleOffline(authID int64) {
-	mmo.Call(entity.GetPlayerID(authID), "Logout")
+func handleOffline(request *base.Any) *base.Any {
+	mmo.Call(entity.GetPlayerID(request.GetAuthId()), "Logout")
+	return nil
 }
