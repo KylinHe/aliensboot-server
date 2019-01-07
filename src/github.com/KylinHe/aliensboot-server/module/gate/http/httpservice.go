@@ -39,7 +39,6 @@ func Close() {
 
 }
 
-//添加弹幕信息
 func handleService(c *gin.Context) {
 	service := c.Param("service")
 
@@ -51,7 +50,7 @@ func handleService(c *gin.Context) {
 	//data, _ := json.Marshal(c.Request.Form)
 
 	log.Debugf("request data %v", string(body))
-	response, err := route.HandleUrlMessage(service, nil)
+	response, err := route.HandleUrlMessage(service, body)
 	if err != nil {
 		response = []byte(err.Error())
 		c.String(http.StatusInternalServerError, string(response))

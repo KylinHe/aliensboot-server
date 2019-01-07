@@ -27,7 +27,7 @@ var serviceSeqMapping = make(map[string]uint16)
 //goroutine pool, deal async request and callback
 
 func Init() {
-	for service, seq := range conf.Config.Route {
+	for service, seq := range conf.Config.Routes {
 		seqServiceMapping[seq] = service
 		serviceSeqMapping[service] = seq
 	}
@@ -35,10 +35,6 @@ func Init() {
 
 func GetServiceSeq(serviceName string) uint16 {
 	return serviceSeqMapping[serviceName]
-}
-
-func GetServiceByeSeq(seq uint16) string {
-	return seqServiceMapping[seq]
 }
 
 func HandleUrlMessage(serviceName string, requestData []byte) ([]byte, error) {

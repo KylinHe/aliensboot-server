@@ -43,7 +43,7 @@ cache:
 #
 # service name - message seq
 #
-route: {passport: 1, game: 2, room: 3, hall: 8, scene: 9}
+routes: {passport: 1, game: 2, room: 3, hall: 8, scene: 9}
 #
 # ---------------------------------- Auth -----------------------------
 #

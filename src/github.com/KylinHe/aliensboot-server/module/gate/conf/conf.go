@@ -29,7 +29,7 @@ var Config struct {
 	SecretKey        string //
 	AuthTimeout      float64
 	HeartbeatTimeout float64
-	Route            map[string]uint16 //路由配置
+	Routes            map[string]uint16 //路由配置
 }
 
 //func Init(name string) {

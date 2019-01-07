@@ -3,17 +3,15 @@
 package service
 
 import (
-
+	"github.com/KylinHe/aliensboot-core/chanrpc"
+	"github.com/KylinHe/aliensboot-core/cluster/center"
+	"github.com/KylinHe/aliensboot-core/cluster/center/service"
+	"github.com/KylinHe/aliensboot-core/exception"
+	"github.com/KylinHe/aliensboot-core/log"
+	"github.com/KylinHe/aliensboot-core/protocol/base"
+	"github.com/KylinHe/aliensboot-server/module/gate/conf"
+	"github.com/KylinHe/aliensboot-server/protocol"
 	"github.com/gogo/protobuf/proto"
-    "github.com/KylinHe/aliensboot-core/chanrpc"
-    "github.com/KylinHe/aliensboot-core/exception"
-    "github.com/KylinHe/aliensboot-core/cluster/center/service"
-    "github.com/KylinHe/aliensboot-core/cluster/center"
-    "github.com/KylinHe/aliensboot-core/protocol/base"
-    "github.com/KylinHe/aliensboot-core/log"
-    "github.com/KylinHe/aliensboot-server/protocol"
-    "github.com/KylinHe/aliensboot-server/module/gate/conf"
-
 )
 
 var instance service.IService = nil
