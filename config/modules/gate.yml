@@ -14,34 +14,34 @@ service:
 # ---------------------------------- Network --------------------------
 #
 #tcp configuration
-tcp:
-  address: :3579
-  maxconnnum: 20000
-  pendingwritenum: 2000
-  lenmsglen: 2
-  minmsglen: 0
-  maxmsglen: 4096
-  littleendian: true
-
-#kcp configuration
-kcp:
-  address: :28129
-  maxconnnum: 20000
-  pendingwritenum: 2000
-  lenmsglen: 2
-  minmsglen: 0
-  maxmsglen: 4096
-  littleendian: true
-
-#websocket configuration
-#websocket:
-#  address: :28107
+#tcp:
+#  address: :3579
 #  maxconnnum: 20000
 #  pendingwritenum: 2000
+#  lenmsglen: 2
+#  minmsglen: 0
 #  maxmsglen: 4096
-#  httptimeout: 10
-#  certfile:
-#  keyfile:
+#  littleendian: true
+
+#kcp configuration
+#kcp:
+#  address: :28129
+#  maxconnnum: 20000
+#  pendingwritenum: 2000
+#  lenmsglen: 2
+#  minmsglen: 0
+#  maxmsglen: 4096
+#  littleendian: true
+
+#websocket configuration
+websocket:
+  address: :28107
+  maxconnnum: 20000
+  pendingwritenum: 2000
+  maxmsglen: 4096
+  httptimeout: 10
+  certfile:
+  keyfile:
 
 #http configuration
 #http:

@@ -2,8 +2,8 @@ github.com/DataDog/datadog-go v0.0.0-20180822151419-281ae9f2d895 h1:dmc/C8bpE5Vk
 github.com/DataDog/datadog-go v0.0.0-20180822151419-281ae9f2d895/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
 github.com/DataDog/zstd v1.3.5/go.mod h1:1jcaCB/ufaK+sKp1NBhlGmpz41jOoPQ35bpF36t7BBo=
 github.com/GoogleCloudPlatform/gcloud-golang v0.32.0/go.mod h1:N8HFQ7lrtBZbw9zFt05Bpf7W8qrhk7zZ0oRylRDV+eQ=
-github.com/KylinHe/aliensboot-core v0.0.1 h1:RNCSDVXwtdHJYgHYMBIrSo/1XebIPgfstdUqg4Ie1LE=
-github.com/KylinHe/aliensboot-core v0.0.1/go.mod h1:lD7iNELKDMII67XuKTXUqcWBw2Roq+Ls7xRtyY0Qmyo=
+github.com/KylinHe/aliensboot-core v0.0.2 h1:vzQWTWhdH5e6XtdGoAFgt7k1dm9rahag+YqSaYajN2o=
+github.com/KylinHe/aliensboot-core v0.0.2/go.mod h1:ZlaHZ9beARQU3Yq6GvfSAN1E0AKWwd15e3mWTB9KOPg=
 github.com/Shopify/sarama v1.20.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.3+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
 github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da h1:8GUt8eRujhVEGZFFEjBj46YV4rDjvGrNxb0KMWYkL2I=
@@ -53,7 +53,6 @@ github.com/go-yaml/yaml v2.1.0+incompatible/go.mod h1:w2MrLa16VYP0jy6N7M5kHaCkaL
 github.com/gogo/protobuf v1.2.0 h1:xU6/SpYbvkNYiptHJYEDRseDLvYE7wSqhYYNy0QSUzI=
 github.com/gogo/protobuf v1.2.0/go.mod h1:r8qH/GZQm5c6nD/R0oafs1akxWv10x8SbQlK7atdtwQ=
 github.com/golang/appengine v1.3.0/go.mod h1:xpcJRLb0r/rnEns0DIKYYv+WjYCduHsrkT7/EB5XEv4=
-github.com/golang/crypto v0.0.0-20181106171534-e4dc69e5b2fd h1:1PsP5/t9feLVxYT/lEm99GSIJT2lh3OxNEKkT2U9yHU=
 github.com/golang/crypto v0.0.0-20181106171534-e4dc69e5b2fd/go.mod h1:uZvAcrsnNaCxlh1HorK5dUQHGmEKPh2H/Rl1kehswPo=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b h1:VKtxabqXZkF25pY9ekfRL6a582T4P37/31XEstQ5p58=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
@@ -62,7 +61,6 @@ github.com/golang/groupcache v0.0.0-20181024230925-c65c006176ff/go.mod h1:cIg4er
 github.com/golang/lint v0.0.0-20180702182130-06c8688daad7/go.mod h1:tluoj9z5200jBnyusfRPU2LqT6J+DAorxEvtC7LHB+E=
 github.com/golang/lint v0.0.0-20181026193005-c67002cb31c3/go.mod h1:tluoj9z5200jBnyusfRPU2LqT6J+DAorxEvtC7LHB+E=
 github.com/golang/mock v1.1.1/go.mod h1:oTYuIxOrZwtPieC+H1uAHpcLFnEyAGVDL/k47Jfbm0A=
-github.com/golang/net v0.0.0-20181108082009-03003ca0c849 h1:Ykya8rRgXvL+B7dHq05AyVPKym2+wTrmjT6xLTHL0Dw=
 github.com/golang/net v0.0.0-20181108082009-03003ca0c849/go.mod h1:98y8FxUyMjTdJ5eOj/8vzuiVO14/dkJ98NYhEPG8QGY=
 github.com/golang/oauth2 v0.0.0-20181106182150-f42d05182288/go.mod h1:ovBFgdmJqyggKzXS0i5+osE+RsPEbEsUfp2sVCgys1Q=
 github.com/golang/protobuf v1.2.0 h1:P3YflyNX/ehuJFLhxviNdFxQPkGK5cDcApsge1SqnvM=
@@ -70,14 +68,11 @@ github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5y
 github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db h1:woRePGFeVFfLKN/pOkfl+p/TAqKOfFu+7KPlMVpok/w=
 github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=
 github.com/golang/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:YCHYtYb9c8Q7XgYVYjmJBPtFPKx5QvOcPxHZWjldabE=
-github.com/golang/sys v0.0.0-20181107165924-66b7b1311ac8 h1:gFyVYPBOyPCYiYPRr7RWANIKGLsIIYtdz0NJ/PuuGbU=
 github.com/golang/sys v0.0.0-20181107165924-66b7b1311ac8/go.mod h1:5JyrLPvD/ZdaYkT7IqKhsP5xt7aLjA99KXRtk4EIYDk=
-github.com/golang/text v0.3.0 h1:uI5zIUA9cg047ctlTptnVc0Ghjfurf2eZMFrod8R7v8=
 github.com/golang/text v0.3.0/go.mod h1:GUiq9pdJKRKKAZXiVgWFEvocYuREvC14NhI4OPgEjeE=
 github.com/golang/tools v0.0.0-20181111003725-6d71ab8aade0/go.mod h1:BZR6KJOI/IQ5FlSQroxL7yevEMRCz1dARTXHD9s4mHE=
 github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c h1:964Od4U6p2jUkFxvCydnIczKteheJEzHRToSGK3Bnlw=
 github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c/go.mod h1:lNA+9X1NB3Zf8V7Ke586lFgjr2dZNuvo3lPJSGZ5JPQ=
-github.com/google/go-genproto v0.0.0-20181109154231-b5d43981345b h1:AQgh8FtSwUf5r8jTKcjGBf8JF+lbQKYZMigFvkVnU64=
 github.com/google/go-genproto v0.0.0-20181109154231-b5d43981345b/go.mod h1:7Ep/1NZk928CDR8SjdVbjWNpdIf6nzjE3BTgJDr2Atg=
 github.com/gorilla/websocket v1.4.0 h1:WDFjx/TMzVgy9VdMMQi2K2Emtwi2QcUQsztZ/zLaH/Q=
 github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
@@ -87,7 +82,6 @@ github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 h1:Ovs26xHkKqVztRpIrF/92Bcuy
 github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0/go.mod h1:8NvIoxWQoOIhqOTXgfV/d3M/q6VIi02HzZEHgUlZvzk=
 github.com/grpc-ecosystem/grpc-gateway v1.6.3 h1:oQ+8y59SMDn8Ita1Sh4f94XCUVp8AB84sppXP8Qgiow=
 github.com/grpc-ecosystem/grpc-gateway v1.6.3/go.mod h1:RSKVYQBd5MCa4OVpNdGskqpgL2+G+NZTnrVHpWWfpdw=
-github.com/grpc/grpc-go v1.16.0 h1:NoIxpYcu0On8pGfXH92qMzpvh+CupLSmOXbqWdjugpk=
 github.com/grpc/grpc-go v1.16.0/go.mod h1:0JHn/cJsOMiMfNA9+DeHDlAU7KAAB5GDlYFpa9MZMio=
 github.com/hashicorp/consul v1.4.0 h1:PQTW4xCuAExEiSbhrsFsikzbW5gVBoi74BjUvYFyKHw=
 github.com/hashicorp/consul v1.4.0/go.mod h1:mFrjN1mfidgJfYP1xrJCF+AfRhr6Eaqhb2+sfyn/OOI=
@@ -217,8 +211,6 @@ github.com/xiaonanln/goworld v0.1.6 h1:5B+uNAX4+f7Aw7Yerp8vuISRjQw7S+BUHSeBo1JyZ
 github.com/xiaonanln/goworld v0.1.6/go.mod h1:eZcfaF8KY/3mgAcFAJPmOXCOi9vzEngio0VXheNNYSI=
 github.com/xtaci/kcp-go v5.0.4+incompatible h1:zCX9MJxfJcfynNsUdyZnq8mbJVBNvuaZaf47mqd45Mk=
 github.com/xtaci/kcp-go v5.0.4+incompatible/go.mod h1:bN6vIwHQbfHaHtFpEssmWsN45a+AZwO7eyRCmEIbtvE=
-github.com/xtaci/smux v1.1.0 h1:VO9uJ2TQprdETdlkV+MggqiKLmXvB9I9gZR0AG4RypY=
-github.com/xtaci/smux v1.1.0/go.mod h1:f+nYm6SpuHMy/SH0zpbvAFHT1QoMcgLOsWcFip5KfPw=
 go.uber.org/atomic v1.3.2 h1:2Oa65PReHzfn29GpvgsYwloV9AVFHPDk8tYxt2c2tr4=
 go.uber.org/atomic v1.3.2/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
 go.uber.org/multierr v1.1.0 h1:HoEmRHQPVSqub6w2z2d2EOVs2fjyFRGyofhKuyDq0QI=
