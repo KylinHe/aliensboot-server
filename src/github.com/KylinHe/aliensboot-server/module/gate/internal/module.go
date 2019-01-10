@@ -30,6 +30,7 @@ func (m *Module) OnInit() {
 	//conf.Init(m.GetName())
 	m.Gate = &gate.Gate{
 		TcpConfig:    conf.Config.TCP,
+		KcpConfig:    conf.Config.KCP,
 		WsConfig:     conf.Config.WebSocket,
 		Processor:    msg.Processor,
 		AgentChanRPC: Skeleton.ChanRPCServer,

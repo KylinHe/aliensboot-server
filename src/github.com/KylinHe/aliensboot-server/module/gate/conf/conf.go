@@ -24,6 +24,8 @@ var Config struct {
 	Service          config.ServiceConfig
 	Cache            config.CacheConfig
 	TCP              config.TCPConfig
+	KCP 			 config.KCPConfig
+	UDP 			 config.UDPConfig
 	WebSocket        config.WsConfig
 	Http             config.HttpConfig
 	SecretKey        string //
