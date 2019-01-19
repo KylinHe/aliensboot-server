@@ -42,7 +42,7 @@ path.profile:
 # ----------------------------------- Debug ------------------------------------
 #
 #console.port: 6666
-console.prompt: AliensBot#
+console.prompt: AliensBoot#
 #
 # ---------------------------------- Statistics -----------------------------
 #
