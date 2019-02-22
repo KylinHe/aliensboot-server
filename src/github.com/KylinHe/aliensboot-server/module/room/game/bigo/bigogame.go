@@ -7,28 +7,25 @@
  *     aliens idea(xiamen) Corporation - initial API and implementation
  *     jialin.he <kylinh@gmail.com>
  *******************************************************************************/
-package game
+package bigo
 
 import (
-	"github.com/KylinHe/aliensboot-server/protocol"
 	"encoding/json"
 	"github.com/KylinHe/aliensboot-core/exception"
 	"github.com/KylinHe/aliensboot-core/log"
+	"github.com/KylinHe/aliensboot-server/module/room/game"
+	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-type BigoGameFactory struct {
+type GameFactory struct {
 }
 
-func (this *BigoGameFactory) Match(appID string) bool {
-	return appID == "1"
+func (this *GameFactory) NewGame(handler game.Handler) game.Game {
+	return &Game{CommonGame: &game.CommonGame{Handler: handler}, data: make(map[string]interface{})}
 }
 
-func (this *BigoGameFactory) NewGame(handler Handler) Game {
-	return &BigoGame{CommonGame: &CommonGame{Handler: handler}, data: make(map[string]interface{})}
-}
-
-type BigoGame struct {
-	*CommonGame
+type Game struct {
+	*game.CommonGame
 
 	data map[string]interface{} //游戏数据
 
@@ -45,7 +42,7 @@ type BigoGame struct {
  * @param forceUpdate   强制所有人更新这次全量数据
  */
 
-func (game *BigoGame) AcceptPlayerMessage(playerID int64, request interface{}, response interface{}) {
+func (game *Game) AcceptPlayerMessage(playerID int64, request interface{}, response interface{}) {
 	//log.Debugf("accept %v - %v - %v", playerID, request, response)
 	//switch request.(type) {
 	//case *protocol.UpdateBigoData:
@@ -58,7 +55,7 @@ func (game *BigoGame) AcceptPlayerMessage(playerID int64, request interface{}, r
 
 }
 
-//func (game *BigoGame) handleGetBigoData(playerID int64, request *protocol.GetBigoData, response *protocol.GetBigoDataRet) {
+//func (game *Game) handleGetBigoData(playerID int64, request *protocol.GetBigoData, response *protocol.GetBigoDataRet) {
 //	response.Type = request.Type
 //	response.Data = game.dataStr
 //	response.Ts = game.ts
@@ -66,7 +63,7 @@ func (game *BigoGame) AcceptPlayerMessage(playerID int64, request interface{}, r
 //	log.Debugf("get bigo data %v", game.dataStr)
 //}
 //
-//func (game *BigoGame) handleUpdateBigoData(playerID int64, data *protocol.UpdateBigoData) {
+//func (game *Game) handleUpdateBigoData(playerID int64, data *protocol.UpdateBigoData) {
 //	game.updateData(data.GetData(), data.GetType(), data.GetTs())
 //
 //	//是否通知其他玩家
@@ -83,7 +80,7 @@ func (game *BigoGame) AcceptPlayerMessage(playerID int64, request interface{}, r
 //	}
 //}
 
-func (game *BigoGame) updateData(data string, updateType int32, ts int64) {
+func (game *Game) updateData(data string, updateType int32, ts int64) {
 	newData := make(map[string]interface{})
 	err := json.Unmarshal([]byte(data), &newData)
 	if err != nil {
@@ -105,7 +102,7 @@ func (game *BigoGame) updateData(data string, updateType int32, ts int64) {
 	log.Debugf("update bigo data %v - %v", game.ts, game.dataStr)
 }
 
-func (game *BigoGame) appendData(newData map[string]interface{}) {
+func (game *Game) appendData(newData map[string]interface{}) {
 	for key, value := range newData {
 		game.data[key] = value
 	}

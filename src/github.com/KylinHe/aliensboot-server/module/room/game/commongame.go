@@ -17,10 +17,6 @@ import (
 type CommonGameFactory struct {
 }
 
-func (this *CommonGameFactory) Match(appID string) bool {
-	return appID == "0"
-}
-
 func (this *CommonGameFactory) NewGame(handler Handler) Game {
 	return &CommonGame{Handler: handler}
 }

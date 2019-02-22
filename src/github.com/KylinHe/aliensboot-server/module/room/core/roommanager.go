@@ -16,33 +16,34 @@ import (
 	"github.com/KylinHe/aliensboot-server/module/room/conf"
 	"github.com/KylinHe/aliensboot-server/module/room/config"
 	"github.com/KylinHe/aliensboot-server/module/room/game"
+	"github.com/KylinHe/aliensboot-server/module/room/game/agar"
+	"github.com/KylinHe/aliensboot-server/module/room/game/bigo"
 	"github.com/KylinHe/aliensboot-server/protocol"
-	"reflect"
 )
 
 var RoomManager = &roomManager{
-	gameFactories: make(map[reflect.Type]game.Factory),
+	gameFactories: make(map[string]game.Factory),
 	rooms:         make(map[string]*Room),
 	players:       make(map[int64]string),
 }
 
 func init() {
 	//
-	RoomManager.RegisterGameFactory(&game.CommonGameFactory{})
-	RoomManager.RegisterGameFactory(&game.BigoGameFactory{})
+	RoomManager.RegisterGameFactory("0", &game.CommonGameFactory{})
+	RoomManager.RegisterGameFactory("1", &bigo.GameFactory{})
+	RoomManager.RegisterGameFactory("2", &agar.GameFactory{})
 }
 
 type roomManager struct {
-	gameFactories map[reflect.Type]game.Factory //游戏工厂类
+	gameFactories map[string]game.Factory //游戏工厂类
 
 	rooms map[string]*Room //运行的游戏  游戏id - 房间对象
 
 	players map[int64]string //所有玩家的对应信息 玩家id - 房间id
-
 }
 
-func (this *roomManager) RegisterGameFactory(factory game.Factory) {
-	this.gameFactories[reflect.TypeOf(factory)] = factory
+func (this *roomManager) RegisterGameFactory(appId string, factory game.Factory) {
+	this.gameFactories[appId] = factory
 }
 
 //获取玩家在哪个房间
@@ -146,8 +147,8 @@ func (this *roomManager) newRoom(config *config.RoomConfig, roomID string) *Room
 		result.id = util.GenUUID()
 	}
 
-	for _, factory := range this.gameFactories {
-		if factory.Match(config.AppID) {
+	for appId, factory := range this.gameFactories {
+		if appId == config.AppID {
 			result.game = factory.NewGame(result)
 			break
 		}

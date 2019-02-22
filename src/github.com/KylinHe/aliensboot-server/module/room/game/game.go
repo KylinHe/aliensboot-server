@@ -19,7 +19,6 @@ type Game interface {
 }
 
 type Factory interface {
-	Match(appID string) bool
 	NewGame(handler Handler) Game
 }
 
