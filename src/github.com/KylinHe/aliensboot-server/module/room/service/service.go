@@ -3,17 +3,19 @@
 package service
 
 import (
-	"github.com/KylinHe/aliensboot-core/chanrpc"
-	"github.com/KylinHe/aliensboot-core/cluster/center"
-	"github.com/KylinHe/aliensboot-core/cluster/center/service"
-	"github.com/KylinHe/aliensboot-core/exception"
-	"github.com/KylinHe/aliensboot-core/protocol/base"
-	"github.com/KylinHe/aliensboot-server/module/room/conf"
-	"github.com/KylinHe/aliensboot-server/protocol"
-	"github.com/gogo/protobuf/proto"
+    "github.com/KylinHe/aliensboot-core/chanrpc"
+    "github.com/KylinHe/aliensboot-core/cluster/center/service"
+    "github.com/KylinHe/aliensboot-core/cluster/center"
+    "github.com/KylinHe/aliensboot-core/exception"
+    "github.com/KylinHe/aliensboot-core/protocol/base"
+    "github.com/KylinHe/aliensboot-server/module/room/conf"
+    "github.com/KylinHe/aliensboot-server/protocol"
+    "github.com/gogo/protobuf/proto"
 )
 
 var instance service.IService = nil
+
+var handlers = make(map[uint16]func(request *base.Any)*base.Any)
 
 func Init(chanRpc *chanrpc.Server) {
 	instance = center.PublicService(conf.Config.Service, service.NewRpcHandler(chanRpc, handle))
@@ -24,7 +26,25 @@ func Close() {
 }
 
 
+//register self handler
+func RegisteHandler(msgID uint16, handler func(request *base.Any)*base.Any) {
+	handlers[msgID] = handler
+}
+
+func handleInternal(request *base.Any) (bool, *base.Any) {
+	handler := handlers[request.Id]
+	if handler == nil {
+		return false, nil
+	}
+	response := handler(request)
+	return true, response
+}
+
 func handle(request *base.Any) (response *base.Any) {
+    ok, response := handleInternal(request)
+	if ok {
+		return response
+	}
 	requestProxy := &protocol.Request{}
 	responseProxy := &protocol.Response{}
 	response = &base.Any{}
@@ -73,13 +93,6 @@ func handleRequest(authID int64, gateID string, request *protocol.Request, respo
 		return true
 	}
 	
-	if request.GetJoinRoom() != nil {
-		messageRet := &protocol.JoinRoomRet{}
-		handleJoinRoom(authID, gateID, request.GetJoinRoom(), messageRet)
-		response.Room = &protocol.Response_JoinRoomRet{messageRet}
-		return true
-	}
-	
 	if request.GetRoomCreate() != nil {
 		messageRet := &protocol.RoomCreateRet{}
 		handleRoomCreate(authID, gateID, request.GetRoomCreate(), messageRet)
@@ -87,28 +100,44 @@ func handleRequest(authID int64, gateID string, request *protocol.Request, respo
 		return true
 	}
 	
-	if request.GetGetBigoData() != nil {
-		messageRet := &protocol.GetBigoDataRet{}
-		handleGetBigoData(authID, gateID, request.GetGetBigoData(), messageRet)
-		response.Room = &protocol.Response_GetBigoDataRet{messageRet}
-		return true
-	}
-	
-	if request.GetOnPlayerStateChange() != nil {
-		messageRet := &protocol.OnPlayerStateChangeRet{}
-		handleOnPlayerStateChange(authID, gateID, request.GetOnPlayerStateChange(), messageRet)
-		response.Room = &protocol.Response_OnPlayerStateChangeRet{messageRet}
-		return true
-	}
-	
-	if request.GetOnGameStateChange() != nil {
-		messageRet := &protocol.OnGameStateChangeRet{}
-		handleOnGameStateChange(authID, gateID, request.GetOnGameStateChange(), messageRet)
-		response.Room = &protocol.Response_OnGameStateChangeRet{messageRet}
+	if request.GetJoinRoom() != nil {
+		messageRet := &protocol.JoinRoomRet{}
+		handleJoinRoom(authID, gateID, request.GetJoinRoom(), messageRet)
+		response.Room = &protocol.Response_JoinRoomRet{messageRet}
 		return true
 	}
 	
 	
+    if request.GetRoomClose() != nil {
+    	handleRoomClose(authID, gateID, request.GetRoomClose())
+    	return false
+    }
+    
+    if request.GetRequestJoinSeat() != nil {
+    	handleRequestJoinSeat(authID, gateID, request.GetRequestJoinSeat())
+    	return false
+    }
+    
+    if request.GetJoinSeat() != nil {
+    	handleJoinSeat(authID, gateID, request.GetJoinSeat())
+    	return false
+    }
+    
+    if request.GetUpdateSeat() != nil {
+    	handleUpdateSeat(authID, gateID, request.GetUpdateSeat())
+    	return false
+    }
+    
+    if request.GetGameStart() != nil {
+    	handleGameStart(authID, gateID, request.GetGameStart())
+    	return false
+    }
+    
+    if request.GetGameOver() != nil {
+    	handleGameOver(authID, gateID, request.GetGameOver())
+    	return false
+    }
+    
     if request.GetGameReady() != nil {
     	handleGameReady(authID, gateID, request.GetGameReady())
     	return false
@@ -116,46 +145,6 @@ func handleRequest(authID int64, gateID string, request *protocol.Request, respo
     
     if request.GetGameData() != nil {
     	handleGameData(authID, gateID, request.GetGameData())
-    	return false
-    }
-    
-    if request.GetFrameData() != nil {
-    	handleFrameData(authID, gateID, request.GetFrameData())
-    	return false
-    }
-    
-    if request.GetUploadGameResult() != nil {
-    	handleUploadGameResult(authID, gateID, request.GetUploadGameResult())
-    	return false
-    }
-    
-    if request.GetUpdateBigoData() != nil {
-    	handleUpdateBigoData(authID, gateID, request.GetUpdateBigoData())
-    	return false
-    }
-    
-    if request.GetContinueJoinGame() != nil {
-    	handleContinueJoinGame(authID, gateID, request.GetContinueJoinGame())
-    	return false
-    }
-    
-    if request.GetPreJoinGame() != nil {
-    	handlePreJoinGame(authID, gateID, request.GetPreJoinGame())
-    	return false
-    }
-    
-    if request.GetRequestJoinGame() != nil {
-    	handleRequestJoinGame(authID, gateID, request.GetRequestJoinGame())
-    	return false
-    }
-    
-    if request.GetRespondJoinGame() != nil {
-    	handleRespondJoinGame(authID, gateID, request.GetRespondJoinGame())
-    	return false
-    }
-    
-    if request.GetBroadcastViewer() != nil {
-    	handleBroadcastViewer(authID, gateID, request.GetBroadcastViewer())
     	return false
     }
     

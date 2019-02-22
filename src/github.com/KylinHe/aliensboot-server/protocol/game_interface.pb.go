@@ -50,45 +50,33 @@
 		ShowUserRet
 		RoomCreate
 		RoomCreateRet
+		RoomClose
 		JoinRoom
 		JoinRoomRet
-		RequestJoinGame
-		RespondJoinGame
-		ContinueJoinGame
-		OnGameStateChange
-		OnGameStateChangeRet
-		OnPlayerStateChange
-		OnPlayerStateChangeRet
-		PreJoinGame
-		BroadcastViewer
+		RequestJoinSeat
+		JoinSeat
+		ChangePlayerState
+		ChangePlayerStateRet
+		UpdateSeat
 		GetRoomInfo
 		GetRoomInfoRet
-		GameData
-		UpdateBigoData
-		GetBigoData
-		GetBigoDataRet
 		GameReady
-		FrameData
-		UploadGameResult
-		UploadGameResultRet
-		OnceMore
-		OnceMoreRet
-		ContinueJoinGameReq
-		PreJoinGameReq
-		PlayerLeaveRet
-		EndGameRet
-		PlayerJoinRet
-		GameStartRet
-		BroadcastViewerRet
-		GameDataRet
-		UpdateBigoDataRet
-		FrameDataRet
-		LeaveRet
-		NetworkRet
-		VoiceRet
-		GameResetRet
+		GameStart
+		GameOver
+		CloseRoom
+		GameData
+		GameOverRet
+		RoomClosePush
+		GameStartPush
+		GameStopPush
+		RequestJoinSeatPush
+		GameDataPush
+		UpdateSeatPush
 		PlayerResult
 		Record
+		JoinRequest
+		Room
+		Seat
 		Player
 		LoginScene
 		MoveScene

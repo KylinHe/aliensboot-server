@@ -14,89 +14,63 @@ message showUserRet {
     Player player = 1;
 }
 
-
-//创建房间 匹配成功后内部调用
+//创建房间
 message roomCreate {
     string appID = 1; //游戏id
     string roomID = 2; //指定房间id ""不指定
-    bool force = 3; //是否强制创建 会清理之前的房间
+    bool  force = 3; //是否强制创建 会清理之前的房间
     int32 maxSeat = 4; //<=0 默认4个
-    //repeated Player players = 2; //匹配成功的玩家
+    repeated int64 playerID = 5; //匹配成功的玩家id
 }
 
 //创建房间成功
 message roomCreateRet {
+    Room room = 1;
+}
+
+message roomClose {
     string roomID = 1;
-    repeated Player players = 2; //玩家信息
 }
 
 
-//快速加入房间
+//加入房间
 message joinRoom {
     string appID = 1;
     string roomID = 2;
 }
 
-
-//玩家加入房间信息
+//加入房间信息
 message joinRoomRet {
-    string roomID = 1; //房间id
-    repeated Player players = 2; //当前房间的玩家
+    Room room = 1;
 }
 
-
-//观众 请求成为嘉宾
-message requestJoinGame {
-    string appID = 1;
-    string roomID = 2;
+//请求加入游戏 观众
+message requestJoinSeat {
+    JoinRequest request = 1;
 }
 
-//观众 响应是否加入游戏
-message respondJoinGame {
-    int32 code = 1;
-}
-
-//主播 是否同意成为嘉宾
-message continueJoinGame {
-    int32 code = 1;
-    int64 playerID = 2;
-}
-
-//主播 修改游戏状态
-message onGameStateChange {
-    int32 state = 1;  //0-准备中，1-游戏中，2-游戏房间已结束，3-回合结束
-    int32 reason = 2;  // 结束原因，integer。0-正常游戏结束，1-服务器失去连接，2-停服
-}
-
-
-message onGameStateChangeRet {
-    int32 code = 1; //
+message joinSeat {
+    JoinRequest request = 1;
 }
 
 //主播 修改玩家状态
-message onPlayerStateChange {
-    int32 state = 1; //0-加入席位（成为玩家），1-离开席位(玩家退出)
-    int64 playerID = 2; //操作的玩家id
+message changePlayerState {
+    int32 role = 1; //改变玩家权限
+    int64 playerID = 2; //
 }
 
-//| 0x0000 | 没有错误 |
-//| 0x0001 | 权限不足 |
-//| 0x0002 | 参数错误 |
-//| 0x0003 | 未知错误 |
-//| 0x0004 | 操作超时 |
-message onPlayerStateChangeRet {
-    int32 code = 1; //
+message changePlayerStateRet {
+    string roomID = 1; //
+    Player player = 2; //
 }
 
-//通知加入游戏
-message preJoinGame {
-    int64 playerID = 1;
+//更新座位信息
+message updateSeat {
+    string roomID = 1; //
+    int32 seatID = 2; //座位号
+    int32 opt = 3; //0开放座位, 1锁定座位 2离开座位 3加入座位(直接换座位)
 }
 
-//广播给所有观众
-message broadcastViewer {
-    string data = 1;
-}
 
 message getRoomInfo {
     string appID = 1;
@@ -104,177 +78,74 @@ message getRoomInfo {
 }
 
 message getRoomInfoRet {
-    string roomID = 1; //房间id
-    repeated Player players = 2; //当前房间的玩家
+    Room room = 1;
 }
 
+
+message gameReady {
+}
+
+//直接开始游戏
+message gameStart {
+}
+
+//游戏结束上报游戏结果
+message gameOver {
+    string data = 1; //游戏上报数据
+}
+
+message closeRoom {
+
+}
 
 //发送游戏数据, data参数结构由游戏自拟，接收方收到的data与发送方发送的结构和内容一致。
 //1v1游戏中，玩家A调用invoke gameData发送消息，玩家B使用onMessage gameData接收消息。
 //但在2v2游戏中，有A、B、C、D四个玩家，A调用invoke gameData发送消息时，玩家B、C、D都可以收到，
 //但是B、C、D并不知道消息的发送方为哪位玩家，所以在2v2游戏中调用invoke gameData发送消息时，需显示声明发送者的身份。
 message gameData {
-    string data = 1; //游戏数据 玩家自定义
+    string data = 1; //游戏数据 玩家自定义json字符串
+    int32 roles = 2; //发送的角色
 }
 
-
-
-/**
-   * 向直播间输出游戏状态数据(V2, 增量或全量)  主播/嘉宾
-   * @param stateData          游戏状态数据
-   * @param type          数据类型 0 - 增量数据 1 - 全量数据
-   * @param ts            时间戳 单位毫秒
-   * @param forceUpdate   强制所有人更新这次全量数据
-   */
-message updateBigoData {
-    int32 type = 1;
-    int64 ts = 2;
-    string data = 3;
-    bool forceUpdate = 4;
-}
-
-message getBigoData {
-    int32 type = 1;
-}
-
-message getBigoDataRet {
-    int32 type = 1;
-    int64 ts = 2;
-    string data = 3;
-}
-
-
-//帧同步游戏初始化
-//message gameInit {
-//    bool openFraming = 1; //是否开启帧同步
-//    int32 fpsExpect = 2; //每秒的逻辑帧数量  默认5帧
-//}
-
-message gameReady {
-}
-
-//上报帧数据
-message frameData {
-    bytes data = 1; //帧数据 玩家自定义
-}
-
-//上报游戏结果
-message uploadGameResult {
-    repeated PlayerResult detail = 1; //成员结算记录
-}
-
-
-
-message uploadGameResultRet {
-    int32 result = 1; // 0上报成功
-}
-
-//再来一局
-message onceMore {
-
-}
-
-//
-message onceMoreRet {
-    
-}
-
-//message uploadGroupGameResult {
-//    string groupId = 1; //组id
-//    Record record = 2;  //组得分结果
-//    repeated PlayerResult detail = 3; //成员结算记录
-//}
 
 
 //-----------------------------推送房间消息------------------------------------
 
-
-//推送主播加入房间请求
-message continueJoinGameReq {
-    int64 playerID = 1;
+message gameOverRet {
+    string roomID = 1;
+    bool result = 2; //
 }
 
-//推送主播 占位置
-message preJoinGameReq {
-    Player player = 1;
+message roomClosePush {
+    string roomID = 1;
 }
 
-/**
-    * 使某用户离开游戏  主播
-    * @param data.param = {
-       // 用户id, integer
-       "uid":uid,
-        // 游戏定义的游戏房间id
-       "roomId":0x1000,
-       // 踢出原因, integer。1-主动退出，2-踢出，3-离线
-       "reason": reason
-    }
-    */
-
-//玩家离开房间推送
-message playerLeaveRet {
-    int32 playerID = 1; //玩家离开房间
-    int32 reson = 2; //1-主动退出，2-踢出，3-离线
-    string roomID = 3;
+//收到所有玩家gameReady，通知所有玩家游戏开始。
+message gameStartPush {
+    string roomID = 1;
 }
 
-message endGameRet {
-    string roomID = 4;
+//上报游戏数据成功 通知所有玩家游戏结束
+message gameStopPush {
+    string roomID = 1;
 }
 
-//玩家加入房间推送
-message playerJoinRet {
-    string roomID = 1; //房间id
-    Player player = 2; //加入的玩家信息
+//请求加入游戏 观众
+message requestJoinSeatPush {
+    string roomID = 1;
+    JoinRequest request = 2;
 }
 
-
-//收到所有玩家gameReady，大厅通知游戏开始。
-message gameStartRet {
-
-}
-
-message broadcastViewerRet {
-    string data = 1;
-}
 
 //接收其他玩家发送的data，接收到的数据与发送的数据结构和内容一致。
 //比如，玩家A通过invoke gameData发送数据{x:1, y: 2}，玩家B通过onMessage gameData收到的数据也为{x:1, y: 2}。
-message gameDataRet {
-    string data = 1;
+message gameDataPush {
+    string roomID = 1;
+    string data = 2;
 }
 
-message updateBigoDataRet {
-    int32 type = 1;
-    int64 ts = 2;
-    string data = 3;
-}
-
-//帧同步游戏接收帧数据
-message frameDataRet {
-    int32 index = 1; //帧序号
-    string data = 2; //帧数据
-}
-
-//玩家离开游戏 或房间
-message leaveRet {
-    int64 playerid = 1;
-}
-
-//玩家断开网络
-message networkRet {
-    int64 playerid = 1;
-    bool online = 2; //是否在线
-}
-
-//玩家音频信息
-message voiceRet {
-    int64 playerid = 1;
-    bool open = 2; //是否开放语言
-    bool talking = 3; //是否正在讲话
-}
-
-//大厅通知游戏重置，此时游戏需重置到初始状态（不能通过刷新页面实现），并再次调用gameInit
-message gameResetRet {
-
+//座位更新信息推送
+message updateSeatPush {
+    string roomID = 1;
+    repeated Seat seats = 2; //变更的座位信息
 }

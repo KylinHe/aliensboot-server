@@ -10,7 +10,6 @@
 package match
 
 import (
-	"github.com/KylinHe/aliensboot-core/common/util"
 	"github.com/KylinHe/aliensboot-core/exception"
 	"github.com/KylinHe/aliensboot-server/constant"
 	"github.com/KylinHe/aliensboot-server/dispatch/rpc"
@@ -36,21 +35,21 @@ func (this *manager) Add(appID string, authID int64) {
 }
 
 func (this *manager) TryMatch() {
+	count := 2
+
 	for appID, queue := range this.queues {
 		//configData := conf.GameData[appID]
 		//count := int(configData.MaxSeat)
-
-		count := 2
-
 		if count > 0 && queue.Length() >= count {
-			results := make([]*protocol.Player, count)
+			results := make([]int64, count)
 			for i := 0; i < count; i++ {
 				playerID := queue.Remove().(int64)
-				results[i] = &protocol.Player{Playerid: playerID, Nickname: "蛇皮" + util.Int64ToString(playerID)}
+				results[i] = playerID
 			}
 
 			rpc.Room.RoomCreate("", &protocol.RoomCreate{
 				AppID: appID,
+				PlayerID:results,
 				//Players: results,
 			})
 		}

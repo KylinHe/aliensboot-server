@@ -7,8 +7,11 @@ import (
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
+
+
+
 //
-func handleUploadGameResult(authID int64, gateID string, request *protocol.UploadGameResult) {
-	game := core.RoomManager.GetRoomByPlayerID(authID)
-	game.UploadResult(authID, request.GetDetail())
+func handleGameStart(authID int64, gateID string, request *protocol.GameStart) {
+	room := core.RoomManager.GetRoomByPlayerID(authID)
+	room.GameStart(authID)
 }

@@ -98,30 +98,136 @@ func (m *Record) GetUnit() string {
 	return ""
 }
 
+// 玩家加入座位请求
+type JoinRequest struct {
+	AppID    string `protobuf:"bytes,1,opt,name=appID,proto3" json:"appID,omitempty"`
+	RoomID   string `protobuf:"bytes,2,opt,name=roomID,proto3" json:"roomID,omitempty"`
+	PlayerID int64  `protobuf:"varint,3,opt,name=playerID,proto3" json:"playerID,omitempty"`
+	SeatID   int32  `protobuf:"varint,4,opt,name=seatID,proto3" json:"seatID,omitempty"`
+}
+
+func (m *JoinRequest) Reset()                    { *m = JoinRequest{} }
+func (m *JoinRequest) String() string            { return proto.CompactTextString(m) }
+func (*JoinRequest) ProtoMessage()               {}
+func (*JoinRequest) Descriptor() ([]byte, []int) { return fileDescriptorRoomModel, []int{2} }
+
+func (m *JoinRequest) GetAppID() string {
+	if m != nil {
+		return m.AppID
+	}
+	return ""
+}
+
+func (m *JoinRequest) GetRoomID() string {
+	if m != nil {
+		return m.RoomID
+	}
+	return ""
+}
+
+func (m *JoinRequest) GetPlayerID() int64 {
+	if m != nil {
+		return m.PlayerID
+	}
+	return 0
+}
+
+func (m *JoinRequest) GetSeatID() int32 {
+	if m != nil {
+		return m.SeatID
+	}
+	return 0
+}
+
+type Room struct {
+	RoomID string  `protobuf:"bytes,1,opt,name=roomID,proto3" json:"roomID,omitempty"`
+	Mode   int32   `protobuf:"varint,2,opt,name=mode,proto3" json:"mode,omitempty"`
+	Seats  []*Seat `protobuf:"bytes,3,rep,name=seats" json:"seats,omitempty"`
+}
+
+func (m *Room) Reset()                    { *m = Room{} }
+func (m *Room) String() string            { return proto.CompactTextString(m) }
+func (*Room) ProtoMessage()               {}
+func (*Room) Descriptor() ([]byte, []int) { return fileDescriptorRoomModel, []int{3} }
+
+func (m *Room) GetRoomID() string {
+	if m != nil {
+		return m.RoomID
+	}
+	return ""
+}
+
+func (m *Room) GetMode() int32 {
+	if m != nil {
+		return m.Mode
+	}
+	return 0
+}
+
+func (m *Room) GetSeats() []*Seat {
+	if m != nil {
+		return m.Seats
+	}
+	return nil
+}
+
+type Seat struct {
+	Id     int32   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Lock   bool    `protobuf:"varint,2,opt,name=lock,proto3" json:"lock,omitempty"`
+	Player *Player `protobuf:"bytes,3,opt,name=player" json:"player,omitempty"`
+}
+
+func (m *Seat) Reset()                    { *m = Seat{} }
+func (m *Seat) String() string            { return proto.CompactTextString(m) }
+func (*Seat) ProtoMessage()               {}
+func (*Seat) Descriptor() ([]byte, []int) { return fileDescriptorRoomModel, []int{4} }
+
+func (m *Seat) GetId() int32 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *Seat) GetLock() bool {
+	if m != nil {
+		return m.Lock
+	}
+	return false
+}
+
+func (m *Seat) GetPlayer() *Player {
+	if m != nil {
+		return m.Player
+	}
+	return nil
+}
+
 type Player struct {
-	Playerid int64  `protobuf:"varint,1,opt,name=playerid,proto3" json:"playerid,omitempty"`
-	GroupId  int32  `protobuf:"varint,2,opt,name=groupId,proto3" json:"groupId,omitempty"`
+	Id       int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Group    int32  `protobuf:"varint,2,opt,name=group,proto3" json:"group,omitempty"`
 	Seat     int32  `protobuf:"varint,3,opt,name=seat,proto3" json:"seat,omitempty"`
 	Nickname string `protobuf:"bytes,4,opt,name=nickname,proto3" json:"nickname,omitempty"`
-	Headurl  string `protobuf:"bytes,5,opt,name=headurl,proto3" json:"headurl,omitempty"`
+	Avatar   string `protobuf:"bytes,5,opt,name=avatar,proto3" json:"avatar,omitempty"`
 	Gender   string `protobuf:"bytes,6,opt,name=gender,proto3" json:"gender,omitempty"`
+	Role     int32  `protobuf:"varint,7,opt,name=role,proto3" json:"role,omitempty"`
 }
 
 func (m *Player) Reset()                    { *m = Player{} }
 func (m *Player) String() string            { return proto.CompactTextString(m) }
 func (*Player) ProtoMessage()               {}
-func (*Player) Descriptor() ([]byte, []int) { return fileDescriptorRoomModel, []int{2} }
+func (*Player) Descriptor() ([]byte, []int) { return fileDescriptorRoomModel, []int{5} }
 
-func (m *Player) GetPlayerid() int64 {
+func (m *Player) GetId() int64 {
 	if m != nil {
-		return m.Playerid
+		return m.Id
 	}
 	return 0
 }
 
-func (m *Player) GetGroupId() int32 {
+func (m *Player) GetGroup() int32 {
 	if m != nil {
-		return m.GroupId
+		return m.Group
 	}
 	return 0
 }
@@ -140,9 +246,9 @@ func (m *Player) GetNickname() string {
 	return ""
 }
 
-func (m *Player) GetHeadurl() string {
+func (m *Player) GetAvatar() string {
 	if m != nil {
-		return m.Headurl
+		return m.Avatar
 	}
 	return ""
 }
@@ -154,9 +260,19 @@ func (m *Player) GetGender() string {
 	return ""
 }
 
+func (m *Player) GetRole() int32 {
+	if m != nil {
+		return m.Role
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*PlayerResult)(nil), "protocol.PlayerResult")
 	proto.RegisterType((*Record)(nil), "protocol.Record")
+	proto.RegisterType((*JoinRequest)(nil), "protocol.JoinRequest")
+	proto.RegisterType((*Room)(nil), "protocol.Room")
+	proto.RegisterType((*Seat)(nil), "protocol.Seat")
 	proto.RegisterType((*Player)(nil), "protocol.Player")
 	proto.RegisterEnum("protocol.GameResult", GameResult_name, GameResult_value)
 }
@@ -227,6 +343,130 @@ func (m *Record) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *JoinRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *JoinRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.AppID) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintRoomModel(dAtA, i, uint64(len(m.AppID)))
+		i += copy(dAtA[i:], m.AppID)
+	}
+	if len(m.RoomID) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintRoomModel(dAtA, i, uint64(len(m.RoomID)))
+		i += copy(dAtA[i:], m.RoomID)
+	}
+	if m.PlayerID != 0 {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintRoomModel(dAtA, i, uint64(m.PlayerID))
+	}
+	if m.SeatID != 0 {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintRoomModel(dAtA, i, uint64(m.SeatID))
+	}
+	return i, nil
+}
+
+func (m *Room) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Room) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.RoomID) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintRoomModel(dAtA, i, uint64(len(m.RoomID)))
+		i += copy(dAtA[i:], m.RoomID)
+	}
+	if m.Mode != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintRoomModel(dAtA, i, uint64(m.Mode))
+	}
+	if len(m.Seats) > 0 {
+		for _, msg := range m.Seats {
+			dAtA[i] = 0x1a
+			i++
+			i = encodeVarintRoomModel(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	return i, nil
+}
+
+func (m *Seat) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Seat) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Id != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintRoomModel(dAtA, i, uint64(m.Id))
+	}
+	if m.Lock {
+		dAtA[i] = 0x10
+		i++
+		if m.Lock {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.Player != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintRoomModel(dAtA, i, uint64(m.Player.Size()))
+		n2, err := m.Player.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n2
+	}
+	return i, nil
+}
+
 func (m *Player) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -242,15 +482,15 @@ func (m *Player) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Playerid != 0 {
+	if m.Id != 0 {
 		dAtA[i] = 0x8
 		i++
-		i = encodeVarintRoomModel(dAtA, i, uint64(m.Playerid))
+		i = encodeVarintRoomModel(dAtA, i, uint64(m.Id))
 	}
-	if m.GroupId != 0 {
+	if m.Group != 0 {
 		dAtA[i] = 0x10
 		i++
-		i = encodeVarintRoomModel(dAtA, i, uint64(m.GroupId))
+		i = encodeVarintRoomModel(dAtA, i, uint64(m.Group))
 	}
 	if m.Seat != 0 {
 		dAtA[i] = 0x18
@@ -263,17 +503,22 @@ func (m *Player) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintRoomModel(dAtA, i, uint64(len(m.Nickname)))
 		i += copy(dAtA[i:], m.Nickname)
 	}
-	if len(m.Headurl) > 0 {
+	if len(m.Avatar) > 0 {
 		dAtA[i] = 0x2a
 		i++
-		i = encodeVarintRoomModel(dAtA, i, uint64(len(m.Headurl)))
-		i += copy(dAtA[i:], m.Headurl)
+		i = encodeVarintRoomModel(dAtA, i, uint64(len(m.Avatar)))
+		i += copy(dAtA[i:], m.Avatar)
 	}
 	if len(m.Gender) > 0 {
 		dAtA[i] = 0x32
 		i++
 		i = encodeVarintRoomModel(dAtA, i, uint64(len(m.Gender)))
 		i += copy(dAtA[i:], m.Gender)
+	}
+	if m.Role != 0 {
+		dAtA[i] = 0x38
+		i++
+		i = encodeVarintRoomModel(dAtA, i, uint64(m.Role))
 	}
 	return i, nil
 }
@@ -316,14 +561,69 @@ func (m *Record) Size() (n int) {
 	return n
 }
 
+func (m *JoinRequest) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.AppID)
+	if l > 0 {
+		n += 1 + l + sovRoomModel(uint64(l))
+	}
+	l = len(m.RoomID)
+	if l > 0 {
+		n += 1 + l + sovRoomModel(uint64(l))
+	}
+	if m.PlayerID != 0 {
+		n += 1 + sovRoomModel(uint64(m.PlayerID))
+	}
+	if m.SeatID != 0 {
+		n += 1 + sovRoomModel(uint64(m.SeatID))
+	}
+	return n
+}
+
+func (m *Room) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.RoomID)
+	if l > 0 {
+		n += 1 + l + sovRoomModel(uint64(l))
+	}
+	if m.Mode != 0 {
+		n += 1 + sovRoomModel(uint64(m.Mode))
+	}
+	if len(m.Seats) > 0 {
+		for _, e := range m.Seats {
+			l = e.Size()
+			n += 1 + l + sovRoomModel(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *Seat) Size() (n int) {
+	var l int
+	_ = l
+	if m.Id != 0 {
+		n += 1 + sovRoomModel(uint64(m.Id))
+	}
+	if m.Lock {
+		n += 2
+	}
+	if m.Player != nil {
+		l = m.Player.Size()
+		n += 1 + l + sovRoomModel(uint64(l))
+	}
+	return n
+}
+
 func (m *Player) Size() (n int) {
 	var l int
 	_ = l
-	if m.Playerid != 0 {
-		n += 1 + sovRoomModel(uint64(m.Playerid))
+	if m.Id != 0 {
+		n += 1 + sovRoomModel(uint64(m.Id))
 	}
-	if m.GroupId != 0 {
-		n += 1 + sovRoomModel(uint64(m.GroupId))
+	if m.Group != 0 {
+		n += 1 + sovRoomModel(uint64(m.Group))
 	}
 	if m.Seat != 0 {
 		n += 1 + sovRoomModel(uint64(m.Seat))
@@ -332,13 +632,16 @@ func (m *Player) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovRoomModel(uint64(l))
 	}
-	l = len(m.Headurl)
+	l = len(m.Avatar)
 	if l > 0 {
 		n += 1 + l + sovRoomModel(uint64(l))
 	}
 	l = len(m.Gender)
 	if l > 0 {
 		n += 1 + l + sovRoomModel(uint64(l))
+	}
+	if m.Role != 0 {
+		n += 1 + sovRoomModel(uint64(m.Role))
 	}
 	return n
 }
@@ -575,6 +878,403 @@ func (m *Record) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *JoinRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowRoomModel
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: JoinRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: JoinRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AppID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRoomModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthRoomModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AppID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RoomID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRoomModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthRoomModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RoomID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PlayerID", wireType)
+			}
+			m.PlayerID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRoomModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PlayerID |= (int64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SeatID", wireType)
+			}
+			m.SeatID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRoomModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SeatID |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipRoomModel(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthRoomModel
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Room) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowRoomModel
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Room: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Room: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RoomID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRoomModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthRoomModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RoomID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Mode", wireType)
+			}
+			m.Mode = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRoomModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Mode |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Seats", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRoomModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthRoomModel
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Seats = append(m.Seats, &Seat{})
+			if err := m.Seats[len(m.Seats)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipRoomModel(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthRoomModel
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Seat) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowRoomModel
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Seat: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Seat: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRoomModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Lock", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRoomModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Lock = bool(v != 0)
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Player", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRoomModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthRoomModel
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Player == nil {
+				m.Player = &Player{}
+			}
+			if err := m.Player.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipRoomModel(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthRoomModel
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *Player) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -606,9 +1306,9 @@ func (m *Player) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Playerid", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
-			m.Playerid = 0
+			m.Id = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRoomModel
@@ -618,16 +1318,16 @@ func (m *Player) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Playerid |= (int64(b) & 0x7F) << shift
+				m.Id |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
 		case 2:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field GroupId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Group", wireType)
 			}
-			m.GroupId = 0
+			m.Group = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRoomModel
@@ -637,7 +1337,7 @@ func (m *Player) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.GroupId |= (int32(b) & 0x7F) << shift
+				m.Group |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -692,7 +1392,7 @@ func (m *Player) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Headurl", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Avatar", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -717,7 +1417,7 @@ func (m *Player) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Headurl = string(dAtA[iNdEx:postIndex])
+			m.Avatar = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
@@ -748,6 +1448,25 @@ func (m *Player) Unmarshal(dAtA []byte) error {
 			}
 			m.Gender = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Role", wireType)
+			}
+			m.Role = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRoomModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Role |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipRoomModel(dAtA[iNdEx:])
@@ -877,25 +1596,33 @@ var (
 func init() { proto.RegisterFile("room_model.proto", fileDescriptorRoomModel) }
 
 var fileDescriptorRoomModel = []byte{
-	// 305 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0xc1, 0x4a, 0x33, 0x31,
-	0x10, 0x80, 0xff, 0x74, 0xbb, 0x69, 0x3b, 0x7f, 0x91, 0x30, 0x14, 0x09, 0x1e, 0x4a, 0xe9, 0x69,
-	0x11, 0xe9, 0xa1, 0x82, 0x0f, 0x20, 0x14, 0x11, 0x3c, 0x48, 0x10, 0x3c, 0x6a, 0xdc, 0x0c, 0x75,
-	0x31, 0xbb, 0x59, 0xb3, 0xdd, 0x83, 0x6f, 0xe3, 0xe3, 0x78, 0xf4, 0x11, 0xa4, 0x4f, 0x22, 0x9b,
-	0xdd, 0x6d, 0x6f, 0x9e, 0x32, 0xdf, 0x4c, 0xe6, 0x9b, 0x49, 0x40, 0x78, 0xe7, 0xf2, 0xa7, 0xdc,
-	0x19, 0xb2, 0xab, 0xd2, 0xbb, 0x9d, 0xc3, 0x71, 0x38, 0x52, 0x67, 0x97, 0x0f, 0x30, 0xbd, 0xb7,
-	0xfa, 0x83, 0xbc, 0xa2, 0xaa, 0xb6, 0x3b, 0x3c, 0x83, 0x71, 0x19, 0x38, 0x33, 0x92, 0x2d, 0x58,
-	0x12, 0xa9, 0x03, 0x63, 0x02, 0xdc, 0x53, 0xea, 0xbc, 0x91, 0xd1, 0x82, 0x25, 0xff, 0xd7, 0x62,
-	0xd5, 0x6b, 0x56, 0x2a, 0xe4, 0x55, 0x57, 0x5f, 0x3e, 0x03, 0x6f, 0x33, 0x78, 0xd1, 0xf4, 0x34,
-	0xe6, 0x60, 0x3b, 0x59, 0xcf, 0x8e, 0x3d, 0x37, 0x3a, 0xa7, 0x76, 0xaa, 0xea, 0xee, 0xe0, 0x0c,
-	0xe2, 0x2a, 0x75, 0x9e, 0xe4, 0x60, 0xc1, 0x92, 0x58, 0xb5, 0x80, 0x08, 0xc3, 0xba, 0xc8, 0x76,
-	0x61, 0xea, 0x44, 0x85, 0x78, 0xf9, 0xc9, 0x80, 0xb7, 0x8b, 0xff, 0xb9, 0xb2, 0x84, 0xd1, 0xd6,
-	0xbb, 0xba, 0xbc, 0x35, 0x9d, 0xb2, 0xc7, 0x46, 0x5a, 0x91, 0x6e, 0xa5, 0xb1, 0x0a, 0x71, 0x63,
-	0x2a, 0xb2, 0xf4, 0xad, 0xd0, 0x39, 0xc9, 0x61, 0x18, 0x76, 0xe0, 0xc6, 0xf4, 0x4a, 0xda, 0xd4,
-	0xde, 0xca, 0x38, 0x94, 0x7a, 0xc4, 0x53, 0xe0, 0x5b, 0x2a, 0x0c, 0x79, 0xc9, 0x43, 0xa1, 0xa3,
-	0xf3, 0x2b, 0x80, 0xe3, 0x13, 0x71, 0x04, 0xd1, 0x63, 0x56, 0x88, 0x7f, 0x38, 0x86, 0xe1, 0x9d,
-	0xab, 0x48, 0x30, 0x9c, 0x40, 0xbc, 0x79, 0xaf, 0xb5, 0x15, 0x03, 0x04, 0xe0, 0x9b, 0x2a, 0xd5,
-	0x25, 0x89, 0xe8, 0x7a, 0xfa, 0xb5, 0x9f, 0xb3, 0xef, 0xfd, 0x9c, 0xfd, 0xec, 0xe7, 0xec, 0x85,
-	0x87, 0xff, 0xba, 0xfc, 0x0d, 0x00, 0x00, 0xff, 0xff, 0x75, 0x59, 0x09, 0x5d, 0xc5, 0x01, 0x00,
-	0x00,
+	// 437 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x64, 0x92, 0xdf, 0xaa, 0xd3, 0x40,
+	0x10, 0xc6, 0xdd, 0xe6, 0xcf, 0x69, 0xa6, 0x87, 0x12, 0x96, 0x22, 0xc1, 0x8b, 0x52, 0x82, 0x17,
+	0x41, 0xa4, 0x17, 0x15, 0x7c, 0x00, 0xe9, 0x41, 0x2a, 0x5e, 0xc8, 0x7a, 0x40, 0xef, 0x74, 0x4d,
+	0x86, 0x43, 0x38, 0x49, 0x26, 0x67, 0x93, 0x08, 0xbe, 0x8e, 0x4f, 0xe3, 0xa5, 0x8f, 0x20, 0x7d,
+	0x12, 0xd9, 0xd9, 0x3d, 0x6d, 0xc5, 0xab, 0xce, 0x37, 0xdb, 0xf9, 0xcd, 0xcc, 0x37, 0x81, 0xd4,
+	0x10, 0xb5, 0x5f, 0x5a, 0xaa, 0xb0, 0xd9, 0xf6, 0x86, 0x46, 0x92, 0x73, 0xfe, 0x29, 0xa9, 0xc9,
+	0x6f, 0xe1, 0xfa, 0x43, 0xa3, 0x7f, 0xa0, 0x51, 0x38, 0x4c, 0xcd, 0x28, 0x9f, 0xc1, 0xbc, 0x67,
+	0x5d, 0x57, 0x99, 0xd8, 0x88, 0x22, 0x50, 0x27, 0x2d, 0x0b, 0x88, 0x0d, 0x96, 0x64, 0xaa, 0x2c,
+	0xd8, 0x88, 0x62, 0xb1, 0x4b, 0xb7, 0x8f, 0x98, 0xad, 0xe2, 0xbc, 0xf2, 0xef, 0xf9, 0x57, 0x88,
+	0x5d, 0x46, 0xbe, 0xb4, 0x35, 0x96, 0xcc, 0xb4, 0xe5, 0x6e, 0x75, 0xae, 0x79, 0xab, 0x5b, 0x74,
+	0x5d, 0x95, 0xff, 0x8f, 0x5c, 0x41, 0x34, 0x94, 0x64, 0x30, 0x9b, 0x6d, 0x44, 0x11, 0x29, 0x27,
+	0xa4, 0x84, 0x70, 0xea, 0xea, 0x91, 0xbb, 0x26, 0x8a, 0xe3, 0x9c, 0x60, 0xf1, 0x8e, 0xea, 0x4e,
+	0xe1, 0xc3, 0x84, 0x03, 0x17, 0xea, 0xbe, 0x3f, 0xec, 0xb9, 0x4b, 0xa2, 0x9c, 0x90, 0x4f, 0x21,
+	0xb6, 0xab, 0x1f, 0xf6, 0xcc, 0x4b, 0x94, 0x57, 0xe7, 0x25, 0x0f, 0x7b, 0x86, 0x9e, 0x96, 0x74,
+	0x35, 0x03, 0xea, 0xf1, 0xb0, 0xcf, 0x42, 0x9e, 0xc1, 0xab, 0xfc, 0x33, 0x84, 0x8a, 0xa8, 0xbd,
+	0x60, 0x8a, 0x7f, 0x98, 0x12, 0x42, 0xeb, 0xb0, 0x9f, 0x9c, 0x63, 0xf9, 0x1c, 0x22, 0x5b, 0x3d,
+	0x64, 0xc1, 0x26, 0x28, 0x16, 0xbb, 0xe5, 0x79, 0xf7, 0x8f, 0xa8, 0x47, 0xe5, 0x1e, 0xf3, 0x5b,
+	0x08, 0xad, 0x94, 0x4b, 0x98, 0x79, 0xd3, 0x23, 0x35, 0xab, 0x2b, 0x4b, 0x6c, 0xa8, 0xbc, 0x67,
+	0xe2, 0x5c, 0x71, 0x6c, 0x4f, 0xe0, 0x26, 0xfd, 0xff, 0x04, 0xfe, 0x8c, 0xfe, 0x3d, 0xff, 0x29,
+	0x20, 0x76, 0xa9, 0x0b, 0x70, 0xc0, 0xe0, 0x15, 0x44, 0x77, 0x86, 0xa6, 0xfe, 0xd1, 0x65, 0x16,
+	0xb6, 0x9d, 0x9d, 0x87, 0xc1, 0x91, 0xe2, 0xd8, 0x1a, 0xd5, 0xd5, 0xe5, 0x7d, 0xa7, 0x5b, 0x64,
+	0x3b, 0x12, 0x75, 0xd2, 0xd6, 0x08, 0xfd, 0x5d, 0x8f, 0xda, 0x64, 0x91, 0x33, 0xc2, 0x29, 0x9b,
+	0xbf, 0xc3, 0xae, 0x42, 0x93, 0xc5, 0x2e, 0xef, 0x94, 0xe5, 0x1b, 0x6a, 0x30, 0xbb, 0x72, 0x7c,
+	0x1b, 0xbf, 0x78, 0x0d, 0x70, 0xfe, 0x0a, 0xe4, 0x15, 0x04, 0x9f, 0xea, 0x2e, 0x7d, 0x22, 0xe7,
+	0x10, 0xbe, 0xa7, 0x01, 0x53, 0x21, 0x13, 0x88, 0x6e, 0x1e, 0x26, 0xdd, 0xa4, 0x33, 0x09, 0x10,
+	0xdf, 0x0c, 0xa5, 0xee, 0x31, 0x0d, 0xde, 0x5c, 0xff, 0x3a, 0xae, 0xc5, 0xef, 0xe3, 0x5a, 0xfc,
+	0x39, 0xae, 0xc5, 0xb7, 0x98, 0x3d, 0x78, 0xf5, 0x37, 0x00, 0x00, 0xff, 0xff, 0xf2, 0xa4, 0x7e,
+	0x3b, 0xe8, 0x02, 0x00, 0x00,
 }

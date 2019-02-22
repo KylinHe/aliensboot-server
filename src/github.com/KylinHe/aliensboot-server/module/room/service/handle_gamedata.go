@@ -17,5 +17,5 @@ import (
 //
 func handleGameData(authID int64, gateID string, request *protocol.GameData) {
 	room := core.RoomManager.GetRoomByPlayerID(authID)
-	room.AcceptPlayerData(authID, request.GetData())
+	room.AcceptPlayerData(authID, request.GetData(), request.GetRoles())
 }

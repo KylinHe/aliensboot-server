@@ -8,7 +8,9 @@ import (
 )
 
 //
-func handleOnGameStateChange(authID int64, gateID string, request *protocol.OnGameStateChange, response *protocol.OnGameStateChangeRet) {
-	response.Code = core.RoomManager.ChangeGameState(authID, request.GetState())
-
+func handleGameOver(authID int64, gateID string, request *protocol.GameOver) {
+	room := core.RoomManager.GetRoomByPlayerID(authID)
+	room.GameOver()
 }
+
+

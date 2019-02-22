@@ -29,11 +29,32 @@ message Record {
     string unit = 3;
 }
 
+//玩家加入座位请求
+message JoinRequest {
+    string appID = 1;
+    string roomID = 2;
+    int64 playerID = 3; //玩家id
+    int32 seatID = 4; //请求入座编号 -1随便哪个座位
+}
+
+message Room {
+    string roomID = 1; //房间id
+    int32 mode = 2; //房间模式 0 1房主控制
+    repeated Seat seats = 3; //座位信息
+}
+
+message Seat {
+    int32 id = 1; //座位编号
+    bool lock = 2; //是否锁定
+    Player player = 3; //是否有玩家
+}
+
 message Player {
-    int64 playerid = 1;
-    int32 groupId = 2;
+    int64 id = 1;
+    int32 group = 2;
     int32 seat = 3; // 1v1为1-2，2v2为1-4
     string nickname = 4;
-    string headurl = 5;
+    string avatar = 5;
     string gender = 6; // 0：未知，1：男，2：女
+    int32 role = 7; //角色
 }

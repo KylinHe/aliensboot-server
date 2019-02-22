@@ -49,29 +49,21 @@ message Request {
     //-----------------房间服务器接口-------------
     oneof room {
         showUser showUser = 100;
+
         getRoomInfo getRoomInfo = 101;
-        joinRoom joinRoom = 102;
-        roomCreate roomCreate = 103;
-        getBigoData getBigoData = 104;
-        onPlayerStateChange onPlayerStateChange = 105;
-        onGameStateChange onGameStateChange = 106;
+        roomCreate roomCreate = 102;
+        roomClose roomClose = 103;
+        joinRoom joinRoom = 104;
 
-        //push
-        //gameInit gameInit = 120;
-        gameReady gameReady = 121;
-        gameData gameData = 122;
-        frameData frameData = 123;
-        uploadGameResult uploadGameResult = 124;
-        updateBigoData updateBigoData = 125;
-        continueJoinGame continueJoinGame = 127;
-        preJoinGame preJoinGame = 128;
-
-        requestJoinGame requestJoinGame = 129;
-        respondJoinGame respondJoinGame = 130;
-        broadcastViewer broadcastViewer = 131;
+        requestJoinSeat requestJoinSeat = 110; //请求加入游戏
+        joinSeat joinSeat = 111;
+        updateSeat updateSeat = 112;
 
 
-
+        gameStart gameStart = 120; //开始游戏
+        gameOver gameOver = 121; //上报游戏结果、游戏结束
+        gameReady gameReady = 122;
+        gameData gameData = 123;
     }
 
     oneof hall {
@@ -118,32 +110,23 @@ message Response {
         changeNicknameRet changeNicknameRet = 52;
     }
 
+    //-----------------游戏模块接口---------------
     oneof room {
         showUserRet showUserRet = 100;
+
         getRoomInfoRet getRoomInfoRet = 101;
-        joinRoomRet joinRoomRet = 102;
-        roomCreateRet roomCreateRet = 103;
-        getBigoDataRet getBigoDataRet = 104;
-        onPlayerStateChangeRet onPlayerStateChangeRet = 105;
-        onGameStateChangeRet onGameStateChangeRet = 106;
+        roomCreateRet roomCreateRet = 102;
+        joinRoomRet joinRoomRet = 104;
+
+
 
         //push
-
-        gameStartRet gameStartRet = 1101;
-        gameDataRet gameDataRet = 1102;
-        frameDataRet frameDataRet = 1103;
-        leaveRet leaveRet = 1104;
-        networkRet networkRet = 1105;
-        voiceRet voiceRet = 1106;
-        gameResetRet gameResetRet = 1107;
-        playerLeaveRet playerLeaveRet = 1108;
-        playerJoinRet playerJoinRet = 1109;
-        updateBigoDataRet updateBigoDataRet = 1110;
-        continueJoinGameReq continueJoinGameReq = 1111;
-        preJoinGameReq preJoinGameReq = 1112;
-        broadcastViewerRet broadcastViewerRet = 1113;
-        endGameRet endGameRet = 1114;
-
+        gameStartPush gameStartPush = 1100; //游戏开始
+        gameStopPush gameStopPush = 1101; //游戏结束
+        gameDataPush gameDataPush = 1102; //游戏数据传输
+        updateSeatPush updateSeatPush = 1103; //座位信息改变
+        requestJoinSeatPush requestJoinSeatPush = 1104; //加入座位请求
+        roomClosePush roomClosePush = 1105;
 
     }
 

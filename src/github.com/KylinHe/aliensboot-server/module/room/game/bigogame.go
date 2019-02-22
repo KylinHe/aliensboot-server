@@ -10,13 +10,17 @@
 package game
 
 import (
+	"github.com/KylinHe/aliensboot-server/protocol"
 	"encoding/json"
 	"github.com/KylinHe/aliensboot-core/exception"
 	"github.com/KylinHe/aliensboot-core/log"
-	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
 type BigoGameFactory struct {
+}
+
+func (this *BigoGameFactory) Match(appID string) bool {
+	return appID == "1"
 }
 
 func (this *BigoGameFactory) NewGame(handler Handler) Game {
@@ -42,42 +46,42 @@ type BigoGame struct {
  */
 
 func (game *BigoGame) AcceptPlayerMessage(playerID int64, request interface{}, response interface{}) {
-	log.Debugf("accept %v - %v - %v", playerID, request, response)
-	switch request.(type) {
-	case *protocol.UpdateBigoData:
-		game.handleUpdateBigoData(playerID, request.(*protocol.UpdateBigoData))
-	case *protocol.GetBigoData:
-		game.handleGetBigoData(playerID, request.(*protocol.GetBigoData), response.(*protocol.GetBigoDataRet))
-	default: //类型为其他类型时执行
-		//
-	}
+	//log.Debugf("accept %v - %v - %v", playerID, request, response)
+	//switch request.(type) {
+	//case *protocol.UpdateBigoData:
+	//	game.handleUpdateBigoData(playerID, request.(*protocol.UpdateBigoData))
+	//case *protocol.GetBigoData:
+	//	game.handleGetBigoData(playerID, request.(*protocol.GetBigoData), response.(*protocol.GetBigoDataRet))
+	//default: //类型为其他类型时执行
+	//	//
+	//}
 
 }
 
-func (game *BigoGame) handleGetBigoData(playerID int64, request *protocol.GetBigoData, response *protocol.GetBigoDataRet) {
-	response.Type = request.Type
-	response.Data = game.dataStr
-	response.Ts = game.ts
-
-	log.Debugf("get bigo data %v", game.dataStr)
-}
-
-func (game *BigoGame) handleUpdateBigoData(playerID int64, data *protocol.UpdateBigoData) {
-	game.updateData(data.GetData(), data.GetType(), data.GetTs())
-
-	//是否通知其他玩家
-	if data.GetForceUpdate() {
-		push := &protocol.Response{Room: &protocol.Response_UpdateBigoDataRet{
-			UpdateBigoDataRet: &protocol.UpdateBigoDataRet{
-				Type: data.GetType(),
-				Ts:   data.GetTs(),
-				Data: game.dataStr,
-			},
-		},
-		}
-		game.BroadcastOtherPlayer(playerID, push)
-	}
-}
+//func (game *BigoGame) handleGetBigoData(playerID int64, request *protocol.GetBigoData, response *protocol.GetBigoDataRet) {
+//	response.Type = request.Type
+//	response.Data = game.dataStr
+//	response.Ts = game.ts
+//
+//	log.Debugf("get bigo data %v", game.dataStr)
+//}
+//
+//func (game *BigoGame) handleUpdateBigoData(playerID int64, data *protocol.UpdateBigoData) {
+//	game.updateData(data.GetData(), data.GetType(), data.GetTs())
+//
+//	//是否通知其他玩家
+//	if data.GetForceUpdate() {
+//		push := &protocol.Response{Room: &protocol.Response_UpdateBigoDataRet{
+//			UpdateBigoDataRet: &protocol.UpdateBigoDataRet{
+//				Type: data.GetType(),
+//				Ts:   data.GetTs(),
+//				Data: game.dataStr,
+//			},
+//		},
+//		}
+//		game.BroadcastOtherPlayer(playerID, push)
+//	}
+//}
 
 func (game *BigoGame) updateData(data string, updateType int32, ts int64) {
 	newData := make(map[string]interface{})

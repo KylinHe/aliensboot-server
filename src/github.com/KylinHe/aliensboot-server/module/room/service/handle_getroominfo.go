@@ -2,9 +2,13 @@
 // source: room_interface.proto
 package service
 
-import "github.com/KylinHe/aliensboot-server/protocol"
+import (
+	"github.com/KylinHe/aliensboot-server/module/room/core"
+	"github.com/KylinHe/aliensboot-server/protocol"
+)
 
 //
 func handleGetRoomInfo(authID int64, gateID string, request *protocol.GetRoomInfo, response *protocol.GetRoomInfoRet) {
-
+	room := core.RoomManager.EnsureRoom(request.GetRoomID())
+	response.Room = room.BuildProtocol()
 }

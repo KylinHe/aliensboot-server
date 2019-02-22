@@ -26,7 +26,7 @@ type Player struct {
 
 func (player *Player) SendMsg(data []byte) {
 	pushMessage := &protocol.PushMessage{
-		AuthID:  player.GetPlayerid(),
+		AuthID:  player.GetId(),
 		Data:    data,
 		Service: "room",
 	}
@@ -40,7 +40,7 @@ func (player *Player) SendProtoMsg(message proto.Message) {
 
 func (player *Player) kick(kickType protocol.KickType) {
 	rpc.Gate.KickOut("", &protocol.KickOut{
-		AuthID:   player.GetPlayerid(),
+		AuthID:   player.GetId(),
 		KickType: kickType,
 	})
 }
@@ -50,7 +50,21 @@ func (player *Player) Ready() {
 }
 
 func (player *Player) IsAnchor() bool {
-	return player.GroupId == constant.RoleAnchor
+	return player.HaveRole(constant.RoleAnchor)
+}
+
+func (player *Player) HaveRole(role int32) bool {
+	return (player.GetRole() & role) != 0
+}
+
+func (player *Player) RemoveRole(role int32) {
+	if player.HaveRole(role) {
+		player.Role -= role
+	}
+}
+
+func (player *Player) AddRole(role int32) {
+	player.Role |= role
 }
 
 func (player *Player) IsReady() bool {

@@ -2,86 +2,76 @@
  * Copyright (c) 2015, 2017 aliens idea(xiamen) Corporation and others.
  * All rights reserved.
  * Date:
- *     2018/11/22
+ *     2018/11/13
  * Contributors:
  *     aliens idea(xiamen) Corporation - initial API and implementation
  *     jialin.he <kylinh@gmail.com>
  *******************************************************************************/
 package core
 
-//座位编号从0
-type Seats []*Player
+import (
+	"github.com/KylinHe/aliensboot-server/constant"
+	"github.com/KylinHe/aliensboot-server/protocol"
+	"github.com/KylinHe/aliensboot-core/exception"
+)
 
-func NewSeats(seatNum int) Seats {
-	return make(Seats, seatNum)
+type Seat struct {
+
+	id int32 //座位编号
+
+	lock bool //是否锁定
+
+	player *Player //座位上的玩家
 }
 
-//新增玩家
-func (seats Seats) Add(player *Player) bool {
-	if seats.Exists(player.GetPlayerid()) {
+func (seat *Seat) SetPlayer(player *Player) {
+	if seat.lock {
+		exception.GameException(protocol.Code_invalidSeat)
+	}
+	player.RemoveRole(constant.RoleViewer)
+	player.AddRole(constant.RolePlayer)
+	player.Seat = seat.id
+	seat.player = player
+
+}
+
+func (seat *Seat) RemovePlayer() *Player {
+	player := seat.player
+	if player != nil {
+		player.Seat = 0
+	}
+	seat.player = nil
+	return player
+}
+
+func (seat *Seat) UpdateLock(lock bool) {
+	if lock && seat.player != nil {
+		exception.GameException(protocol.Code_playerAlreadySeat)
+	}
+	seat.lock = lock
+}
+
+func (seat *Seat) GetPlayer() *Player {
+	return seat.player
+}
+
+func (seat *Seat) CheckPlayer(playerID int64) bool {
+	if seat.player == nil {
 		return false
 	}
-	for index, seat := range seats {
-		if seat == nil {
-			seats[index] = player
-			player.Seat = int32(index + 1)
-			return true
-		}
-	}
-	return false
+	return seat.player.GetId() == playerID
 }
 
-func (seats Seats) Get(playerID int64) *Player {
-	for _, seat := range seats {
-		if seat != nil && seat.GetPlayerid() == playerID {
-			return seat
-		}
-	}
-	return nil
+//是否空闲
+func (seat *Seat) IsFree() bool {
+	return !seat.lock && seat.player == nil
 }
 
-func (seats Seats) Delete(playerID int64) *Player {
-	for index, seat := range seats {
-		if seat != nil && seat.GetPlayerid() == playerID {
-			seats[index] = nil
-			return seat
-		}
-	}
-	return nil
+func (seat *Seat) BuildProtocol() *protocol.Seat {
+	 result := &protocol.Seat{Id:seat.id, Lock:seat.lock}
+	 if seat.player != nil {
+	 	result.Player = seat.player.Player
+	 }
+	 return result
 }
 
-func (seats Seats) Exists(playerID int64) bool {
-	return seats.Get(playerID) != nil
-}
-
-func (seats Seats) IsFull() bool {
-	for _, seat := range seats {
-		if seat == nil {
-			return false
-		}
-	}
-	return true
-}
-
-func (seats Seats) Clean() {
-	for index, _ := range seats {
-		seats[index] = nil
-	}
-}
-
-func (seats Seats) Foreach(callback func(player *Player)) {
-	for _, seat := range seats {
-		if seat != nil {
-			callback(seat)
-		}
-	}
-}
-
-func (seats Seats) IsAllReady() bool {
-	for _, seat := range seats {
-		if seat == nil || !seat.IsReady() {
-			return false
-		}
-	}
-	return true
-}

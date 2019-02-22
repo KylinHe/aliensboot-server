@@ -16,25 +16,24 @@ import (
 	"github.com/KylinHe/aliensboot-server/module/room/conf"
 	"github.com/KylinHe/aliensboot-server/module/room/config"
 	"github.com/KylinHe/aliensboot-server/module/room/game"
-	"github.com/KylinHe/aliensboot-server/module/room/game/agar"
 	"github.com/KylinHe/aliensboot-server/protocol"
+	"reflect"
 )
 
 var RoomManager = &roomManager{
-	gameFactories: make(map[string]game.Factory),
+	gameFactories: make(map[reflect.Type]game.Factory),
 	rooms:         make(map[string]*Room),
 	players:       make(map[int64]string),
 }
 
 func init() {
 	//
-	RoomManager.RegisterGameFactory("0", &game.CommonGameFactory{})
-	RoomManager.RegisterGameFactory("1", &game.BigoGameFactory{})
-	RoomManager.RegisterGameFactory("2", &agar.AgarGameFactory{})
+	RoomManager.RegisterGameFactory(&game.CommonGameFactory{})
+	RoomManager.RegisterGameFactory(&game.BigoGameFactory{})
 }
 
 type roomManager struct {
-	gameFactories map[string]game.Factory //游戏工厂类
+	gameFactories map[reflect.Type]game.Factory //游戏工厂类
 
 	rooms map[string]*Room //运行的游戏  游戏id - 房间对象
 
@@ -42,35 +41,8 @@ type roomManager struct {
 
 }
 
-func (this *roomManager) RegisterGameFactory(appId string, factory game.Factory) {
-	this.gameFactories[appId] = factory
-}
-
-func (this *roomManager) ChangePlayerState(authID int64, playerID int64, state int32) int32 {
-	room := this.GetRoomByPlayerID(authID)
-	auth := room.Get(authID)
-	if !auth.IsAnchor() {
-		return 1
-	}
-	if state == PlayerStatekick {
-		room.kickPlayer(playerID)
-		return 0
-	}
-	return 1
-}
-
-func (this *roomManager) ChangeGameState(authID int64, state int32) int32 {
-	room := this.GetRoomByPlayerID(authID)
-	auth := room.Get(authID)
-	if !auth.IsAnchor() {
-		return 1
-	}
-
-	if state == RoomStateOver {
-		//通知所有玩家游戏结束
-		room.game.Stop()
-	}
-	return 0
+func (this *roomManager) RegisterGameFactory(factory game.Factory) {
+	this.gameFactories[reflect.TypeOf(factory)] = factory
 }
 
 //获取玩家在哪个房间
@@ -99,48 +71,62 @@ func (this *roomManager) JoinRoom(appID string, roomID string, playerID int64) *
 	return room
 }
 
-//玩家申请从观众成为主播
-//func (this *roomManager) RequestJoinGame(playerID int64) *Room {
-//	room := this.GetRoomByPlayerID(playerID)
-//	room.RequestJoinGame(playerID)
-//	return room
-//}
-
-//房主创建新房间
-func (this *roomManager) CreateRoom(appID string, playerID int64, roomID string, force bool, maxSeat int32) *Room {
+//房主创建新房间 玩家需要主动加入房间
+func (this *roomManager) CreateRoomByPlayer(appID string, playerID int64, roomID string, force bool) *Room {
 	if roomID != "" && force {
-		this.RemoveRoom(roomID)
+		this.CloseRoom(playerID, roomID)
 	}
 	roomConfig := conf.GetRoomConfig(appID)
-
-	if maxSeat > 0 {
-		roomConfig = &config.RoomConfig{
-			AppID:   roomConfig.AppID,
-			MaxSeat: int(maxSeat),
-		}
+	if roomConfig == nil {
+		exception.GameException(protocol.Code_appIDNotFound)
+	}
+	//不能房主管理
+	if !roomConfig.Anchor {
+		exception.GameException(protocol.Code_invalidAuth)
 	}
 	room := this.newRoom(roomConfig, roomID)
+	room.AddPlayer(playerID, constant.RoleAnchor | constant.RolePlayer)
 	//room.InitPlayers(players)
 	this.rooms[room.GetID()] = room
-	room.AddPlayer(playerID, constant.RoleAnchor)
 	this.players[playerID] = room.GetID()
-	//if players != nil {
-	//	for _, player := range players {
-	//		this.players[player.GetPlayerid()] = room.GetID()
-	//	}
-	//}
+	return room
+}
+
+//系统创建房间 玩家自动加入房间
+func (this *roomManager) CreateRoom(appID string, roomID string, force bool, playerIDs []int64) *Room {
+	if roomID != "" && force {
+		this.CloseRoom(-1, roomID)
+	}
+	roomConfig := conf.GetRoomConfig(appID)
+	room := this.newRoom(roomConfig, roomID)
+
+	for _, playerID := range playerIDs {
+		room.AddPlayer(playerID, constant.RolePlayer)
+		this.players[playerID] = room.GetID()
+	}
+
+	this.rooms[room.GetID()] = room
+
+
 	return room
 }
 
 //关闭房间
-func (this *roomManager) RemoveRoom(roomID string) {
+func (this *roomManager) CloseRoom(authID int64, roomID string) bool {
 	room := this.rooms[roomID]
-	if room != nil {
-		room.Close(func(playerID int64) {
-			delete(this.players, playerID)
-		})
-		delete(this.rooms, roomID)
+	if room == nil {
+		return false
 	}
+	//玩家关闭的房间需要验证权限、只有房主能关闭房间
+	if authID > 0 {
+		room.EnsureAnchor(authID)
+	}
+
+	room.Close(func(playerID int64) {
+		delete(this.players, playerID)
+	})
+	delete(this.rooms, roomID)
+	return true
 }
 
 //新建房间
@@ -153,15 +139,15 @@ func (this *roomManager) newRoom(config *config.RoomConfig, roomID string) *Room
 		id:     roomID,
 		config: config,
 		Seats:  NewSeats(config.MaxSeat),
-		viewer: make(map[int64]*Player),
+		viewers: make(Viewers),
 	}
 
 	if result.id == "" {
 		result.id = util.GenUUID()
 	}
 
-	for appId, factory := range this.gameFactories {
-		if appId == config.AppID {
+	for _, factory := range this.gameFactories {
+		if factory.Match(config.AppID) {
 			result.game = factory.NewGame(result)
 			break
 		}

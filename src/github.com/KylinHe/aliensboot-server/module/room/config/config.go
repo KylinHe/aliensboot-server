@@ -10,6 +10,8 @@
 package config
 
 type RoomConfig struct {
-	AppID   string //游戏类型id
-	MaxSeat int    //最大的玩家类型
+	AppID    string //游戏类型id
+	MaxSeat  int    //最大的座位数量
+	Viewer   bool   //是否允许观众模式
+	Anchor   bool   //支持房主管理
 }
