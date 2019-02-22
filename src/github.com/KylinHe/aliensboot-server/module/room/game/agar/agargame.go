@@ -10,16 +10,14 @@
 package agar
 
 import (
+	"github.com/KylinHe/aliensboot-core/log"
 	"github.com/KylinHe/aliensboot-server/module/room/game"
 	"github.com/KylinHe/aliensboot-server/module/room/game/agar/collision"
 	"github.com/KylinHe/aliensboot-server/module/room/game/agar/util"
 )
 
 type AgarGameFactory struct {
-}
 
-func (this *AgarGameFactory) Match(appID string) bool {
-	return appID == "110"
 }
 
 func (this *AgarGameFactory) NewGame(handler game.Handler) game.Game {
@@ -39,8 +37,6 @@ type AgarGame struct {
 
 	colMgr collision.ICollision
 	ballIDCounter int32 //球的id计数器
-
-
 }
 
 //接收玩家数据，同步给其他玩家
@@ -54,6 +50,8 @@ func (game *AgarGame) AcceptPlayerData(playerID int64, data string) {
 	//}
 
 	//game.BroadcastOtherPlayer(playerID, push)
+
+	log.Debugf("accpet msg %v - %v", playerID, data)
 }
 
 /**

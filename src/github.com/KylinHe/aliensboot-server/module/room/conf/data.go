@@ -10,6 +10,7 @@ func Init() {
 	roomData = make(map[string]*config.RoomConfig)
 	roomData["0"] = &config.RoomConfig{AppID: "0", MaxSeat: 2}
 	roomData["1"] = &config.RoomConfig{AppID: "1", MaxSeat: 4}
+	roomData["2"] = &config.RoomConfig{AppID: "2", MaxSeat: 10}
 	//center.ClusterCenter.SubscribeConfig("testdata", UpdateArmyData)
 }
 

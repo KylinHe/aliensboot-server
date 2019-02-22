@@ -3,16 +3,14 @@
 package service
 
 import (
-
+	"github.com/KylinHe/aliensboot-core/chanrpc"
+	"github.com/KylinHe/aliensboot-core/cluster/center"
+	"github.com/KylinHe/aliensboot-core/cluster/center/service"
+	"github.com/KylinHe/aliensboot-core/exception"
+	"github.com/KylinHe/aliensboot-core/protocol/base"
+	"github.com/KylinHe/aliensboot-server/module/room/conf"
+	"github.com/KylinHe/aliensboot-server/protocol"
 	"github.com/gogo/protobuf/proto"
-    "github.com/KylinHe/aliensboot-core/chanrpc"
-    "github.com/KylinHe/aliensboot-core/exception"
-    "github.com/KylinHe/aliensboot-core/cluster/center/service"
-    "github.com/KylinHe/aliensboot-core/cluster/center"
-    "github.com/KylinHe/aliensboot-core/protocol/base"
-    "github.com/KylinHe/aliensboot-server/protocol"
-    "github.com/KylinHe/aliensboot-server/module/room/conf"
-
 )
 
 var instance service.IService = nil
@@ -42,6 +40,7 @@ func handle(request *base.Any) (response *base.Any) {
 				exception.PrintStackDetail(err)
 				responseProxy.Code = protocol.Code_ServerException
 			}
+			isResponse = true
 		}
 		if !isResponse {
             return

@@ -76,7 +76,7 @@ type AtarGameBase struct {
 	MaxThornScore int32
 	SplitDuration	int32
 	GameTime int32
-	MapWidth int32
+	MapWidth float32
 	ThornColorID int32
 	ThornColor []int32
 	Colors []Color

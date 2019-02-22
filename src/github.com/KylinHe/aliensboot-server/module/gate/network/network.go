@@ -139,7 +139,7 @@ func (this *Network) HandleMessage(request *base.Any) {
 	resp := &protocol.Response{}
 	resp.Unmarshal(response.GetValue())
 
-	//log.Debugf("data  : %+v - %+v", request, response)
+	log.Debugf("data  : %+v - %+v", request, response)
 	log.Debugf("r-r : %+v - %+v", req, resp)
 
 	this.handleResponse(response, err)

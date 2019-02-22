@@ -18,8 +18,8 @@ type MapBorder struct {
 }
 
 type Position struct {
-	X int32
-	Y int32
+	X float32
+	Y float32
 }
 
 func (this Position) Equals(p Position) bool {

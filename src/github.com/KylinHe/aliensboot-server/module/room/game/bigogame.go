@@ -19,10 +19,6 @@ import (
 type BigoGameFactory struct {
 }
 
-func (this *BigoGameFactory) Match(appID string) bool {
-	return appID == "1"
-}
-
 func (this *BigoGameFactory) NewGame(handler Handler) Game {
 	return &BigoGame{CommonGame: &CommonGame{Handler: handler}, data: make(map[string]interface{})}
 }

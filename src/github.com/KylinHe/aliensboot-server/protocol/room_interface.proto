@@ -228,6 +228,7 @@ message playerJoinRet {
     Player player = 2; //加入的玩家信息
 }
 
+
 //收到所有玩家gameReady，大厅通知游戏开始。
 message gameStartRet {
 
