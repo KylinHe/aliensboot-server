@@ -9,10 +9,13 @@
  *******************************************************************************/
 package collision
 
-import "github.com/KylinHe/aliensboot-server/module/room/game/agar/util"
+import (
+	"github.com/KylinHe/aliensboot-core/log"
+	"github.com/KylinHe/aliensboot-server/module/room/game/agar/util"
+)
 
 
-func NewRect(bottomLeftX float32,bottomLeftY float32,topRightX float32,topRightY float32) *Rect {
+func NewRect(bottomLeftX float64,bottomLeftY float64,topRightX float64,topRightY float64) *Rect {
 	return &Rect{
 		bottomLeft: util.Position{X:bottomLeftX, Y:bottomLeftY},
 		topRight: util.Position{X:topRightX, Y:topRightY},
@@ -20,7 +23,7 @@ func NewRect(bottomLeftX float32,bottomLeftY float32,topRightX float32,topRightY
 }
 
 
-func inRange(topRight util.Position, bottomLeft util.Position, x float32, y float32) bool {
+func inRange(topRight util.Position, bottomLeft util.Position, x float64, y float64) bool {
 	return  x >= bottomLeft.X && y >= bottomLeft.Y && x <= topRight.X && y <= topRight.Y
 }
 
@@ -30,11 +33,14 @@ type Rect struct {
 	bottomLeft 	util.Position
 }
 
-func (self *Rect) Height() float32 {
+func (self *Rect) Height() float64 {
 	return self.topRight.Y - self.bottomLeft.Y
 }
 
-func (self *Rect) Width() float32 {
+func (self *Rect) Width() float64 {
+	if self == nil {
+		log.Error(self)
+	}
 	return self.topRight.X - self.bottomLeft.X
 }
 

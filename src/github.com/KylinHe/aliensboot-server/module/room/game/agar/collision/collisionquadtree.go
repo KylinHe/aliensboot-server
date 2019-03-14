@@ -20,7 +20,7 @@ func NewQuadTreeCollision() *QuadTreeCollision {
 }
 
 
-func rect(pos util.Position, r float32) *Rect {
+func rect(pos util.Position, r float64) *Rect {
 	var bottomLeftX = pos.X - r
 	if bottomLeftX < 0 {
 		bottomLeftX = 0
@@ -53,8 +53,8 @@ func (self *QuadTreeCollision) Enter(obj *CollideObject) {
 	if obj.Collision != nil {
 		return
 	}
-
-	obj.Rect = rect(obj.Position, obj.R)
+	//log.Debug("Enter Collision || obj type:", obj.Proxy.GetType())
+	obj.Rect = rect(obj.Proxy.GetPosition(), obj.Proxy.GetR())
 	obj.Collision = self
 	self.QuadTree.Insert(obj)
 }
@@ -68,17 +68,19 @@ func (self *QuadTreeCollision) Leave(obj *CollideObject) {
 
 func (self *QuadTreeCollision) Update(obj *CollideObject) {
 	if obj.Collision != nil {
-		obj.Rect = rect(obj.Position, obj.R)
+		obj.Rect = rect(obj.Proxy.GetPosition(), obj.Proxy.GetR())
 		self.QuadTree.Update(obj)
 	}
 }
 
 func checkCollision(obj *CollideObject, other *CollideObject) {
 	if other.Proxy != nil {
-		totalR := obj.R + other.R
-		distancePow2 := obj.Position.DistancePow2(other.Position)
+		totalR := obj.Proxy.GetR() + other.Proxy.GetR()
+		distancePow2 := obj.Proxy.GetPosition().DistancePow2(other.Proxy.GetPosition())
 		if distancePow2 < totalR * totalR {
-			obj.Proxy.OnOverLap(other.Proxy)
+			//log.Debugf("obj  ||type:%v, pos:%v, r:%v",obj.Proxy.GetType(), obj.Proxy.GetPosition(), obj.Proxy.GetR())
+			//log.Debugf("other||type:%v, pos:%v, r:%v",other.Proxy.GetType(), other.Proxy.GetPosition(), other.Proxy.GetR())
+			obj.Proxy.OnOverLap(other)
 		}
 	}
 }
