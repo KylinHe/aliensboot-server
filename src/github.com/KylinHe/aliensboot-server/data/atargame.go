@@ -68,15 +68,15 @@ type AtarGameBase struct {
 	StarScore int32
 	MaxUserBallCount int32
 	MaxThornBallCount int32
-	SpitV0Factor float32
-	SplitV0Factor	float32
-	CentripetalSpeedCoef float32
+	SpitV0Factor float64
+	SplitV0Factor	float64
+	CentripetalSpeedCoef float64
 	ThornCount int32
 	MinThornScore int32
 	MaxThornScore int32
 	SplitDuration	int32
 	GameTime int32
-	MapWidth float32
+	MapWidth float64
 	ThornColorID int32
 	ThornColor []int32
 	Colors []Color
