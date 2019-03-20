@@ -9,7 +9,10 @@
  *******************************************************************************/
 package game
 
-import "github.com/gogo/protobuf/proto"
+import (
+	"github.com/KylinHe/aliensboot-core/common/util"
+	"github.com/gogo/protobuf/proto"
+)
 
 type Game interface {
 	Start()                                                                        //启动游戏
@@ -24,4 +27,6 @@ type Factory interface {
 
 type Handler interface {
 	BroadcastOtherPlayer(playerID int64, roles int32, message proto.Message) //广播其他玩家
+	SendToPlayer(playerID int64, roles int32, message proto.Message) //发送给指定玩家
+	GetTimerMgr() *util.TimerManager
 }

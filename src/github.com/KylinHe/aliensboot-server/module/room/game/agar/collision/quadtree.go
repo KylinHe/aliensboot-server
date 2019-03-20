@@ -56,8 +56,8 @@ func (self *QuadTree) getSubTree(rect *Rect) *QuadTree {
 }
 
 func (self *QuadTree) Split() {
-	var  subWidth = float32(math.Ceil(float64(self.rect.Width()) / 2))
-	var  subHeight = float32(math.Ceil(float64(self.rect.Height()) / 2))
+	var  subWidth = math.Ceil(float64(self.rect.Width()) / 2)
+	var  subHeight = math.Ceil(float64(self.rect.Height()) / 2)
 
 	var bottomLeft = self.rect.bottomLeft
 	var topRight = self.rect.topRight

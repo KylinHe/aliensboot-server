@@ -12,6 +12,7 @@ package core
 import (
 	"github.com/KylinHe/aliensboot-core/common/util"
 	"github.com/KylinHe/aliensboot-core/exception"
+	"github.com/KylinHe/aliensboot-core/module/base"
 	"github.com/KylinHe/aliensboot-server/constant"
 	"github.com/KylinHe/aliensboot-server/module/room/conf"
 	"github.com/KylinHe/aliensboot-server/module/room/config"
@@ -27,6 +28,11 @@ var RoomManager = &roomManager{
 	players:       make(map[int64]string),
 }
 
+func Init(skeleton *base.Skeleton) {
+	RoomManager.timerMgr = util.NewTimerManager()
+	skeleton.SetTick(RoomManager.timerMgr.Tick)
+}
+
 func init() {
 	//
 	RoomManager.RegisterGameFactory("0", &game.CommonGameFactory{})
@@ -40,6 +46,8 @@ type roomManager struct {
 	rooms map[string]*Room //运行的游戏  游戏id - 房间对象
 
 	players map[int64]string //所有玩家的对应信息 玩家id - 房间id
+
+	timerMgr *util.TimerManager
 }
 
 func (this *roomManager) RegisterGameFactory(appId string, factory game.Factory) {
@@ -67,7 +75,7 @@ func (this *roomManager) EnsureRoom(roomID string) *Room {
 //玩家加入房间
 func (this *roomManager) JoinRoom(appID string, roomID string, playerID int64) *Room {
 	room := this.EnsureRoom(roomID)
-	room.AddPlayer(playerID, constant.RoleViewer)
+	room.AddPlayer(playerID, constant.RolePlayer)
 	this.players[playerID] = room.GetID()
 	return room
 }
@@ -141,6 +149,10 @@ func (this *roomManager) newRoom(config *config.RoomConfig, roomID string) *Room
 		config: config,
 		Seats:  NewSeats(config.MaxSeat),
 		viewers: make(Viewers),
+	}
+
+	if this.timerMgr != nil {
+		result.timerMgr = this.timerMgr
 	}
 
 	if result.id == "" {

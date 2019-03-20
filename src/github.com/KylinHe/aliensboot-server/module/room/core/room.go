@@ -32,6 +32,7 @@ type Room struct {
 
 	viewers Viewers
 
+	timerMgr *util.TimerManager
 }
 
 func (room *Room) GetID() string {
@@ -253,6 +254,19 @@ func (room *Room) BroadcastOtherPlayer(playerID int64, roles int32, message prot
 			viewer.SendMsg(sendData)
 		})
 	}
+}
+
+func (room *Room) SendToPlayer(playerID int64, roles int32, message proto.Message) {
+	sendData, _ := proto.Marshal(message)
+	room.Foreach(func(player *Player) {
+		if player.GetId() == playerID && player.HaveRole(roles) {
+			player.SendMsg(sendData)
+		}
+	})
+}
+
+func (room *Room) GetTimerMgr() *util.TimerManager {
+	return room.timerMgr
 }
 
 func (room *Room) SendToAnchor(message proto.Message) {

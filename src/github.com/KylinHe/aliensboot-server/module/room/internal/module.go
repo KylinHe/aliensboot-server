@@ -4,6 +4,7 @@ import (
 	"github.com/KylinHe/aliensboot-core/module/base"
 	"github.com/KylinHe/aliensboot-server/module/room/cache"
 	"github.com/KylinHe/aliensboot-server/module/room/conf"
+	"github.com/KylinHe/aliensboot-server/module/room/core"
 	"github.com/KylinHe/aliensboot-server/module/room/db"
 	"github.com/KylinHe/aliensboot-server/module/room/service"
 )
@@ -25,6 +26,8 @@ func (m *Module) OnInit() {
 	conf.Init()
 	db.Init()
 	cache.Init()
+	core.Init(m.Skeleton)
+
 	service.Init(m.ChanRPCServer)
 }
 

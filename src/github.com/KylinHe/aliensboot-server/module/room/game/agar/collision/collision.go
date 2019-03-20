@@ -17,15 +17,19 @@ func NewCollision() ICollision {
 
 type CollideObject struct {
 
-	Collision ICollision
+	//OType util.ObjType
+
+	Collision ICollision  //mgr
 
 	Tree *QuadTree
 
 	Rect *Rect
 
-	Position util.Position
+	//Position util.Position
 
-	R float32
+	//R float64
+
+	//Obj interface{}
 
 	Proxy ICollideObject
 
@@ -33,12 +37,13 @@ type CollideObject struct {
 
 type ICollideObject interface {
 
+	GetPosition() util.Position
+
+	GetType() util.ObjType
+
+	GetR() float64
 	//碰撞监听
-	OnOverLap(other ICollideObject)
-
-}
-
-func (self *CollideObject) OnOverLap(other *CollideObject) {
+	OnOverLap(other *CollideObject)
 
 }
 
