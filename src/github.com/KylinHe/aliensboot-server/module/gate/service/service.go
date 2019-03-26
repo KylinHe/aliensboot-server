@@ -3,20 +3,19 @@
 package service
 
 import (
-
     "github.com/KylinHe/aliensboot-core/chanrpc"
-    "github.com/KylinHe/aliensboot-core/cluster/center"
     "github.com/KylinHe/aliensboot-core/cluster/center/service"
+    "github.com/KylinHe/aliensboot-core/cluster/center"
     "github.com/KylinHe/aliensboot-core/exception"
-    "github.com/KylinHe/aliensboot-core/log"
     "github.com/KylinHe/aliensboot-core/protocol/base"
     "github.com/KylinHe/aliensboot-server/module/gate/conf"
     "github.com/KylinHe/aliensboot-server/protocol"
     "github.com/gogo/protobuf/proto"
-
 )
 
 var instance service.IService = nil
+
+var handlers = make(map[uint16]func(request *base.Any)*base.Any)
 
 func Init(chanRpc *chanrpc.Server) {
 	instance = center.PublicService(conf.Config.Service, service.NewRpcHandler(chanRpc, handle))
@@ -27,43 +26,83 @@ func Close() {
 }
 
 
-func handle(request *base.Any) *base.Any {
-     requestProxy := &protocol.Request{}
-     defer func() {
-         exception.CatchStackDetail()
-     }()
-     error := proto.Unmarshal(request.Value, requestProxy)
-     if error != nil {
-         log.Debugf("un expect request data : %v", request)
-         return nil
-     }
-     handleRequest(requestProxy)
-	 return nil
+//register self handler
+func RegisteHandler(msgID uint16, handler func(request *base.Any)*base.Any) {
+	handlers[msgID] = handler
 }
 
-func handleRequest(request *protocol.Request) {
+func handleInternal(request *base.Any) (bool, *base.Any) {
+	handler := handlers[request.Id]
+	if handler == nil {
+		return false, nil
+	}
+	response := handler(request)
+	return true, response
+}
+
+func handle(request *base.Any) (response *base.Any) {
+    ok, response := handleInternal(request)
+	if ok {
+		return response
+	}
+	requestProxy := &protocol.Request{}
+	responseProxy := &protocol.Response{}
+	response = &base.Any{}
+	isResponse := false
+	defer func() {
+		//处理消息异常
+		if err := recover(); err != nil {
+			switch err.(type) {
+			case protocol.Code:
+				responseProxy.Code = err.(protocol.Code)
+				break
+			default:
+				exception.PrintStackDetail(err)
+				responseProxy.Code = protocol.Code_ServerException
+			}
+			isResponse = true
+		}
+		if !isResponse {
+            return
+        }
+		data, _ := proto.Marshal(responseProxy)
+		responseProxy.Session = requestProxy.GetSession()
+		response.Value = data
+	}()
+	error := proto.Unmarshal(request.Value, requestProxy)
+	if error != nil {
+		exception.GameException(protocol.Code_InvalidRequest)
+	}
+	isResponse = handleRequest(request.GetAuthId(), request.GetGateId(), requestProxy, responseProxy)
+	return
+}
+
+func handleRequest(authID int64, gateID string, request *protocol.Request, response *protocol.Response) bool {
 	
 	if request.GetHeartBeat() != nil {
-		handleHeartBeat(request.GetHeartBeat())
-		return
+		messageRet := &protocol.HeartBeat{}
+		handleHeartBeat(authID, gateID, request.GetHeartBeat(), messageRet)
+		response.Gate = &protocol.Response_HeartBeat{messageRet}
+		return true
 	}
 	
 	
-     if request.GetBindService() != nil {
-        handleBindService(request.GetBindService())
-      	return
-     }
+    if request.GetBindService() != nil {
+    	handleBindService(authID, gateID, request.GetBindService())
+    	return false
+    }
     
-     if request.GetKickOut() != nil {
-        handleKickOut(request.GetKickOut())
-      	return
-     }
+    if request.GetKickOut() != nil {
+    	handleKickOut(authID, gateID, request.GetKickOut())
+    	return false
+    }
     
-     if request.GetPushMessage() != nil {
-        handlePushMessage(request.GetPushMessage())
-      	return
-     }
+    if request.GetPushMessage() != nil {
+    	handlePushMessage(authID, gateID, request.GetPushMessage())
+    	return false
+    }
     
-	exception.GameException(protocol.Code_InvalidRequest)
+	response.Code = protocol.Code_InvalidRequest
+	return true
 }
 
