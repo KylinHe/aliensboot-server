@@ -11,17 +11,18 @@ service:
   # service lbs strategy options[polling,hashing]
   #
   lbs: polling
+  local: true
 # ---------------------------------- Network --------------------------
 #
 #tcp configuration
-#tcp:
-#  address: :3579
-#  maxconnnum: 20000
-#  pendingwritenum: 2000
-#  lenmsglen: 2
-#  minmsglen: 0
-#  maxmsglen: 4096
-#  littleendian: true
+tcp:
+  address: :3579
+  maxconnnum: 20000
+  pendingwritenum: 2000
+  lenmsglen: 2
+  minmsglen: 0
+  maxmsglen: 4096
+  littleendian: true
 
 #kcp configuration
 #kcp:
@@ -55,7 +56,7 @@ cache:
 #
 # service name - message seq
 #
-routes: {passport: 1, game: 2, room: 3, hall: 8, scene: 9}
+routes: {gate: 0, passport: 1, game: 2, room: 3, hall: 8, scene: 9}
 #
 # ---------------------------------- Auth -----------------------------
 #
