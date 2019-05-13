@@ -1,4 +1,4 @@
-#=========================== AliensBot Configuration ============================
+#=========================== AliensBoot Configuration ============================
 #
 # NOTE: AliensBot comes with reasonable defaults for most settings.
 #       Before you set out to tweak and tune the configuration, make sure you
@@ -8,7 +8,7 @@
 # the most important settings you may want to configure for a production cluster.
 #
 # Please consult the documentation for further information on configuration options:
-# https://www.aliensbot.com/guide/en/index.html
+# https://www.aliensboot.com/guide/en/index.html
 #
 # ---------------------------------- Cluster -----------------------------------
 cluster:

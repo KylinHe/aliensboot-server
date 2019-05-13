@@ -1,4 +1,5 @@
 #!/bin/sh
+#导出docker镜像
 source ./env.sh
 cd $PROJECT_PATH
 

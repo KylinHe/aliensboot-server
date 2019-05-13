@@ -2,7 +2,7 @@ module github.com/KylinHe/aliensboot-server
 
 replace (
 	cloud.google.com/go v0.26.0 => github.com/GoogleCloudPlatform/gcloud-golang v0.32.0
-	github.com/KylinHe/aliensboot-core v0.0.5 => ../../../../../aliensboot-core
+	//github.com/KylinHe/aliensboot-core v0.0.8 => ../../../../../aliensboot-core
 	golang.org/x/crypto v0.0.0-20180904163835-0709b304e793 => github.com/golang/crypto v0.0.0-20181106171534-e4dc69e5b2fd
 	golang.org/x/lint v0.0.0-20180702182130-06c8688daad7 => github.com/golang/lint v0.0.0-20181026193005-c67002cb31c3
 	golang.org/x/net => github.com/golang/net v0.0.0-20181108082009-03003ca0c849
@@ -17,7 +17,7 @@ replace (
 )
 
 require (
-	github.com/KylinHe/aliensboot-core v0.0.5
+	github.com/KylinHe/aliensboot-core v0.0.8
 	github.com/eapache/queue v1.1.0
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect
 	github.com/gin-gonic/gin v1.3.0
