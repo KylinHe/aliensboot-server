@@ -1,0 +1,12 @@
+name: github.com/KylinHe/aliensboot-server
+
+#工程模板配置
+template:
+  #
+  # 排除路径
+  #
+  exclude: ["doc", "log", "test"]
+
+
+#接口代码模板路径配置
+code.template.path:
