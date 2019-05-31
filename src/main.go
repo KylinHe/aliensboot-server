@@ -1,4 +1,4 @@
-package src
+package main
 
 import (
 	"github.com/KylinHe/aliensboot-core/aliensboot"
