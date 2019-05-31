@@ -1,7 +1,7 @@
 #=============================== 构建阶段 ===============================
 FROM registry.cn-shenzhen.aliyuncs.com/aliensidea/golib:latest AS aliens-build
 
-ENV SOURCE src/github.com/KylinHe/aliensboot-server
+ENV SOURCE src
 
 # 设置我们应用程序的工作目录
 WORKDIR /go/$SOURCE
@@ -16,7 +16,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -v  -a -installsuffix cgo -o ./server
 
 FROM scratch AS aliens-prod
 
-ENV SOURCE src/github.com/KylinHe/aliensboot-server
+ENV SOURCE src
 
 #作者
 MAINTAINER aliensboot
