@@ -5,7 +5,7 @@ template:
   #
   # 排除路径
   #
-  exclude: ["doc/", "log/", "test/"]
+  exclude: ["doc/", "log/", "test/", ".git/"]
 
 
 #接口代码模板路径配置

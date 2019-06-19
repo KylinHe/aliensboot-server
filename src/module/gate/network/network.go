@@ -29,12 +29,14 @@ func NewNetwork(agent gate.Agent) *Network {
 	network.hashKey = agent.RemoteAddr().String()
 	network.bindRoutes = make(map[uint16]string)
 	network.bindServices = make(map[string]string)
+	//network.channel = make(chan *base.Any, 1000)
 	return network
 }
 
 type Network struct {
 	agent gate.Agent
-	//channel       chan *base.Any //消息管道
+
+	//channel chan *base.Any //消息管道
 
 	authID int64 //用户标识 登录验证后
 
@@ -44,10 +46,10 @@ type Network struct {
 
 	heartbeatTime time.Time //上次的心跳时间
 
-	bindRoutes map[uint16]string //绑定路由表 对应服务消息转发到指定节点上 比如场景服务器需要固定转发服务器
+	bindRoutes map[uint16]string //绑定路由表 对应服务消息转发到指定节点上 比如需要固定转发到指定的场景服务器
 
 	//绑定的服务 离线需要通知
-	bindServices map[string]string
+	bindServices map[string]string //
 }
 
 //发送消息给客户端
@@ -75,13 +77,9 @@ func (this *Network) OnClose() {
 		AuthId: this.authID,
 	}
 	for service, node := range this.bindServices {
-		dispatch.RequestNode(service, node, offlineMsg)
+		_, _ = dispatch.RequestNode(service, node, offlineMsg)
 	}
 }
-
-//func (this *Network) requestCallback(request *base.Any, err error) {
-//	Manager.acceptResponse(this, request, err)
-//}
 
 func (this *Network) handleResponse(response *base.Any, err error) {
 	if response == nil || response.Value == nil || len(response.Value) == 0 {
@@ -103,6 +101,8 @@ func (this *Network) handleResponse(response *base.Any, err error) {
 	//lpc.StatisticsHandler.AddServiceStatistic(route.GetServiceByeSeq(response.Id), 1, 0.001)
 }
 
+
+
 func (this *Network) HandleMessage(request *base.Any) {
 	//根据是否授权，传递授权id
 	if this.IsAuth() {
@@ -115,43 +115,32 @@ func (this *Network) HandleMessage(request *base.Any) {
 	request.GateId = center.ClusterCenter.GetNodeID()
 	node, _ := this.bindRoutes[request.Id]
 
-	//var err error = nil
-	//if node != "" {
-	//	err = route.AsyncHandleNodeMessage(node, service.NewAsyncCall(request, handler.Go, this.handleResponse))
-	//} else {
-	//	err = route.AsyncHandleMessage(this.hashKey, service.NewAsyncCall(request, handler.Go, this.handleResponse))
-	//}
-	//if err != nil {
-	//	log.Debug(err.Error())
-	//}
+	go func(){
+		var response *base.Any = nil
+		var err error = nil
+		if node != "" {
+			response, err = route.HandleNodeMessage(request, node)
+		} else {
+			response, err = route.HandleMessage(request, this.hashKey)
+		}
 
-	var response *base.Any = nil
-	var err error = nil
-	if node != "" {
-		response, err = route.HandleNodeMessage(request, node)
-	} else {
-		response, err = route.HandleMessage(request, this.hashKey)
-	}
+		//req := &protocol.Request{}
+		//req.Unmarshal(request.GetValue())
+		//
+		//resp := &protocol.Response{}
+		//resp.Unmarshal(response.GetValue())
+		//
+		//log.Debugf("request %+v : response:%+v", req, resp)
 
-	req := &protocol.Request{}
-	req.Unmarshal(request.GetValue())
-
-	resp := &protocol.Response{}
-	resp.Unmarshal(response.GetValue())
-
-	log.Debugf("request %+v : response:%+v", req, resp)
-
-	this.handleResponse(response, err)
-
-	////更新验权id
-	//if response.GetAuthId() > 0 {
-	//	this.Auth(response.GetAuthId())
-	//}
-	//if response != nil {
-	//	this.agent.WriteMsg(response)
-	//}
-	//lpc.StatisticsHandler.AddServiceStatistic("passport", int32(request.Id), time.Now().Sub(start).Seconds())
+		this.handleResponse(response, err)
+	}()
 }
+
+func (this *Network) internalHandleMessage(request *base.Any) {
+
+}
+
+
 
 //绑定服务节点,固定转发
 func (this *Network) BindService(binds map[string]string) {

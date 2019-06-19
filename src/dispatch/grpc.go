@@ -31,7 +31,10 @@ func RequestMessage(serviceName string, message *protocol.Request, hashKey strin
 		return nil, err
 	}
 	messageRet := &protocol.Response{}
-	messageRet.Unmarshal(response.GetValue())
+	err = messageRet.Unmarshal(response.GetValue())
+	if err != nil {
+		return nil, err
+	}
 	return messageRet, nil
 }
 

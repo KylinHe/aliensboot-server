@@ -23,8 +23,7 @@ func (this *gateRPCHandler) BindService1(node string, authID int64, service stri
 		AuthID: authID,
 		Binds:  binds,
 	}
-	this.BindService(node, request)
-	return nil
+	return this.BindService(node, request)
 }
 
 //推送玩家消息
@@ -38,8 +37,7 @@ func (this *gateRPCHandler) Push(fromService string, authID int64, node string, 
 		Data:    data,
 		Service: fromService,
 	}
-	this.PushMessage(node, pushMessage)
-	return nil
+	return this.PushMessage(node, pushMessage)
 }
 
 func (this *gateRPCHandler) BroadcastAll(node string, response *protocol.Response) {

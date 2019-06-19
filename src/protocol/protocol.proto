@@ -21,7 +21,7 @@ message Request {
     //----------------网关模块接口-----------
     oneof gate {
 
-        heartBeat heartBeat = 8; //心跳消息
+        //heartBeat heartBeat = 8; //心跳消息
 
         bindService bindService = 9; //绑定服务-定向转发
         //push
