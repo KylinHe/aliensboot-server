@@ -1,5 +1,5 @@
 #=============================== 构建阶段 ===============================
-FROM registry.cn-shenzhen.aliyuncs.com/aliensidea/golib:latest AS aliens-build
+FROM golang:latest AS aliens-build
 
 ENV SOURCE src
 
@@ -8,6 +8,9 @@ WORKDIR /go/$SOURCE
 
 # 添加所有需要编译的应用代码
 COPY ./$SOURCE  .
+
+ENV GO111MODULE on
+ENV GOPROXY https://goproxy.io
 
 # 编译一个静态的go应用（在二进制构建中包含C语言依赖库）
 RUN CGO_ENABLED=0 GOOS=linux go build -v  -a -installsuffix cgo -o ./server

@@ -17,10 +17,11 @@ func main() {
 
 	aliensboot.Run(
 		database.Module,
-		gate.Module,
 		hall.Module,
 		room.Module,
 		passport.Module,
+		gate.Module,
+		gate.SubModule,
 		//game.Module,
 		//scene.Module,
 	)

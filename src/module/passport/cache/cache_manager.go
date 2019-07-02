@@ -46,6 +46,12 @@ func Close() {
 
 func (this *cacheManager) Init(config config.CacheConfig) {
 	this.redisClient = redis.NewRedisClient(config)
+	this.redisClient.SetErrorHandler(func (err error, command string, args... interface{}) {
+		if err != redis.ErrNil {
+			log.Errorf("[%v] %v err: %v", command, args, err)
+			exception.GameException(protocol.Code_DBExcetpion)
+		}
+	})
 	this.redisClient.Start()
 }
 

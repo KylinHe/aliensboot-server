@@ -24,6 +24,9 @@ import (
 	"time"
 )
 
+//心跳包
+var heartbeat = &base.Any{Id: 0}
+
 func NewNetwork(agent gate.Agent) *Network {
 	network := &Network{agent: agent, createTime: time.Now(), heartbeatTime: time.Now()}
 	network.hashKey = agent.RemoteAddr().String()
@@ -104,6 +107,13 @@ func (this *Network) handleResponse(response *base.Any, err error) {
 
 
 func (this *Network) HandleMessage(request *base.Any) {
+	this.HeartBeat()
+	//心跳包直接回
+	if request.Id == 0 {
+		this.agent.WriteMsg(heartbeat)
+		return
+	}
+
 	//根据是否授权，传递授权id
 	if this.IsAuth() {
 		request.AuthId = this.authID
@@ -140,8 +150,6 @@ func (this *Network) internalHandleMessage(request *base.Any) {
 
 }
 
-
-
 //绑定服务节点,固定转发
 func (this *Network) BindService(binds map[string]string) {
 	for serviceName, serviceID := range binds {
@@ -171,13 +179,20 @@ func (this *Network) Auth(id int64) {
 }
 
 //是否没有验权超时 释放多余的空连接
-func (this *Network) IsAuthTimeout() bool {
-	return !this.IsAuth() && time.Now().Sub(this.createTime).Seconds() >= conf.Config.AuthTimeout
+func (this *Network) HandleAuthTimeout() {
+	//!this.IsAuth() && time.Now().Sub(this.createTime).Seconds() >= conf.Config.AuthTimeout
+	//未授权需要T除
+	if !this.IsAuth() {
+		this.KickOut(protocol.KickType_Timeout)
+	}
 }
 
 //是否心跳超时
-func (this *Network) IsHeartbeatTimeout() bool {
-	return time.Now().Sub(this.heartbeatTime).Seconds() >= conf.Config.HeartbeatTimeout
+func (this *Network) HandleHeartbeatTimeout() {
+	isTimeOut := time.Now().Sub(this.heartbeatTime).Seconds() >= conf.Config.HeartbeatTimeout
+	if isTimeOut {
+		this.KickOut(protocol.KickType_Timeout)
+	}
 }
 
 func (this *Network) HeartBeat() {

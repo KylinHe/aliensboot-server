@@ -11,9 +11,7 @@ package internal
 
 import (
 	"github.com/KylinHe/aliensboot-core/gate"
-	"github.com/KylinHe/aliensboot-core/log"
 	"github.com/KylinHe/aliensboot-core/protocol/base"
-	"github.com/KylinHe/aliensboot-core/task"
 	"github.com/KylinHe/aliensboot-server/module/gate/msg"
 	"github.com/KylinHe/aliensboot-server/module/gate/network"
 )
@@ -24,12 +22,12 @@ func init() {
 	Skeleton.RegisterChanRPC(gate.CommandAgentClose, closeAgent)
 	Skeleton.RegisterChanRPC(gate.CommandAgentMsg, handleMessage)
 
-	cron, err := task.NewCronExpr("*/1 * * * *")
-	if err != nil {
-		log.Error("init gate timer error : %v", err)
-	}
-
-	Skeleton.CronFunc(cron, network.Manager.DealAuthTimeout)
+	//cron, err := task.NewCronExpr("*/1 * * * *")
+	//if err != nil {
+	//	log.Error("init gate timer error : %v", err)
+	//}
+	//
+	//Skeleton.CronFunc(cron, network.Manager.DealAuthTimeout)
 
 	//dispatch.MQ.RegisterConsumer(constant.SERVICE_GATE, HandlePush)
 }

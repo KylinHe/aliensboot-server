@@ -6,4 +6,5 @@ import (
 
 var (
 	Module = new(internal.Module)
+	SubModule = new(internal.SubModule)
 )
