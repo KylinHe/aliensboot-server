@@ -179,7 +179,7 @@ func (this *Network) Auth(id int64) {
 }
 
 //是否没有验权超时 释放多余的空连接
-func (this *Network) HandleAuthTimeout() {
+func (this *Network) HandleAuthTimeout([]interface{}) {
 	//!this.IsAuth() && time.Now().Sub(this.createTime).Seconds() >= conf.Config.AuthTimeout
 	//未授权需要T除
 	if !this.IsAuth() {
@@ -188,7 +188,7 @@ func (this *Network) HandleAuthTimeout() {
 }
 
 //是否心跳超时
-func (this *Network) HandleHeartbeatTimeout() {
+func (this *Network) HandleHeartbeatTimeout([]interface{}) {
 	isTimeOut := time.Now().Sub(this.heartbeatTime).Seconds() >= conf.Config.HeartbeatTimeout
 	if isTimeOut {
 		this.KickOut(protocol.KickType_Timeout)

@@ -262,7 +262,7 @@ func (self *Game) GameOver() {
 
 }
 
-func (self *Game) GameUpdate() {
+func (self *Game) GameUpdate([]interface{}) {
 
 	self.updateCount = self.updateCount + 1
 	nowSysTick := util.TimeNowSysTick()
