@@ -10,8 +10,7 @@ service:
   #
   # service lbs strategy options[polling,hashing]
   #
-  lbs: polling
-  local: true
+  lbs: Polling
 # ---------------------------------- Network --------------------------
 #
 #

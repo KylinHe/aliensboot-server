@@ -11,8 +11,7 @@ service:
   #
   # service lbs strategy options[polling,hashing]
   #
-  lbs: polling
-  local: true
+  lbs: Polling
 # -------------------------------- Database ---------------------------
 database:
   address: 127.0.0.1:27017
