@@ -10,43 +10,86 @@
 package rpc
 
 import (
-	"github.com/KylinHe/aliensboot-core/cluster/center"
 	"github.com/KylinHe/aliensboot-server/dispatch"
 	"github.com/KylinHe/aliensboot-server/protocol"
+	"github.com/KylinHe/aliensboot-core/cluster/center"
 	"github.com/gogo/protobuf/proto"
 )
 
-func (this *gateRPCHandler) BindService1(node string, authID int64, service string) error {
+func (this *gateRPCHandler) BindService1(node string, authID int64, service string) bool {
 	binds := make(map[string]string)
 	binds[service] = center.ClusterCenter.GetNodeID()
 	request := &protocol.BindService{
-		AuthID: authID,
+		AuthId: authID,
 		Binds:  binds,
 	}
-	return this.BindService(node, request)
+	return this.BindService(node, request).GetResult()
 }
 
-//推送玩家消息
-func (this *gateRPCHandler) Push(fromService string, authID int64, node string, response *protocol.Response) error {
+// 推送玩家相关信息
+func (this *gateRPCHandler) PushRole(fromService string, authID int64, response *protocol.Response) error {
+	return this.PushMultiRole(fromService, []int64{authID}, response)
+}
+
+func (this *gateRPCHandler) PushMultiRole(fromService string, authIDs []int64, response *protocol.Response) error {
+	// 玩家在线需要推送
 	data, err := proto.Marshal(response)
 	if err != nil {
 		return err
 	}
 	pushMessage := &protocol.PushMessage{
-		AuthID:  authID,
+		AuthId:  authIDs,
+		Data:    data,
+		Service: fromService,
+		Relay:   true, //允许转发
+	}
+	return this.PushMessage("", pushMessage)
+}
+
+//推送玩家消息到指定节点
+func (this *gateRPCHandler) PushNode(fromService string, authID int64, node string, response *protocol.Response) error {
+	return this.PushNodeMulti(fromService, []int64{authID}, node, response)
+}
+
+//推送多个玩家消息到指定节点
+func (this *gateRPCHandler) PushNodeMulti(fromService string, authIDs []int64, node string, response *protocol.Response) error {
+	data, err := proto.Marshal(response)
+	if err != nil {
+		return err
+	}
+	pushMessage := &protocol.PushMessage{
+		AuthId:  authIDs,
 		Data:    data,
 		Service: fromService,
 	}
 	return this.PushMessage(node, pushMessage)
 }
 
-func (this *gateRPCHandler) BroadcastAll(node string, response *protocol.Response) {
+//广播所有用户
+func (this *gateRPCHandler) BroadcastAll(fromService string, response *protocol.Response) {
 	data, _ := proto.Marshal(response)
 	message := &protocol.Request{
 		Gate: &protocol.Request_PushMessage{
 			PushMessage: &protocol.PushMessage{
-				AuthID: -1,
-				Data:   data,
+				All:     true,
+				Data:    data,
+				Service: fromService,
+			},
+		},
+	}
+	dispatch.Broadcast(this.name, message)
+}
+
+//广播多个玩家
+func (this *gateRPCHandler) BroadcastMulti(fromService string, authId []int64, response *protocol.Response) {
+	data, _ := proto.Marshal(response)
+	message := &protocol.Request{
+		Gate: &protocol.Request_PushMessage{
+			PushMessage: &protocol.PushMessage{
+				All:     false,
+				AuthId:  authId,
+				Data:    data,
+				Service: fromService,
 			},
 		},
 	}

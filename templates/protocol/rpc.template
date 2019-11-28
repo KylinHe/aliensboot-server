@@ -3,7 +3,7 @@
 package rpc
 
 import (
-	"github.com/KylinHe/aliensboot-server/protocol"
+	"e.coding.net/aliens/slg_server/protocol"
 )
 
 var ${Module} = &${module}RPCHandler{&rpcHandler{name:"${module}"}}
@@ -14,7 +14,7 @@ type ${module}RPCHandler struct {
 }
 
 <message>
-func (this *${module}RPCHandler) ${o_request}(node string, request *${package}.${o_request}) *${package}.${o_response} {
+func (this *${module}RPCHandler) ${o_request}(node string, request *${package}.${o_request_type}) *${package}.${o_response_type} {
 	message := &${package}.Request{
 		${Module}:&${package}.Request_${o_request}{
 			${o_request}:request,
@@ -23,7 +23,19 @@ func (this *${module}RPCHandler) ${o_request}(node string, request *${package}.$
 	messageRet := this.Request(node, message)
 	return messageRet.Get${o_response}()
 }
+
+
+func (this *${module}RPCHandler) Test${o_request}(authId int64, node string, request *${package}.${o_request_type}) (*${package}.${o_response_type}, error) {
+	message := &${package}.Request{
+		${Module}:&${package}.Request_${o_request}{
+			${o_request}:request,
+		},
+	}
+	messageRet, err := this.TestRequest(authId, node, message)
+	return messageRet.Get${o_response}(), err
+}
 <message>
+
 
 <request>
 func (this *${module}RPCHandler) ${o_request}(node string, request *${package}.${o_request}) error {

@@ -24,14 +24,15 @@ var Config struct {
 	Service          config.ServiceConfig
 	Cache            config.CacheConfig
 	TCP              config.TCPConfig
-	KCP 			 config.KCPConfig
-	UDP 			 config.UDPConfig
+	KCP              config.KCPConfig
+	UDP              config.UDPConfig
 	WebSocket        config.WsConfig
 	Http             config.HttpConfig
+	Routes           map[string]uint16 //路由配置
+	Session          []string
 	SecretKey        string //
 	AuthTimeout      float64
 	HeartbeatTimeout float64
-	Routes            map[string]uint16 //路由配置
 }
 
 //func Init(name string) {

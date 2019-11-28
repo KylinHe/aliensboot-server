@@ -10,16 +10,17 @@
 package network
 
 import (
-	"github.com/KylinHe/aliensboot-core/cluster/center"
-	"github.com/KylinHe/aliensboot-core/common/util"
-	"github.com/KylinHe/aliensboot-core/gate"
-	"github.com/KylinHe/aliensboot-core/log"
-	"github.com/KylinHe/aliensboot-core/protocol/base"
 	"github.com/KylinHe/aliensboot-server/constant"
 	"github.com/KylinHe/aliensboot-server/dispatch"
 	"github.com/KylinHe/aliensboot-server/module/gate/conf"
 	"github.com/KylinHe/aliensboot-server/module/gate/route"
 	"github.com/KylinHe/aliensboot-server/protocol"
+	"github.com/KylinHe/aliensboot-core/cluster/center"
+	"github.com/KylinHe/aliensboot-core/common/util"
+	"github.com/KylinHe/aliensboot-core/gate"
+	"github.com/KylinHe/aliensboot-core/log"
+	"github.com/KylinHe/aliensboot-core/protocol/base"
+	"github.com/KylinHe/aliensboot-core/task"
 	"net"
 	"time"
 )
@@ -32,6 +33,8 @@ func NewNetwork(agent gate.Agent) *Network {
 	network.hashKey = agent.RemoteAddr().String()
 	network.bindRoutes = make(map[uint16]string)
 	network.bindServices = make(map[string]string)
+
+	//log.Debugf("%v", agent.RemoteAddr())
 	//network.channel = make(chan *base.Any, 1000)
 	return network
 }
@@ -53,6 +56,10 @@ type Network struct {
 
 	//绑定的服务 离线需要通知
 	bindServices map[string]string //
+}
+
+func (this *Network) GetAddr() string {
+	return this.agent.RemoteAddr().(*net.TCPAddr).IP.String()
 }
 
 //发送消息给客户端
@@ -79,32 +86,16 @@ func (this *Network) OnClose() {
 		Id:     constant.MsgOffline,
 		AuthId: this.authID,
 	}
-	for service, node := range this.bindServices {
-		_, _ = dispatch.RequestNode(service, node, offlineMsg)
+
+	// 通知带会话的服务玩家下线
+	for _, service := range conf.Config.Session {
+		_ = dispatch.Send(service, offlineMsg, this.hashKey)
 	}
+
+	//for service, node := range this.bindServices {
+	//	_, _ = dispatch.RequestNode(service, node, offlineMsg)
+	//}
 }
-
-func (this *Network) handleResponse(response *base.Any, err error) {
-	if response == nil || response.Value == nil || len(response.Value) == 0 {
-		return
-	}
-	//TODO 返回服务不可用,或者尝试重发其他有效的节点
-	if err != nil {
-		log.Debugf("handle response %v err : %v", response, err)
-		return
-	}
-	//更新验权id
-	if response.GetAuthId() > 0 && !this.IsAuth() {
-		this.Auth(response.GetAuthId())
-	}
-	if response.GetValue() == nil || len(response.GetValue()) == 0 {
-		return
-	}
-	this.agent.WriteMsg(response)
-	//lpc.StatisticsHandler.AddServiceStatistic(route.GetServiceByeSeq(response.Id), 1, 0.001)
-}
-
-
 
 func (this *Network) HandleMessage(request *base.Any) {
 	this.HeartBeat()
@@ -125,7 +116,12 @@ func (this *Network) HandleMessage(request *base.Any) {
 	request.GateId = center.ClusterCenter.GetNodeID()
 	node, _ := this.bindRoutes[request.Id]
 
-	go func(){
+	// 账号模块需要带上ip头信息
+	if request.Id == constant.ModulePassportId {
+		request.AddHeader(constant.HeaderIP, []byte(this.GetAddr()))
+	}
+
+	task.SafeGo(func() {
 		var response *base.Any = nil
 		var err error = nil
 		if node != "" {
@@ -133,21 +129,35 @@ func (this *Network) HandleMessage(request *base.Any) {
 		} else {
 			response, err = route.HandleMessage(request, this.hashKey)
 		}
+		//TODO 返回服务不可用,或者尝试重发其他有效的节点
+		if err != nil {
+			log.Debugf("handle response %v err : %v", response, err)
+			return
+		}
+		if response == nil || response.Value == nil || len(response.Value) == 0 {
+			return
+		}
+		response.Id = request.Id
 
 		//req := &protocol.Request{}
 		//req.Unmarshal(request.GetValue())
 		//
 		//resp := &protocol.Response{}
 		//resp.Unmarshal(response.GetValue())
-		//
-		//log.Debugf("request %+v : response:%+v", req, resp)
 
-		this.handleResponse(response, err)
-	}()
+		//log.Debugf("auth %v request %+v : response:%+v",request.AuthId, req, resp)
+		Manager.HandleResponse(this, response, err)
+		//this.handleResponse(response, err)
+	})
 }
 
-func (this *Network) internalHandleMessage(request *base.Any) {
-
+func (this *Network) handleResponse(response *base.Any, err error) {
+	//更新验权id
+	if response.GetAuthId() > 0 && !this.IsAuth() {
+		this.Auth(response.GetAuthId())
+	}
+	this.agent.WriteMsg(response)
+	//lpc.StatisticsHandler.AddServiceStatistic(route.GetServiceByeSeq(response.Id), 1, 0.001)
 }
 
 //绑定服务节点,固定转发
@@ -159,8 +169,8 @@ func (this *Network) BindService(binds map[string]string) {
 			continue
 		}
 		this.bindRoutes[serviceSeq] = serviceID
+		this.bindServices[serviceName] = serviceID
 	}
-	this.bindServices = binds
 }
 
 func (this *Network) GetRemoteAddr() net.Addr {
@@ -176,6 +186,10 @@ func (this *Network) Auth(id int64) {
 	this.hashKey = util.Int64ToString(id)
 	Manager.auth(id, this)
 	//Skeleton.ChanRPCServer.Go(CommandAgentAuth, id, this)
+}
+
+func (this *Network) GetAuthId() int64 {
+	return this.authID
 }
 
 //是否没有验权超时 释放多余的空连接

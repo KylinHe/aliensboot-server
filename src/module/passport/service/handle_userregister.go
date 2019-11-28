@@ -9,9 +9,11 @@
  *******************************************************************************/
 package service
 
-import "github.com/KylinHe/aliensboot-server/protocol"
+import (
+	"github.com/KylinHe/aliensboot-server/protocol"
+	"github.com/KylinHe/aliensboot-core/cluster/center/service"
+)
 
 //
-func handleUserRegister(request *protocol.UserRegister, response *protocol.UserRegisterRet) int64 {
-	return 0
+func handleUserRegister(ctx *service.Context, request *protocol.UserRegister, response *protocol.UserRegisterRet) {
 }

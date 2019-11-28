@@ -3,33 +3,28 @@
 package service
 
 import (
-
-    "github.com/KylinHe/aliensboot-core/chanrpc"
-    "github.com/KylinHe/aliensboot-core/cluster/center"
-    "github.com/KylinHe/aliensboot-core/cluster/center/service"
-    "github.com/KylinHe/aliensboot-core/exception"
-    "github.com/KylinHe/aliensboot-core/log"
-    "github.com/KylinHe/aliensboot-core/protocol/base"
-    "github.com/KylinHe/aliensboot-server/module/passport/conf"
-    "github.com/KylinHe/aliensboot-server/protocol"
-    "github.com/gogo/protobuf/proto"
+	"github.com/KylinHe/aliensboot-server/module/passport/conf"
+	"github.com/KylinHe/aliensboot-server/protocol"
+	"github.com/KylinHe/aliensboot-core/chanrpc"
+	"github.com/KylinHe/aliensboot-core/cluster/center"
+	"github.com/KylinHe/aliensboot-core/cluster/center/service"
+	"github.com/KylinHe/aliensboot-core/exception"
+	"github.com/gogo/protobuf/proto"
 )
 
 var instance service.IService = nil
 
 func Init(chanRpc *chanrpc.Server) {
-	instance = center.PublicService(conf.Config.Service, service.NewRpcHandler(chanRpc, handle))
+	instance = center.PublicService(conf.Config.Service, service.NewRpcHandler(nil, handle))
 }
 
 func Close() {
 	center.ReleaseService(instance)
 }
 
-func handle(request *base.Any) (response *base.Any) {
+func handle(ctx *service.Context) {
 	requestProxy := &protocol.Request{}
 	responseProxy := &protocol.Response{}
-	response = &base.Any{}
-	authID := request.GetAuthId()
 	defer func() {
 		//处理消息异常
 		if err := recover(); err != nil {
@@ -42,44 +37,59 @@ func handle(request *base.Any) (response *base.Any) {
 				responseProxy.Code = protocol.Code_ServerException
 			}
 		}
-		data, _ := proto.Marshal(responseProxy)
-		responseProxy.Session = requestProxy.GetSession()
-        response.AuthId = authID
-		response.Value = data
+		_ = ctx.GOGOProto(responseProxy)
 	}()
-	error := proto.Unmarshal(request.Value, requestProxy)
+	error := proto.Unmarshal(ctx.Request.Value, requestProxy)
 	if error != nil {
-	    log.Debug(error)
 		exception.GameException(protocol.Code_InvalidRequest)
 	}
-	authID = handleRequest(requestProxy, responseProxy)
-	return
+	responseProxy.Session = requestProxy.GetSession()
+	handleRequest(ctx, requestProxy, responseProxy)
 }
 
-func handleRequest(request *protocol.Request, response *protocol.Response) int64 {
-	
+func handleRequest(ctx *service.Context, request *protocol.Request, response *protocol.Response) {
+
 	if request.GetUserRegister() != nil {
 		messageRet := &protocol.UserRegisterRet{}
-		result := handleUserRegister(request.GetUserRegister(), messageRet)
+		handleUserRegister(ctx, request.GetUserRegister(), messageRet)
 		response.Passport = &protocol.Response_UserRegisterRet{messageRet}
-		return result
+		return
 	}
-	
+
 	if request.GetUserLogin() != nil {
 		messageRet := &protocol.UserLoginRet{}
-		result := handleUserLogin(request.GetUserLogin(), messageRet)
+		handleUserLogin(ctx, request.GetUserLogin(), messageRet)
 		response.Passport = &protocol.Response_UserLoginRet{messageRet}
-		return result
+		return
 	}
-	
+
 	if request.GetTokenLogin() != nil {
 		messageRet := &protocol.TokenLoginRet{}
-		result := handleTokenLogin(request.GetTokenLogin(), messageRet)
+		handleTokenLogin(ctx, request.GetTokenLogin(), messageRet)
 		response.Passport = &protocol.Response_TokenLoginRet{messageRet}
-		return result
+		return
 	}
-	
-	response.Code = protocol.Code_InvalidRequest
-	return 0
-}
 
+	if request.GetModifyUserStatus() != nil {
+		messageRet := &protocol.ModifyUserStatusRet{}
+		handleModifyUserStatus(ctx, request.GetModifyUserStatus(), messageRet)
+		response.Passport = &protocol.Response_ModifyUserStatusRet{messageRet}
+		return
+	}
+
+	if request.GetGetUser() != nil {
+		messageRet := &protocol.GetUserRet{}
+		handleGetUser(ctx, request.GetGetUser(), messageRet)
+		response.Passport = &protocol.Response_GetUserRet{messageRet}
+		return
+	}
+
+	if request.GetUserReset() != nil {
+		messageRet := &protocol.UserResetRet{}
+		handleUserReset(ctx, request.GetUserReset(), messageRet)
+		response.Passport = &protocol.Response_UserResetRet{messageRet}
+		return
+	}
+
+	response.Code = protocol.Code_InvalidRequest
+}

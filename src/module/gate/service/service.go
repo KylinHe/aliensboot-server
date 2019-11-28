@@ -27,7 +27,7 @@ func Close() {
 
 
 //register self handler
-func RegisteHandler(msgID uint16, handler func(request *base.Any)*base.Any) {
+func RegisterHandler(msgID uint16, handler func(request *base.Any)*base.Any) {
 	handlers[msgID] = handler
 }
 
@@ -40,14 +40,13 @@ func handleInternal(request *base.Any) (bool, *base.Any) {
 	return true, response
 }
 
-func handle(request *base.Any) (response *base.Any) {
-    ok, response := handleInternal(request)
-	if ok {
-		return response
-	}
+func handle(ctx *service.Context) {
+    ok, _ := handleInternal(ctx.Request)
+    if ok {
+    	return
+    }
 	requestProxy := &protocol.Request{}
 	responseProxy := &protocol.Response{}
-	response = &base.Any{}
 	isResponse := false
 	defer func() {
 		//处理消息异常
@@ -56,42 +55,51 @@ func handle(request *base.Any) (response *base.Any) {
 			case protocol.Code:
 				responseProxy.Code = err.(protocol.Code)
 				break
+			case *protocol.CodeMessage:
+			    responseProxy.CodeMessage = err.(*protocol.CodeMessage)
+			    break
 			default:
 				exception.PrintStackDetail(err)
 				responseProxy.Code = protocol.Code_ServerException
 			}
 			isResponse = true
 		}
-		if !isResponse {
-            return
+		if isResponse {
+            _ = ctx.GOGOProto(responseProxy)
         }
-		data, _ := proto.Marshal(responseProxy)
-		responseProxy.Session = requestProxy.GetSession()
-		response.Value = data
 	}()
-	error := proto.Unmarshal(request.Value, requestProxy)
+	error := proto.Unmarshal(ctx.Request.Value, requestProxy)
 	if error != nil {
 		exception.GameException(protocol.Code_InvalidRequest)
 	}
-	isResponse = handleRequest(request.GetAuthId(), request.GetGateId(), requestProxy, responseProxy)
-	return
+	responseProxy.Session = requestProxy.GetSession()
+	isResponse = handleRequest(ctx.Request.GetAuthId(), ctx.Request.GetGateId(), requestProxy, responseProxy)
 }
 
 func handleRequest(authID int64, gateID string, request *protocol.Request, response *protocol.Response) bool {
 	
-	if request.GetHeartBeat() != nil {
-		messageRet := &protocol.HeartBeat{}
-		handleHeartBeat(authID, gateID, request.GetHeartBeat(), messageRet)
-		response.Gate = &protocol.Response_HeartBeat{messageRet}
+	if request.GetHealthCheck() != nil {
+		messageRet := &protocol.HealthCheckRet{}
+		handleHealthCheck(authID, gateID, request.GetHealthCheck(), messageRet)
+		response.Gate = &protocol.Response_HealthCheckRet{messageRet}
+		return true
+	}
+	
+	if request.GetBindService() != nil {
+		messageRet := &protocol.BindServiceRet{}
+		handleBindService(authID, gateID, request.GetBindService(), messageRet)
+		response.Gate = &protocol.Response_BindServiceRet{messageRet}
+		return true
+	}
+	
+	if request.GetGetAuthNode() != nil {
+		messageRet := &protocol.GetAuthNodeRet{}
+		handleGetAuthNode(authID, gateID, request.GetGetAuthNode(), messageRet)
+		response.Gate = &protocol.Response_GetAuthNodeRet{messageRet}
 		return true
 	}
 	
 	
-    if request.GetBindService() != nil {
-    	handleBindService(authID, gateID, request.GetBindService())
-    	return false
-    }
-    
     if request.GetKickOut() != nil {
     	handleKickOut(authID, gateID, request.GetKickOut())
     	return false

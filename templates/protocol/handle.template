@@ -2,12 +2,13 @@
 // source: ${module}_interface.proto
 package service
 
-import "github.com/KylinHe/aliensboot-server/protocol"
+import "e.coding.net/aliens/slg_server/protocol"
 
 <message>
 //${o_desc}
-func handle${o_name}(authID int64, gateID string, request *${package}.${o_request}, response *${package}.${o_response}) {
+func handle${o_name}(authID int64, gateID string, request *${package}.${o_request_type}, response *${package}.${o_response_type}) {
 
+    return
 }
 <message>
 

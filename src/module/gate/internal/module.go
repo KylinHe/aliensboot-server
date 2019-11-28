@@ -1,14 +1,12 @@
 package internal
 
 import (
-
-	"github.com/KylinHe/aliensboot-core/module/base"
 	"github.com/KylinHe/aliensboot-server/module/gate/cache"
 	"github.com/KylinHe/aliensboot-server/module/gate/conf"
-	"github.com/KylinHe/aliensboot-server/module/gate/http"
 	"github.com/KylinHe/aliensboot-server/module/gate/network"
 	"github.com/KylinHe/aliensboot-server/module/gate/route"
 	"github.com/KylinHe/aliensboot-server/module/gate/service"
+	"github.com/KylinHe/aliensboot-core/module/base"
 )
 
 var Skeleton = base.NewSkeleton()
@@ -31,10 +29,10 @@ func (m *Module) OnInit() {
 	cache.Init()
 	network.Init(Skeleton)
 	service.Init(Skeleton.ChanRPCServer)
-	http.Init(conf.Config.Http)
+	//http.Init(conf.Config.Http)
 }
 
 func (m *Module) OnDestroy() {
-	http.Close()
+	//http.Close()
 	service.Close()
 }

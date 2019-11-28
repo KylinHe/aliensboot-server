@@ -9,17 +9,19 @@ service:
   #
   address:
   #
-  # service lbs strategy options[polling,hashing]
+  # service lbs strategy options[Polling,HashRing]
   #
   lbs: Polling
+
 # -------------------------------- Database ---------------------------
 database:
   address: 127.0.0.1:27017
-  name: aliens_passport
-# -------------------------------- Cache ---------------------------
+  name: db_passport
+  maxsession: 100
 cache:
   address: 127.0.0.1:6379
   password:
+  wait: true
 # -------------------------------- Custom ---------------------------
 default_channel_password: 11111111
 appkey: e434e639ff7247aea5622f339b383c

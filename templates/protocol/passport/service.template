@@ -3,33 +3,28 @@
 package service
 
 import (
-
+    "e.coding.net/aliens/slg_server/module/${module}/conf"
+    "e.coding.net/aliens/slg_server/${package}"
     "github.com/KylinHe/aliensboot-core/chanrpc"
     "github.com/KylinHe/aliensboot-core/cluster/center"
     "github.com/KylinHe/aliensboot-core/cluster/center/service"
     "github.com/KylinHe/aliensboot-core/exception"
-    "github.com/KylinHe/aliensboot-core/log"
-    "github.com/KylinHe/aliensboot-core/protocol/base"
-    "github.com/KylinHe/aliensboot-server/module/${module}/conf"
-    "github.com/KylinHe/aliensboot-server/${package}"
     "github.com/gogo/protobuf/proto"
 )
 
 var instance service.IService = nil
 
 func Init(chanRpc *chanrpc.Server) {
-	instance = center.PublicService(conf.Config.Service, service.NewRpcHandler(chanRpc, handle))
+	instance = center.PublicService(conf.Config.Service, service.NewRpcHandler(nil, handle))
 }
 
 func Close() {
 	center.ReleaseService(instance)
 }
 
-func handle(request *base.Any) (response *base.Any) {
+func handle(ctx *service.Context) {
 	requestProxy := &${package}.Request{}
 	responseProxy := &${package}.Response{}
-	response = &base.Any{}
-	authID := request.GetAuthId()
 	defer func() {
 		//处理消息异常
 		if err := recover(); err != nil {
@@ -42,30 +37,25 @@ func handle(request *base.Any) (response *base.Any) {
 				responseProxy.Code = ${package}.Code_ServerException
 			}
 		}
-		data, _ := proto.Marshal(responseProxy)
-		responseProxy.Session = requestProxy.GetSession()
-        response.AuthId = authID
-		response.Value = data
+		_ = ctx.GOGOProto(responseProxy)
 	}()
-	error := proto.Unmarshal(request.Value, requestProxy)
+	error := proto.Unmarshal(ctx.Request.Value, requestProxy)
 	if error != nil {
-	    log.Debug(error)
 		exception.GameException(${package}.Code_InvalidRequest)
 	}
-	authID = handleRequest(requestProxy, responseProxy)
-	return
+	responseProxy.Session = requestProxy.GetSession()
+	handleRequest(ctx, requestProxy, responseProxy)
 }
 
-func handleRequest(request *${package}.Request, response *${package}.Response) int64 {
+func handleRequest(ctx *service.Context, request *${package}.Request, response *${package}.Response) {
 	<message>
 	if request.Get${o_request}() != nil {
-		messageRet := &${package}.${o_response}{}
-		result := handle${o_name}(request.Get${o_request}(), messageRet)
+		messageRet := &${package}.${o_response_type}{}
+		handle${o_name}(ctx, request.Get${o_request}(), messageRet)
 		response.${Module} = &${package}.Response_${o_response}{messageRet}
-		return result
+		return
 	}
 	<message>
 	response.Code = ${package}.Code_InvalidRequest
-	return 0
 }
 

@@ -14,26 +14,71 @@ type gateRPCHandler struct {
 }
 
 
-func (this *gateRPCHandler) HeartBeat(node string, request *protocol.HeartBeat) *protocol.HeartBeat {
+func (this *gateRPCHandler) HealthCheck(node string, request *protocol.HealthCheck) *protocol.HealthCheckRet {
 	message := &protocol.Request{
-		Gate:&protocol.Request_HeartBeat{
-			HeartBeat:request,
+		Gate:&protocol.Request_HealthCheck{
+			HealthCheck:request,
 		},
 	}
 	messageRet := this.Request(node, message)
-	return messageRet.GetHeartBeat()
+	return messageRet.GetHealthCheckRet()
 }
 
 
+func (this *gateRPCHandler) TestHealthCheck(authId int64, node string, request *protocol.HealthCheck) (*protocol.HealthCheckRet, error) {
+	message := &protocol.Request{
+		Gate:&protocol.Request_HealthCheck{
+			HealthCheck:request,
+		},
+	}
+	messageRet, err := this.TestRequest(authId, node, message)
+	return messageRet.GetHealthCheckRet(), err
+}
 
-func (this *gateRPCHandler) BindService(node string, request *protocol.BindService) error {
+func (this *gateRPCHandler) BindService(node string, request *protocol.BindService) *protocol.BindServiceRet {
 	message := &protocol.Request{
 		Gate:&protocol.Request_BindService{
 			BindService:request,
 		},
 	}
-	return this.Send(node, message)
+	messageRet := this.Request(node, message)
+	return messageRet.GetBindServiceRet()
 }
+
+
+func (this *gateRPCHandler) TestBindService(authId int64, node string, request *protocol.BindService) (*protocol.BindServiceRet, error) {
+	message := &protocol.Request{
+		Gate:&protocol.Request_BindService{
+			BindService:request,
+		},
+	}
+	messageRet, err := this.TestRequest(authId, node, message)
+	return messageRet.GetBindServiceRet(), err
+}
+
+func (this *gateRPCHandler) GetAuthNode(node string, request *protocol.GetAuthNode) *protocol.GetAuthNodeRet {
+	message := &protocol.Request{
+		Gate:&protocol.Request_GetAuthNode{
+			GetAuthNode:request,
+		},
+	}
+	messageRet := this.Request(node, message)
+	return messageRet.GetGetAuthNodeRet()
+}
+
+
+func (this *gateRPCHandler) TestGetAuthNode(authId int64, node string, request *protocol.GetAuthNode) (*protocol.GetAuthNodeRet, error) {
+	message := &protocol.Request{
+		Gate:&protocol.Request_GetAuthNode{
+			GetAuthNode:request,
+		},
+	}
+	messageRet, err := this.TestRequest(authId, node, message)
+	return messageRet.GetGetAuthNodeRet(), err
+}
+
+
+
 
 func (this *gateRPCHandler) KickOut(node string, request *protocol.KickOut) error {
 	message := &protocol.Request{

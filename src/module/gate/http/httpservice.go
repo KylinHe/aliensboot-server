@@ -10,53 +10,80 @@
 package http
 
 import (
+	"github.com/KylinHe/aliensboot-server/protocol"
+	"encoding/json"
+	"fmt"
 	"github.com/KylinHe/aliensboot-core/config"
+	"github.com/KylinHe/aliensboot-core/exception"
 	"github.com/KylinHe/aliensboot-core/log"
-	"github.com/KylinHe/aliensboot-server/module/gate/route"
+	"github.com/KylinHe/aliensboot-core/task"
 	"github.com/gin-gonic/gin"
-	"io/ioutil"
 	"net/http"
+	//_ "net/http/pprof"
 )
 
 func Init(config config.HttpConfig) {
+	//_ = http.ListenAndServe("0.0.0.0:6060", nil)
 	if config.Address == "" {
 		return
 	}
-	go func() {
-		router := gin.Default()
-		if !log.DEBUG {
-			gin.SetMode(gin.ReleaseMode)
-		}
-		router.Any(config.Prefix+"/:service/:handler", handleService)
+	//if !aliensboot.IsDebug() {
+	gin.SetMode(gin.ReleaseMode)
+	//}
+	router := gin.Default()
+
+	router.Any(config.Prefix+"/:service/:handler", handleService)
+	task.SafeGo(func() {
+		defer func() {
+			if err := recover(); err != nil {
+				exception.PrintStackDetail(err)
+			}
+		}()
 		err := router.Run(config.Address)
 		if err != nil {
 			log.Fatalf("start http service err : %v", err)
 		}
-	}()
+	})
 }
 
 func Close() {
 
 }
 
-func handleService(c *gin.Context) {
-	service := c.Param("service")
-
-	//var data map[string]interface{}
-	//c.ShouldBindQuery(data)
-	//c.shouldbind
-
-	body, _ := ioutil.ReadAll(c.Request.Body)
-	//data, _ := json.Marshal(c.Request.Form)
-
-	log.Debugf("request data %v", string(body))
-	response, err := route.HandleUrlMessage(service, body)
-	if err != nil {
-		response = []byte(err.Error())
-		c.String(http.StatusInternalServerError, string(response))
-	} else {
-		c.String(http.StatusOK, string(response))
+func registerMsg(handler string, data []byte, request *protocol.Request) error {
+	if handler == "benchmark" {
+		benchmark := &protocol.Benchmark{}
+		err := json.Unmarshal(data, benchmark)
+		game := &protocol.Request_Benchmark{Benchmark: benchmark}
+		request.Game = game
+		return err
 	}
+	return fmt.Errorf("unexpect handler %v", handler)
+
+}
+
+func handleService(c *gin.Context) {
+	//c.String(http.StatusOK, "ok")
+
+	c.JSON(http.StatusOK, gin.H{"errmsg": 1})
+	//service := c.Param("service")
+	//handler := c.Param("handler")
+	//
+	//body, _ := ioutil.ReadAll(c.Request.Body)
+	//request := &protocol.Request{}
+	//err := registerMsg(handler, body, request)
+	//
+	//data, err := request.Marshal()
+	//
+	//response, err := route.HandleUrlMessage(service, data)
+	//
+	//if err != nil {
+	//	response = []byte(err.Error())
+	//	log.Debugf("request data %v", string(response))
+	//	c.String(http.StatusInternalServerError, string(response))
+	//} else {
+	//	c.String(http.StatusOK, string(response))
+	//}
 	//_, err := w.Write(response)
 	//if err != nil {
 	//	log.Debug(err.Error())

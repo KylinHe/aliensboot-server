@@ -1,9 +1,9 @@
 package internal
 
 import (
-	"github.com/KylinHe/aliensboot-core/gate"
 	"github.com/KylinHe/aliensboot-server/module/gate/conf"
 	"github.com/KylinHe/aliensboot-server/module/gate/msg"
+	"github.com/KylinHe/aliensboot-core/gate"
 )
 
 type SubModule struct {

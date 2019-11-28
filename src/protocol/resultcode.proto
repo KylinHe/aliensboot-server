@@ -32,8 +32,9 @@ enum Code {
     invalidEntityCall = 201; //无效的方法调用
 
     InvalidService = 1000; //服务不可用
+}
 
-
-
-
+message CodeMessage {
+    Code code = 1;
+    repeated string param = 2;
 }

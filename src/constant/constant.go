@@ -9,6 +9,9 @@
  *******************************************************************************/
 package constant
 
+const SystemAuthId int64 = -1
+const SystemMsgId uint16 = 666
+
 const (
 	TestAppID = "0"
 
@@ -26,4 +29,15 @@ const (
 	OptLockSeat   int32 = 1
 	OptLeaveSeat  int32 = 2
 	OptChangeSeat int32 = 3 //替换座位
+)
+
+const (
+	ModulePassportId uint16 = 1
+	HeaderIP         string = "ip"
+)
+
+const (
+	UserStateNone      int = 0
+	UserStateForbidden     = 1
+	UserStateBanned        = 2
 )

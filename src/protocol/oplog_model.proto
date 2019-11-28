@@ -1,0 +1,130 @@
+syntax = "proto3";
+package protocol;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+enum Operation {
+    none = 0; //无
+}
+
+// 注册
+message logRegister {
+    string id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    int64 roleId = 2; //角色id
+    int64 time = 4; //注册时间
+    string platform = 8; //平台
+    string channel = 7; //渠道
+}
+
+// 登录日志
+message logLogin {
+    string id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    int64 roleId = 2; //角色id
+    int64 time = 3; //登录时间
+    string ip = 4; //ip地址
+}
+
+// 登出日志
+message logLogout {
+    string id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    int64 roleId = 2; //角色id
+    int64 time = 3; //登出时间戳
+    int32 activeTime = 4; //活跃时长
+    int32 logoutType = 5; //登出类型
+}
+
+// 钻石日志
+message logDiamond {
+    string id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    int64 roleId = 2;
+    int64 time = 3;
+    Operation operation = 4; // 操作
+    int32 change = 5; // 改变值
+    int32 current = 6; // 当前值
+}
+
+// 充值日志
+message logCharge {
+    string id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    int64 roleId = 2;
+    int64 time = 3;
+    float value = 5;
+    int32 currencyType = 6;
+    string order = 7;
+    int32 shopID = 8;
+}
+
+//--------------------------------------日结算日志-------------------
+
+//AnalysisTypeDau = "dau" //活跃用户
+//AnalysisTypeDv = "dv"  //访问次数
+//AnalysisTypeDr = "dr"  //注册用户
+//AnalysisTypeDrt = "drt" //累计注册用户
+//AnalysisTypeDav = "dav" //人均访问次数
+//AnalysisTypeDat = "dat" //人均停留时长
+
+message logDayActiveUser {
+    int64 id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    int32 value = 2;
+}
+
+message logDayVisit {
+    int64 id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    int32 value = 2;
+}
+
+message logDayRegister {
+    int64 id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    int32 value = 2;
+}
+
+message logDayRegisterTotal {
+    int64 id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    int32 value = 2;
+}
+
+message logDayAvgVisit {
+    int64 id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    int32 value = 2;
+}
+
+message logDayAvgTime {
+    int64 id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    int32 value = 2;
+}
+
+// 次日注册留存率
+message logDayRegisterRetention1 {
+    int64 id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    float value = 2;
+}
+
+// 3日注册留存率
+message logDayRegisterRetention3 {
+    int64 id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    float value = 2;
+}
+
+// 7日注册留存率
+message logDayRegisterRetention7 {
+    int64 id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    float value = 2;
+}
+
+// 次日活跃留存率
+message logDayActiveRetention1 {
+    int64 id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    float value = 2;
+}
+
+// 3日活跃留存率
+message logDayActiveRetention3 {
+    int64 id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    float value = 2;
+}
+
+// 7日活跃留存率
+message logDayActiveRetention7 {
+    int64 id = 1 [(gogoproto.moretags) = "bson:\"_id\""];
+    float value = 2;
+}

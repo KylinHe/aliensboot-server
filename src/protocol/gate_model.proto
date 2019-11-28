@@ -2,11 +2,11 @@ syntax = "proto3";
 package protocol;
 
 enum KickType {
-    None = 0;     //无
+    None = 0; //无
     OtherSession = 1; //其他会话登录
-    Timeout = 2;      //长时间没有操作
-    ServerClose = 3;  //服务器关闭
-    ServerStop = 4;   //停服
+    Timeout = 2; //长时间没有操作
+    ServerClose = 3; //服务器关闭
+    ServerStop = 4; //停服
     ServerMaintain = 5; //服务器维护
 
     KickOut = 20; //房主T人

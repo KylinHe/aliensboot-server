@@ -8,8 +8,8 @@ import (
     "github.com/KylinHe/aliensboot-core/cluster/center"
     "github.com/KylinHe/aliensboot-core/exception"
     "github.com/KylinHe/aliensboot-core/protocol/base"
-    "github.com/KylinHe/aliensboot-server/module/${module}/conf"
-    "github.com/KylinHe/aliensboot-server/${package}"
+    "e.coding.net/aliens/slg_server/module/${module}/conf"
+    "e.coding.net/aliens/slg_server/${package}"
     "github.com/gogo/protobuf/proto"
 )
 
@@ -27,7 +27,7 @@ func Close() {
 
 
 //register self handler
-func RegisteHandler(msgID uint16, handler func(request *base.Any)*base.Any) {
+func RegisterHandler(msgID uint16, handler func(request *base.Any)*base.Any) {
 	handlers[msgID] = handler
 }
 
@@ -40,14 +40,13 @@ func handleInternal(request *base.Any) (bool, *base.Any) {
 	return true, response
 }
 
-func handle(request *base.Any) (response *base.Any) {
-    ok, response := handleInternal(request)
-	if ok {
-		return response
-	}
+func handle(ctx *service.Context) {
+    ok, _ := handleInternal(ctx.Request)
+    if ok {
+    	return
+    }
 	requestProxy := &${package}.Request{}
 	responseProxy := &${package}.Response{}
-	response = &base.Any{}
 	isResponse := false
 	defer func() {
 		//处理消息异常
@@ -56,31 +55,31 @@ func handle(request *base.Any) (response *base.Any) {
 			case ${package}.Code:
 				responseProxy.Code = err.(${package}.Code)
 				break
+			case *${package}.CodeMessage:
+			    responseProxy.CodeMessage = err.(*${package}.CodeMessage)
+			    break
 			default:
 				exception.PrintStackDetail(err)
 				responseProxy.Code = ${package}.Code_ServerException
 			}
 			isResponse = true
 		}
-		if !isResponse {
-            return
+		if isResponse {
+            _ = ctx.GOGOProto(responseProxy)
         }
-		data, _ := proto.Marshal(responseProxy)
-		responseProxy.Session = requestProxy.GetSession()
-		response.Value = data
 	}()
-	error := proto.Unmarshal(request.Value, requestProxy)
+	error := proto.Unmarshal(ctx.Request.Value, requestProxy)
 	if error != nil {
 		exception.GameException(${package}.Code_InvalidRequest)
 	}
-	isResponse = handleRequest(request.GetAuthId(), request.GetGateId(), requestProxy, responseProxy)
-	return
+	responseProxy.Session = requestProxy.GetSession()
+	isResponse = handleRequest(ctx.Request.GetAuthId(), ctx.Request.GetGateId(), requestProxy, responseProxy)
 }
 
 func handleRequest(authID int64, gateID string, request *${package}.Request, response *${package}.Response) bool {
 	<message>
 	if request.Get${o_request}() != nil {
-		messageRet := &${package}.${o_response}{}
+		messageRet := &${package}.${o_response_type}{}
 		handle${o_name}(authID, gateID, request.Get${o_request}(), messageRet)
 		response.${Module} = &${package}.Response_${o_response}{messageRet}
 		return true

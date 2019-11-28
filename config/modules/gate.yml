@@ -1,16 +1,17 @@
 # -------------------------------- Service ---------------------------
 service:
   name: gate
-  port: 20107
+  port: 10107
   #
   # registered in the service center [zookeepr or etcd], exposed to the
   # external address information
   #
   address:
   #
-  # service lbs strategy options[polling,hashing]
+  # service lbs strategy options[Polling,HashRing]
   #
   lbs: Polling
+
 # ---------------------------------- Network --------------------------
 #
 #
@@ -39,7 +40,7 @@ websocket:
   address: :28107
   maxconnnum: 20000
   pendingwritenum: 2000
-  maxmsglen: 4096
+  maxmsglen: 409600
   httptimeout: 10
   certfile:
   keyfile:
@@ -48,18 +49,21 @@ websocket:
 #http:
 #  address: :8712
 #  prefix: /aliens
-# -------------------------------- Cache ---------------------------
 cache:
   address: 127.0.0.1:6379
   password:
+  wait: true
 # ---------------------------------- Routes ---------------------------
 #
 # service name - message seq
 #
-routes: {gate: 0, passport: 1, game: 2, room: 3, hall: 8, scene: 9}
+routes: {gate: 1000, passport: 1, game: 2, battle: 3, chat: 4, mail: 5, match: 6, explore: 7, fight: 8, social: 9, union: 10}
 #
-# ---------------------------------- Auth -----------------------------
+# when network close , the service need to notify
+session: ["game", "battle", "chat"]
 #
-auth:
-  timeout: 60
+# ---------------------------------- check -----------------------------
+#
+authtimeout: 0
+heartbeattimeout: 0
 

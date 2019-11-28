@@ -10,10 +10,11 @@
 package rpc
 
 import (
-	"github.com/KylinHe/aliensboot-core/exception"
-	"github.com/KylinHe/aliensboot-core/log"
 	"github.com/KylinHe/aliensboot-server/dispatch"
 	"github.com/KylinHe/aliensboot-server/protocol"
+	"github.com/KylinHe/aliensboot-core/common/util"
+	"github.com/KylinHe/aliensboot-core/exception"
+	"github.com/KylinHe/aliensboot-core/log"
 )
 
 type rpcHandler struct {
@@ -33,6 +34,14 @@ func (this *rpcHandler) Request(node string, request *protocol.Request) *protoco
 		exception.GameException(protocol.Code_InvalidService)
 	}
 	return rpcRet
+}
+
+func (this *rpcHandler) TestRequest(authId int64, node string, request *protocol.Request) (*protocol.Response, error) {
+	if node != "" {
+		return dispatch.TestRequestNodeMessage(authId, this.name, node, request)
+	} else {
+		return dispatch.TestRequestMessage(authId, this.name, request, util.Int64ToString(authId))
+	}
 }
 
 func (this *rpcHandler) Send(node string, request *protocol.Request) error {

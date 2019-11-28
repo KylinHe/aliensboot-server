@@ -3,16 +3,11 @@
 package service
 
 import (
-	"github.com/KylinHe/aliensboot-core/log"
 	"github.com/KylinHe/aliensboot-server/module/gate/network"
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-
-
-
 //
-func handleBindService(authID int64, gateID string, request *protocol.BindService) {
-	log.Debugf("bind : %v - %v", request.GetAuthID(), request.GetBinds())
-	network.Manager.BindService(request.GetAuthID(), request.GetBinds())
+func handleBindService(authID int64, gateID string, request *protocol.BindService, response *protocol.BindServiceRet) {
+	response.Result = network.Manager.BindService(request.GetAuthId(), request.GetBinds())
 }

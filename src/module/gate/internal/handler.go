@@ -10,10 +10,10 @@
 package internal
 
 import (
-	"github.com/KylinHe/aliensboot-core/gate"
-	"github.com/KylinHe/aliensboot-core/protocol/base"
 	"github.com/KylinHe/aliensboot-server/module/gate/msg"
 	"github.com/KylinHe/aliensboot-server/module/gate/network"
+	"github.com/KylinHe/aliensboot-core/gate"
+	"github.com/KylinHe/aliensboot-core/protocol/base"
 )
 
 func init() {
@@ -49,6 +49,12 @@ func init() {
 //新的连接处理
 func newAgent(args []interface{}) {
 	agent := args[0].(gate.Agent)
+	//ip := agent.RemoteAddr().(*net.TCPAddr).IP.String()
+	// 禁用ip不允许登录
+	//if !conf.EnsureIP(ip) {
+	//	agent.Close()
+	//	return
+	//}
 	if agent.UserData() == nil {
 		//打开缓存大小为5的收消息管道
 		networker := network.NewNetwork(agent)
@@ -60,8 +66,10 @@ func newAgent(args []interface{}) {
 //关闭连接处理
 func closeAgent(args []interface{}) {
 	a := args[0].(gate.Agent)
-	network.Manager.RemoveNetwork(a.UserData().(*network.Network))
-	a.SetUserData(nil)
+	if a.UserData() != nil {
+		network.Manager.RemoveNetwork(a.UserData().(*network.Network))
+		a.SetUserData(nil)
+	}
 }
 
 //消息处理

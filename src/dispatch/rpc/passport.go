@@ -24,6 +24,17 @@ func (this *passportRPCHandler) UserRegister(node string, request *protocol.User
 	return messageRet.GetUserRegisterRet()
 }
 
+
+func (this *passportRPCHandler) TestUserRegister(authId int64, node string, request *protocol.UserRegister) (*protocol.UserRegisterRet, error) {
+	message := &protocol.Request{
+		Passport:&protocol.Request_UserRegister{
+			UserRegister:request,
+		},
+	}
+	messageRet, err := this.TestRequest(authId, node, message)
+	return messageRet.GetUserRegisterRet(), err
+}
+
 func (this *passportRPCHandler) UserLogin(node string, request *protocol.UserLogin) *protocol.UserLoginRet {
 	message := &protocol.Request{
 		Passport:&protocol.Request_UserLogin{
@@ -32,6 +43,17 @@ func (this *passportRPCHandler) UserLogin(node string, request *protocol.UserLog
 	}
 	messageRet := this.Request(node, message)
 	return messageRet.GetUserLoginRet()
+}
+
+
+func (this *passportRPCHandler) TestUserLogin(authId int64, node string, request *protocol.UserLogin) (*protocol.UserLoginRet, error) {
+	message := &protocol.Request{
+		Passport:&protocol.Request_UserLogin{
+			UserLogin:request,
+		},
+	}
+	messageRet, err := this.TestRequest(authId, node, message)
+	return messageRet.GetUserLoginRet(), err
 }
 
 func (this *passportRPCHandler) TokenLogin(node string, request *protocol.TokenLogin) *protocol.TokenLoginRet {
@@ -43,5 +65,80 @@ func (this *passportRPCHandler) TokenLogin(node string, request *protocol.TokenL
 	messageRet := this.Request(node, message)
 	return messageRet.GetTokenLoginRet()
 }
+
+
+func (this *passportRPCHandler) TestTokenLogin(authId int64, node string, request *protocol.TokenLogin) (*protocol.TokenLoginRet, error) {
+	message := &protocol.Request{
+		Passport:&protocol.Request_TokenLogin{
+			TokenLogin:request,
+		},
+	}
+	messageRet, err := this.TestRequest(authId, node, message)
+	return messageRet.GetTokenLoginRet(), err
+}
+
+func (this *passportRPCHandler) ModifyUserStatus(node string, request *protocol.ModifyUserStatus) *protocol.ModifyUserStatusRet {
+	message := &protocol.Request{
+		Passport:&protocol.Request_ModifyUserStatus{
+			ModifyUserStatus:request,
+		},
+	}
+	messageRet := this.Request(node, message)
+	return messageRet.GetModifyUserStatusRet()
+}
+
+
+func (this *passportRPCHandler) TestModifyUserStatus(authId int64, node string, request *protocol.ModifyUserStatus) (*protocol.ModifyUserStatusRet, error) {
+	message := &protocol.Request{
+		Passport:&protocol.Request_ModifyUserStatus{
+			ModifyUserStatus:request,
+		},
+	}
+	messageRet, err := this.TestRequest(authId, node, message)
+	return messageRet.GetModifyUserStatusRet(), err
+}
+
+func (this *passportRPCHandler) GetUser(node string, request *protocol.GetUser) *protocol.GetUserRet {
+	message := &protocol.Request{
+		Passport:&protocol.Request_GetUser{
+			GetUser:request,
+		},
+	}
+	messageRet := this.Request(node, message)
+	return messageRet.GetGetUserRet()
+}
+
+
+func (this *passportRPCHandler) TestGetUser(authId int64, node string, request *protocol.GetUser) (*protocol.GetUserRet, error) {
+	message := &protocol.Request{
+		Passport:&protocol.Request_GetUser{
+			GetUser:request,
+		},
+	}
+	messageRet, err := this.TestRequest(authId, node, message)
+	return messageRet.GetGetUserRet(), err
+}
+
+func (this *passportRPCHandler) UserReset(node string, request *protocol.UserReset) *protocol.UserResetRet {
+	message := &protocol.Request{
+		Passport:&protocol.Request_UserReset{
+			UserReset:request,
+		},
+	}
+	messageRet := this.Request(node, message)
+	return messageRet.GetUserResetRet()
+}
+
+
+func (this *passportRPCHandler) TestUserReset(authId int64, node string, request *protocol.UserReset) (*protocol.UserResetRet, error) {
+	message := &protocol.Request{
+		Passport:&protocol.Request_UserReset{
+			UserReset:request,
+		},
+	}
+	messageRet, err := this.TestRequest(authId, node, message)
+	return messageRet.GetUserResetRet(), err
+}
+
 
 

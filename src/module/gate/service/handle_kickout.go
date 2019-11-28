@@ -7,9 +7,6 @@ import (
 	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
-
-
-
 //push
 func handleKickOut(authID int64, gateID string, request *protocol.KickOut) {
 	network.Manager.KickOut(request.GetAuthID(), request.GetKickType())

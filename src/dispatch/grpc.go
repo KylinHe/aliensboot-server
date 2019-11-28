@@ -10,14 +10,20 @@
 package dispatch
 
 import (
+	"github.com/KylinHe/aliensboot-server/constant"
+	"github.com/KylinHe/aliensboot-server/protocol"
 	"github.com/KylinHe/aliensboot-core/cluster/center/service"
 	"github.com/KylinHe/aliensboot-core/cluster/message"
 	"github.com/KylinHe/aliensboot-core/protocol/base"
-	"github.com/KylinHe/aliensboot-server/protocol"
 	"github.com/gogo/protobuf/proto"
 )
 
 var serviceMapping = make(map[string]*message.RemoteService)
+
+// 初始化远程服务
+func Init(service string) {
+	allocService(service)
+}
 
 //阻塞请求消息 - 根据负载均衡动态分配一个节点处理
 func RequestMessage(serviceName string, message *protocol.Request, hashKey string) (*protocol.Response, error) {
@@ -25,7 +31,25 @@ func RequestMessage(serviceName string, message *protocol.Request, hashKey strin
 	if err != nil {
 		return nil, err
 	}
-	request := &base.Any{Value: data}
+	request := &base.Any{AuthId: constant.SystemAuthId, Value: data}
+	response, err := Request(serviceName, request, hashKey)
+	if err != nil {
+		return nil, err
+	}
+	messageRet := &protocol.Response{}
+	err = messageRet.Unmarshal(response.GetValue())
+	if err != nil {
+		return nil, err
+	}
+	return messageRet, nil
+}
+
+func TestRequestMessage(authId int64, serviceName string, message *protocol.Request, hashKey string) (*protocol.Response, error) {
+	data, err := proto.Marshal(message)
+	if err != nil {
+		return nil, err
+	}
+	request := &base.Any{AuthId: authId, Value: data}
 	response, err := Request(serviceName, request, hashKey)
 	if err != nil {
 		return nil, err
@@ -41,34 +65,47 @@ func RequestMessage(serviceName string, message *protocol.Request, hashKey strin
 //异步发送信息
 func SendNodeMessage(serviceName string, serviceID string, message *protocol.Request) error {
 	data, _ := message.Marshal()
-	request := &base.Any{Value: data}
+	request := &base.Any{AuthId: constant.SystemAuthId, Value: data}
 	return SendNode(serviceName, serviceID, request)
 }
 
 //异步发送信息
 func SendMessage(serviceName string, message *protocol.Request, hashKey string) error {
 	data, _ := message.Marshal()
-	request := &base.Any{Value: data}
+	request := &base.Any{AuthId: constant.SystemAuthId, Value: data}
 	return Send(serviceName, request, hashKey)
 }
 
 func Broadcast(serviceName string, message *protocol.Request) {
 	service := allocService(serviceName)
 	data, _ := message.Marshal()
-	request := &base.Any{Value: data}
+	request := &base.Any{AuthId: constant.SystemAuthId, Value: data}
 	service.BroadcastAll(request)
 }
 
 //同步阻塞请求
-func RequestNodeMessage(serviceName string, serviceID string, message *protocol.Request) (*protocol.Response, error) {
+func TestRequestNodeMessage(authId int64, serviceName string, serviceID string, message *protocol.Request) (*protocol.Response, error) {
 	data, _ := message.Marshal()
-	request := &base.Any{Value: data}
+	request := &base.Any{AuthId: authId, Value: data}
 	response, err := RequestNode(serviceName, serviceID, request)
 	if err != nil {
 		return nil, err
 	}
 	messageRet := &protocol.Response{}
-	messageRet.Unmarshal(response.GetValue())
+	_ = messageRet.Unmarshal(response.GetValue())
+	return messageRet, nil
+}
+
+//同步阻塞请求
+func RequestNodeMessage(serviceName string, serviceID string, message *protocol.Request) (*protocol.Response, error) {
+	data, _ := message.Marshal()
+	request := &base.Any{AuthId: constant.SystemAuthId, Value: data}
+	response, err := RequestNode(serviceName, serviceID, request)
+	if err != nil {
+		return nil, err
+	}
+	messageRet := &protocol.Response{}
+	_ = messageRet.Unmarshal(response.GetValue())
 	return messageRet, nil
 }
 

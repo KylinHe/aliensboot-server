@@ -114,7 +114,7 @@ package dispatch
 //	if err != nil {
 //		return err
 //	}
-//	dispatcher.producer.Push(serviceType, serviceID, data)
+//	dispatcher.producer.push(serviceType, serviceID, data)
 //	return nil
 //}
 //
@@ -124,6 +124,6 @@ package dispatch
 //	if err != nil {
 //		return err
 //	}
-//	dispatcher.producer.Broadcast(serviceType, data)
+//	dispatcher.producer.AutoPush(serviceType, data)
 //	return nil
 //}

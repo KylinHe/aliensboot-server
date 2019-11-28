@@ -13,4 +13,7 @@ const (
 	//服务器内部消息
 
 	MsgOffline uint16 = 999 //玩家离线
+
+
+	LogCommand = "log"
 )

@@ -11,9 +11,10 @@ package service
 
 import (
 	"github.com/KylinHe/aliensboot-server/protocol"
+	"github.com/KylinHe/aliensboot-core/cluster/center/service"
 )
 
 //
-func handleTokenLogin(request *protocol.TokenLogin, response *protocol.TokenLoginRet) int64 {
-	return 0
+func handleTokenLogin(ctx *service.Context, request *protocol.TokenLogin, response *protocol.TokenLoginRet) {
+
 }

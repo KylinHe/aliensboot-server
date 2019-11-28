@@ -15,7 +15,7 @@ cluster:
   #
   # Use a descriptive name for your cluster:
   #
-  name: my-cluster
+  name: slg-local
   #
   # cluster center address，support[etcd,zookeeper]
   #
@@ -28,6 +28,8 @@ cluster:
   # Timeout is the timeout for failing to establish a connection.
   #
   timeout: 10
+  username:
+  password:
   #
   # Use a descriptive name for the node:
   #
@@ -41,8 +43,8 @@ path.profile:
 #
 # ----------------------------------- Debug ------------------------------------
 #
-#console.port: 6666
-console.prompt: AliensBoot#
+console.port: 6666
+console.prompt: tgoc-pprof
 #
 # ---------------------------------- Statistics -----------------------------
 #

@@ -16,7 +16,7 @@ var Config struct {
 	AppKey string
 }
 
-func Init() {
+func InitConfig() {
 	if Config.TokenExpireTime <= 0 {
 		//默认过期时间七天
 		Config.TokenExpireTime = int64(7 * 24 * time.Hour)

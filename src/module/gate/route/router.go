@@ -10,12 +10,12 @@
 package route
 
 import (
+	"github.com/KylinHe/aliensboot-server/dispatch"
+	"github.com/KylinHe/aliensboot-server/module/gate/conf"
 	"errors"
 	"fmt"
 	"github.com/KylinHe/aliensboot-core/cluster/center/service"
 	"github.com/KylinHe/aliensboot-core/protocol/base"
-	"github.com/KylinHe/aliensboot-server/dispatch"
-	"github.com/KylinHe/aliensboot-server/module/gate/conf"
 )
 
 //requestID - service
@@ -30,6 +30,7 @@ func Init() {
 	for service, seq := range conf.Config.Routes {
 		seqServiceMapping[seq] = service
 		serviceSeqMapping[service] = seq
+		dispatch.Init(service)
 	}
 }
 
@@ -49,10 +50,6 @@ func HandleUrlMessage(serviceName string, requestData []byte) ([]byte, error) {
 	}
 	return response.Value, nil
 }
-
-//func GetPushID(service string) uint16 {
-//	return serviceSeqMapping[service]
-//}
 
 func AsyncHandleMessage(hashKey string, asyncCall *service.AsyncCall) error {
 	serviceName, ok := seqServiceMapping[asyncCall.ReqID()]

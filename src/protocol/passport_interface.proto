@@ -3,6 +3,15 @@ package protocol;
 
 import "passport_model.proto";
 
+//清除
+message userReset {
+    string username = 1; //用户名
+}
+
+message userResetRet {
+    bool result = 1;
+}
+
 //普通注册账号
 message userRegister {
     string username = 1; //用户名
@@ -12,26 +21,26 @@ message userRegister {
 
 //登录服务器注册账号返回
 message userRegisterRet {
-    RegisterResult result = 1;    //注册结果
-    int64 uid = 2;                 //用户id 注册成功返回此字段
-    string token = 3;              //登录令牌 注册成功返回此字段
-    string msg = 4;                //反馈消息 登录失败返回
-    int64 serverTime = 5;  //服务器时间
+    RegisterResult result = 1; //注册结果
+    int64 uid = 2; //用户id 注册成功返回此字段
+    string token = 3; //登录令牌 注册成功返回此字段
+    string msg = 4; //反馈消息 登录失败返回
+    int64 serverTime = 5; //服务器时间
 }
 
 //用户名密码登录服务器
 message userLogin {
-    string username = 1;		//用户名
-    string password = 2;		//密码
+    string username = 1; //用户名
+    string password = 2; //密码
 }
 
 //登录服务器返回
 message userLoginRet {
-    LoginResult result = 1;	//登录结果
-    int64 uid = 2;             //用户id
-    string token = 3;          //登录令牌
-    string msg = 4;                //反馈消息 登录失败返回
-    int64 serverTime = 5;  //服务器时间
+    LoginResult result = 1; //登录结果
+    int64 uid = 2; //用户id
+    string token = 3; //登录令牌
+    string msg = 4; //反馈消息 登录失败返回
+    int64 serverTime = 5; //服务器时间
 }
 
 //渠道登录
@@ -47,10 +56,9 @@ message channelLogin {
 message channelLoginRet {
     int64 uid = 1; //登录成功后游戏的uid
     string token = 2; //登录成功后的token信息
-    int64 serverTime = 3;  //服务器时间
+    int64 serverTime = 3; //服务器时间
     //string gameServer = 3; //游戏服务器地址信息
 }
-
 
 //token 登录
 message tokenLogin {
@@ -59,7 +67,24 @@ message tokenLogin {
 }
 
 message tokenLoginRet {
-    LoginResult result = 1;	//登录结果
-    int64 serverTime = 2;  //服务器时间
+    LoginResult result = 1; //登录结果
+    int64 serverTime = 2; //服务器时间
 }
 
+// 修改用户状态
+message modifyUserStatus {
+    int64 uid = 1;
+    int32 status = 2;
+}
+message modifyUserStatusRet {
+    User user = 1;
+}
+
+// 获取用户
+message getUser {
+    int64 uid = 1;
+    string username = 2;
+}
+message getUserRet {
+    User user = 1;
+}
