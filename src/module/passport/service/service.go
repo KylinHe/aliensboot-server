@@ -3,13 +3,13 @@
 package service
 
 import (
-	"github.com/KylinHe/aliensboot-server/module/passport/conf"
-	"github.com/KylinHe/aliensboot-server/protocol"
-	"github.com/KylinHe/aliensboot-core/chanrpc"
-	"github.com/KylinHe/aliensboot-core/cluster/center"
-	"github.com/KylinHe/aliensboot-core/cluster/center/service"
-	"github.com/KylinHe/aliensboot-core/exception"
-	"github.com/gogo/protobuf/proto"
+    "github.com/KylinHe/aliensboot-server/module/passport/conf"
+    "github.com/KylinHe/aliensboot-server/protocol"
+    "github.com/KylinHe/aliensboot-core/chanrpc"
+    "github.com/KylinHe/aliensboot-core/cluster/center"
+    "github.com/KylinHe/aliensboot-core/cluster/center/service"
+    "github.com/KylinHe/aliensboot-core/exception"
+    "github.com/gogo/protobuf/proto"
 )
 
 var instance service.IService = nil
@@ -48,48 +48,49 @@ func handle(ctx *service.Context) {
 }
 
 func handleRequest(ctx *service.Context, request *protocol.Request, response *protocol.Response) {
-
+	
 	if request.GetUserRegister() != nil {
 		messageRet := &protocol.UserRegisterRet{}
 		handleUserRegister(ctx, request.GetUserRegister(), messageRet)
 		response.Passport = &protocol.Response_UserRegisterRet{messageRet}
 		return
 	}
-
+	
 	if request.GetUserLogin() != nil {
 		messageRet := &protocol.UserLoginRet{}
 		handleUserLogin(ctx, request.GetUserLogin(), messageRet)
 		response.Passport = &protocol.Response_UserLoginRet{messageRet}
 		return
 	}
-
+	
 	if request.GetTokenLogin() != nil {
 		messageRet := &protocol.TokenLoginRet{}
 		handleTokenLogin(ctx, request.GetTokenLogin(), messageRet)
 		response.Passport = &protocol.Response_TokenLoginRet{messageRet}
 		return
 	}
-
+	
 	if request.GetModifyUserStatus() != nil {
 		messageRet := &protocol.ModifyUserStatusRet{}
 		handleModifyUserStatus(ctx, request.GetModifyUserStatus(), messageRet)
 		response.Passport = &protocol.Response_ModifyUserStatusRet{messageRet}
 		return
 	}
-
+	
 	if request.GetGetUser() != nil {
 		messageRet := &protocol.GetUserRet{}
 		handleGetUser(ctx, request.GetGetUser(), messageRet)
 		response.Passport = &protocol.Response_GetUserRet{messageRet}
 		return
 	}
-
+	
 	if request.GetUserReset() != nil {
 		messageRet := &protocol.UserResetRet{}
 		handleUserReset(ctx, request.GetUserReset(), messageRet)
 		response.Passport = &protocol.Response_UserResetRet{messageRet}
 		return
 	}
-
+	
 	response.Code = protocol.Code_InvalidRequest
 }
+

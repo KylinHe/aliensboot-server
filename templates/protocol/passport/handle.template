@@ -2,7 +2,7 @@
 // source: ${module}_interface.proto
 package service
 
-import "e.coding.net/aliens/slg_server/${package}"
+import "github.com/KylinHe/aliensboot-server/${package}"
 import "github.com/KylinHe/aliensboot-core/cluster/center/service"
 
 <message>

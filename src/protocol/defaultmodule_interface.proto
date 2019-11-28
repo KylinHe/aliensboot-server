@@ -1,0 +1,10 @@
+syntax = "proto3";
+package protocol;
+
+message benchmark {
+   string requestContent = 1;
+}
+
+message benchmarkRet {
+    string respContent = 2;
+}

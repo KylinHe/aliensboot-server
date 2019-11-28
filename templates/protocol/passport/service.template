@@ -3,8 +3,8 @@
 package service
 
 import (
-    "e.coding.net/aliens/slg_server/module/${module}/conf"
-    "e.coding.net/aliens/slg_server/${package}"
+    "github.com/KylinHe/aliensboot-server/module/${module}/conf"
+    "github.com/KylinHe/aliensboot-server/${package}"
     "github.com/KylinHe/aliensboot-core/chanrpc"
     "github.com/KylinHe/aliensboot-core/cluster/center"
     "github.com/KylinHe/aliensboot-core/cluster/center/service"

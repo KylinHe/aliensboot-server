@@ -3,7 +3,7 @@
 package rpc
 
 import (
-	"e.coding.net/aliens/slg_server/protocol"
+	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
 var ${Module} = &${module}RPCHandler{&rpcHandler{name:"${module}"}}

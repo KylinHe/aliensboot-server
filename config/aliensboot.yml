@@ -15,7 +15,7 @@ cluster:
   #
   # Use a descriptive name for your cluster:
   #
-  name: slg-local
+  name: aliensboot-local
   #
   # cluster center address，support[etcd,zookeeper]
   #

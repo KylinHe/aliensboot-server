@@ -5,6 +5,7 @@ import "resultcode.proto";
 import "gate_model.proto";
 import "gate_interface.proto";
 import "passport_interface.proto";
+import "defaultmodule_interface.proto";
 
 
 //TODO 支持接口权限声明 是否支持客户端调用， 是否支持内部调用
@@ -39,6 +40,10 @@ message Request {
         userReset userReset = 25; //重置账号
     }
 
+
+    oneof defaultmodule {
+        benchmark benchmark = 30;
+    }
 }
 
 //response
@@ -67,6 +72,10 @@ message Response {
         modifyUserStatusRet modifyUserStatusRet = 23; // 修改玩家状态
         getUserRet getUserRet = 24; // 获取用户
         userResetRet userResetRet = 25; //重置账号结果
+    }
+
+    oneof defaultmodule {
+        benchmarkRet benchmarkRet = 30;
     }
 
 }

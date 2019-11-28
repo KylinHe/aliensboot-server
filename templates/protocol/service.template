@@ -8,8 +8,8 @@ import (
     "github.com/KylinHe/aliensboot-core/cluster/center"
     "github.com/KylinHe/aliensboot-core/exception"
     "github.com/KylinHe/aliensboot-core/protocol/base"
-    "e.coding.net/aliens/slg_server/module/${module}/conf"
-    "e.coding.net/aliens/slg_server/${package}"
+    "github.com/KylinHe/aliensboot-server/module/${module}/conf"
+    "github.com/KylinHe/aliensboot-server/${package}"
     "github.com/gogo/protobuf/proto"
 )
 
