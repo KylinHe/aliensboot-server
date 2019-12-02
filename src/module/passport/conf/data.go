@@ -41,7 +41,7 @@ var (
 	WhitelistUidData = make(map[int64]bool)
 )
 
-func UpdateWhitelistIpData(content []byte) {
+func UpdateWhitelistIpData(content []byte, init bool) {
 	var dataArray []*data.WhitelistIp
 	err := json.Unmarshal(content, &dataArray)
 	if err != nil {
@@ -54,7 +54,7 @@ func UpdateWhitelistIpData(content []byte) {
 	WhitelistIpData = results
 }
 
-func UpdateWhitelistAccountData(content []byte) {
+func UpdateWhitelistAccountData(content []byte, init bool) {
 	var dataArray []*data.WhitelistAccount
 	err := json.Unmarshal(content, &dataArray)
 	if err != nil {
@@ -67,7 +67,7 @@ func UpdateWhitelistAccountData(content []byte) {
 	WhitelistAccountData = results
 }
 
-func UpdateWhitelistUidData(content []byte) {
+func UpdateWhitelistUidData(content []byte, init bool) {
 	var dataArray []*data.WhitelistUid
 	err := json.Unmarshal(content, &dataArray)
 	if err != nil {
@@ -80,7 +80,7 @@ func UpdateWhitelistUidData(content []byte) {
 	WhitelistUidData = results
 }
 
-func updateMaintainBase(content []byte) {
+func updateMaintainBase(content []byte, init bool) {
 	maintain := &data.MaintainBase{}
 	_ = json.Unmarshal(content, maintain)
 	//startTimestamp, _ := time.ParseInLocation("2006-01-02 15:04:05", maintain.StartTime, time.Local)
