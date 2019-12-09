@@ -3,91 +3,80 @@
 package service
 
 import (
-    "github.com/KylinHe/aliensboot-core/chanrpc"
-    "github.com/KylinHe/aliensboot-core/cluster/center/service"
-    "github.com/KylinHe/aliensboot-core/cluster/center"
-    "github.com/KylinHe/aliensboot-core/exception"
-    "github.com/KylinHe/aliensboot-core/protocol/base"
     "github.com/KylinHe/aliensboot-server/module/${module}/conf"
     "github.com/KylinHe/aliensboot-server/${package}"
-    "github.com/gogo/protobuf/proto"
+    "github.com/KylinHe/aliensboot-core/chanrpc"
+    "github.com/KylinHe/aliensboot-core/cluster/center"
+    "github.com/KylinHe/aliensboot-core/cluster/center/service"
+    "github.com/KylinHe/aliensboot-core/exception"
 )
 
 var instance service.IService = nil
 
-var handlers = make(map[uint16]func(request *base.Any)*base.Any)
+var handlers = make(map[uint16]func(ctx *service.Context))
+
+//register self handler
+func RegisterHandler(msgID uint16, handler func(ctx *service.Context)) {
+	handlers[msgID] = handler
+}
+
+func handleInternal(ctx *service.Context) bool {
+	handler := handlers[ctx.GetMsgId()]
+	if handler == nil {
+		return false
+	}
+	handler(ctx)
+	return true
+}
 
 func Init(chanRpc *chanrpc.Server) {
-	instance = center.PublicService(conf.Config.Service, service.NewRpcHandler(chanRpc, handle))
+	instance = center.PublicService(conf.Config.Service, service.NewRpcHandler(nil, handle, &${package}.MsgProcessor{}))
 }
 
 func Close() {
 	center.ReleaseService(instance)
 }
 
-
-//register self handler
-func RegisterHandler(msgID uint16, handler func(request *base.Any)*base.Any) {
-	handlers[msgID] = handler
-}
-
-func handleInternal(request *base.Any) (bool, *base.Any) {
-	handler := handlers[request.Id]
-	if handler == nil {
-		return false, nil
-	}
-	response := handler(request)
-	return true, response
-}
-
 func handle(ctx *service.Context) {
-    ok, _ := handleInternal(ctx.Request)
-    if ok {
-    	return
-    }
-	requestProxy := &${package}.Request{}
-	responseProxy := &${package}.Response{}
-	isResponse := false
-	defer func() {
+    isResponse := false
+    request := ctx.Request.(*${package}.Request)
+    response := ctx.Response.(*${package}.Response)
+    defer func() {
 		//处理消息异常
 		if err := recover(); err != nil {
 			switch err.(type) {
 			case ${package}.Code:
-				responseProxy.Code = err.(${package}.Code)
+				response.Code = err.(${package}.Code)
 				break
-			case *${package}.CodeMessage:
-			    responseProxy.CodeMessage = err.(*${package}.CodeMessage)
-			    break
 			default:
 				exception.PrintStackDetail(err)
-				responseProxy.Code = ${package}.Code_ServerException
+				response.Code = ${package}.Code_ServerException
 			}
 			isResponse = true
 		}
 		if isResponse {
-            _ = ctx.GOGOProto(responseProxy)
+            ctx.WriteResponse()
         }
 	}()
-	error := proto.Unmarshal(ctx.Request.Value, requestProxy)
-	if error != nil {
-		exception.GameException(${package}.Code_InvalidRequest)
-	}
-	responseProxy.Session = requestProxy.GetSession()
-	isResponse = handleRequest(ctx.Request.GetAuthId(), ctx.Request.GetGateId(), requestProxy, responseProxy)
+    ok := handleInternal(ctx)
+    if ok {
+    	return
+    }
+	isResponse = handleRequest(ctx, request, response)
 }
 
-func handleRequest(authID int64, gateID string, request *${package}.Request, response *${package}.Response) bool {
+func handleRequest(ctx *service.Context, request *${package}.Request, response *${package}.Response) bool {
 	<message>
 	if request.Get${o_request}() != nil {
 		messageRet := &${package}.${o_response_type}{}
-		handle${o_name}(authID, gateID, request.Get${o_request}(), messageRet)
+		handle${o_name}(ctx, request.Get${o_request}(), messageRet)
 		response.${Module} = &${package}.Response_${o_response}{messageRet}
 		return true
 	}
 	<message>
 	<request>
     if request.Get${o_request}() != nil {
-    	handle${o_name}(authID, gateID, request.Get${o_request}())
+    	handle${o_name}(ctx, request.Get${o_request}())
     	return false
     }
     <request>

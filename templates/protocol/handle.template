@@ -2,19 +2,19 @@
 // source: ${module}_interface.proto
 package service
 
-import "github.com/KylinHe/aliensboot-server/protocol"
+import "github.com/KylinHe/aliensboot-server/${package}"
+import "github.com/KylinHe/aliensboot-core/cluster/center/service"
 
 <message>
 //${o_desc}
-func handle${o_name}(authID int64, gateID string, request *${package}.${o_request_type}, response *${package}.${o_response_type}) {
+func handle${o_name}(ctx *service.Context, request *${package}.${o_request_type}, response *${package}.${o_response_type}) {
 
-    return
 }
 <message>
 
 <request>
 //${o_desc}
-func handle${o_name}(authID int64, gateID string, request *${package}.${o_request}) {
+func handle${o_name}(ctx *service.Context, request *${package}.${o_request}) {
 
 }
 <request>

@@ -5,9 +5,10 @@ package service
 import (
 	"github.com/KylinHe/aliensboot-server/module/gate/network"
 	"github.com/KylinHe/aliensboot-server/protocol"
+	"github.com/KylinHe/aliensboot-core/cluster/center/service"
 )
 
 //push
-func handleKickOut(authID int64, gateID string, request *protocol.KickOut) {
+func handleKickOut(ctx *service.Context, request *protocol.KickOut) {
 	network.Manager.KickOut(request.GetAuthID(), request.GetKickType())
 }

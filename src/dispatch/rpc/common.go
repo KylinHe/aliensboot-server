@@ -10,44 +10,56 @@
 package rpc
 
 import (
-	"github.com/KylinHe/aliensboot-server/dispatch"
-	"github.com/KylinHe/aliensboot-server/protocol"
-	"github.com/KylinHe/aliensboot-core/common/util"
 	"github.com/KylinHe/aliensboot-core/exception"
 	"github.com/KylinHe/aliensboot-core/log"
+	"github.com/KylinHe/aliensboot-server/constant"
+	"github.com/KylinHe/aliensboot-server/dispatch"
+	"github.com/KylinHe/aliensboot-server/protocol"
 )
 
 type rpcHandler struct {
 	name string
 }
 
-func (this *rpcHandler) Request(node string, request *protocol.Request) *protocol.Response {
-	var rpcRet *protocol.Response = nil
-	var err error = nil
-	if node != "" {
-		rpcRet, err = dispatch.RequestNodeMessage(this.name, node, request)
-	} else {
-		rpcRet, err = dispatch.RequestMessage(this.name, request, "")
-	}
+func EnsureCode(response *protocol.Response, err error) (*protocol.Response, error) {
+	code := response.Code
 	if err != nil {
 		log.Error(err)
-		exception.GameException(protocol.Code_InvalidService)
+		code = protocol.Code_InvalidService
 	}
-	return rpcRet
+	if code != protocol.Code_Success {
+		exception.GameException(code)
+	}
+	return response, err
 }
 
-func (this *rpcHandler) TestRequest(authId int64, node string, request *protocol.Request) (*protocol.Response, error) {
+// 根据负载均衡策略发送请求
+func (this *rpcHandler) AuthRequest(authId int64, hashKey string, request *protocol.Request) (*protocol.Response, error) {
+	return dispatch.RequestMessage(authId, this.name, hashKey, request, nil)
+}
+
+func (this *rpcHandler) AuthNodeRequest(authId int64, node string, request *protocol.Request) (*protocol.Response, error) {
+	return dispatch.RequestNodeMessage(authId, this.name, node, request, nil)
+}
+
+// 向指定节点发送请求
+func (this *rpcHandler) Request(node string, request *protocol.Request) (*protocol.Response, error) {
 	if node != "" {
-		return dispatch.TestRequestNodeMessage(authId, this.name, node, request)
+		return EnsureCode(dispatch.RequestNodeMessage(constant.SystemAuthId, this.name, node, request, nil))
 	} else {
-		return dispatch.TestRequestMessage(authId, this.name, request, util.Int64ToString(authId))
+		return EnsureCode(dispatch.RequestMessage(constant.SystemAuthId, this.name, "", request, nil))
 	}
 }
 
 func (this *rpcHandler) Send(node string, request *protocol.Request) error {
 	if node != "" {
-		return dispatch.SendNodeMessage(this.name, node, request)
+		return dispatch.SendNodeMessage(this.name, node, request, nil)
 	} else {
-		return dispatch.SendMessage(this.name, request, "")
+		return dispatch.SendMessage(this.name, request, "", nil)
 	}
+}
+
+// 广播请求
+func (this *rpcHandler) Broadcast(request *protocol.Request) {
+	dispatch.Broadcast(this.name, request, nil)
 }

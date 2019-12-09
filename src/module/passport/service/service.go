@@ -9,13 +9,28 @@ import (
     "github.com/KylinHe/aliensboot-core/cluster/center"
     "github.com/KylinHe/aliensboot-core/cluster/center/service"
     "github.com/KylinHe/aliensboot-core/exception"
-    "github.com/gogo/protobuf/proto"
 )
 
 var instance service.IService = nil
 
+var handlers = make(map[uint16]func(ctx *service.Context))
+
+//register self handler
+func RegisterHandler(msgID uint16, handler func(ctx *service.Context)) {
+	handlers[msgID] = handler
+}
+
+func handleInternal(ctx *service.Context) bool {
+	handler := handlers[ctx.GetMsgId()]
+	if handler == nil {
+		return false
+	}
+	handler(ctx)
+	return true
+}
+
 func Init(chanRpc *chanrpc.Server) {
-	instance = center.PublicService(conf.Config.Service, service.NewRpcHandler(nil, handle))
+	instance = center.PublicService(conf.Config.Service, service.NewRpcHandler(nil, handle, &protocol.MsgProcessor{}))
 }
 
 func Close() {
@@ -23,74 +38,79 @@ func Close() {
 }
 
 func handle(ctx *service.Context) {
-	requestProxy := &protocol.Request{}
-	responseProxy := &protocol.Response{}
-	defer func() {
+    isResponse := false
+    request := ctx.Request.(*protocol.Request)
+    response := ctx.Response.(*protocol.Response)
+    defer func() {
 		//处理消息异常
 		if err := recover(); err != nil {
 			switch err.(type) {
 			case protocol.Code:
-				responseProxy.Code = err.(protocol.Code)
+				response.Code = err.(protocol.Code)
 				break
 			default:
 				exception.PrintStackDetail(err)
-				responseProxy.Code = protocol.Code_ServerException
+				response.Code = protocol.Code_ServerException
 			}
+			isResponse = true
 		}
-		_ = ctx.GOGOProto(responseProxy)
+		if isResponse {
+            ctx.WriteResponse()
+        }
 	}()
-	error := proto.Unmarshal(ctx.Request.Value, requestProxy)
-	if error != nil {
-		exception.GameException(protocol.Code_InvalidRequest)
-	}
-	responseProxy.Session = requestProxy.GetSession()
-	handleRequest(ctx, requestProxy, responseProxy)
+    ok := handleInternal(ctx)
+    if ok {
+    	return
+    }
+	isResponse = handleRequest(ctx, request, response)
 }
 
-func handleRequest(ctx *service.Context, request *protocol.Request, response *protocol.Response) {
+func handleRequest(ctx *service.Context, request *protocol.Request, response *protocol.Response) bool {
 	
 	if request.GetUserRegister() != nil {
 		messageRet := &protocol.UserRegisterRet{}
 		handleUserRegister(ctx, request.GetUserRegister(), messageRet)
 		response.Passport = &protocol.Response_UserRegisterRet{messageRet}
-		return
+		return true
 	}
 	
 	if request.GetUserLogin() != nil {
 		messageRet := &protocol.UserLoginRet{}
 		handleUserLogin(ctx, request.GetUserLogin(), messageRet)
 		response.Passport = &protocol.Response_UserLoginRet{messageRet}
-		return
+		return true
 	}
 	
 	if request.GetTokenLogin() != nil {
 		messageRet := &protocol.TokenLoginRet{}
 		handleTokenLogin(ctx, request.GetTokenLogin(), messageRet)
 		response.Passport = &protocol.Response_TokenLoginRet{messageRet}
-		return
+		return true
 	}
 	
 	if request.GetModifyUserStatus() != nil {
 		messageRet := &protocol.ModifyUserStatusRet{}
 		handleModifyUserStatus(ctx, request.GetModifyUserStatus(), messageRet)
 		response.Passport = &protocol.Response_ModifyUserStatusRet{messageRet}
-		return
+		return true
 	}
 	
 	if request.GetGetUser() != nil {
 		messageRet := &protocol.GetUserRet{}
 		handleGetUser(ctx, request.GetGetUser(), messageRet)
 		response.Passport = &protocol.Response_GetUserRet{messageRet}
-		return
+		return true
 	}
 	
 	if request.GetUserReset() != nil {
 		messageRet := &protocol.UserResetRet{}
 		handleUserReset(ctx, request.GetUserReset(), messageRet)
 		response.Passport = &protocol.Response_UserResetRet{messageRet}
-		return
+		return true
 	}
 	
+	
 	response.Code = protocol.Code_InvalidRequest
+	return true
 }
 

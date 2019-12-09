@@ -7,7 +7,7 @@ protoc --proto_path=%GOPATH%;%GOGOPATH%;./; --gogofast_out=plugins=grpc:. *.prot
 
 :生成服务代码
 cd %PROJECT_PATH%
-set modules=game gate passport hall room scene
+set modules=game gate passport defaultmodule
 
 for %%i in (%modules%) do (
     aliensboot module gen %%i

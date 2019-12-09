@@ -10,12 +10,11 @@
 package route
 
 import (
-	"github.com/KylinHe/aliensboot-server/dispatch"
-	"github.com/KylinHe/aliensboot-server/module/gate/conf"
 	"errors"
 	"fmt"
-	"github.com/KylinHe/aliensboot-core/cluster/center/service"
 	"github.com/KylinHe/aliensboot-core/protocol/base"
+	"github.com/KylinHe/aliensboot-server/dispatch"
+	"github.com/KylinHe/aliensboot-server/module/gate/conf"
 )
 
 //requestID - service
@@ -38,43 +37,43 @@ func GetServiceSeq(serviceName string) uint16 {
 	return serviceSeqMapping[serviceName]
 }
 
-func HandleUrlMessage(serviceName string, requestData []byte) ([]byte, error) {
-	seq := GetServiceSeq(serviceName)
-	if seq <= 0 {
-		return nil, errors.New(fmt.Sprintf("service %v seq not found", serviceName))
-	}
-	request := &base.Any{Id: seq, Value: requestData}
-	response, error := dispatch.Request(serviceName, request, "")
-	if error != nil {
-		return nil, error
-	}
-	return response.Value, nil
-}
-
-func AsyncHandleMessage(hashKey string, asyncCall *service.AsyncCall) error {
-	serviceName, ok := seqServiceMapping[asyncCall.ReqID()]
-	if !ok {
-		return errors.New(fmt.Sprintf("un expect request id %v", asyncCall.ReqID()))
-	}
-	return dispatch.AsyncRequest(serviceName, hashKey, asyncCall)
-}
-
-//发送到指定节点
-func AsyncHandleNodeMessage(serviceID string, asyncCall *service.AsyncCall) error {
-	serviceName, ok := seqServiceMapping[asyncCall.ReqID()]
-	if !ok {
-		return errors.New(fmt.Sprintf("un expect request id %v", asyncCall.ReqID()))
-	}
-	return dispatch.AsyncRequestNode(serviceName, serviceID, asyncCall)
-}
-
-func SendNodeMessage(serviceID string, request *base.Any) error {
-	serviceName, ok := seqServiceMapping[request.Id]
-	if !ok {
-		return errors.New(fmt.Sprintf("un expect request id %v", request.Id))
-	}
-	return dispatch.SendNode(serviceName, serviceID, request)
-}
+//func HandleUrlMessage(serviceName string, requestData []byte) ([]byte, error) {
+//	seq := GetServiceSeq(serviceName)
+//	if seq <= 0 {
+//		return nil, errors.New(fmt.Sprintf("service %v seq not found", serviceName))
+//	}
+//	request := &base.Any{Id: seq, Value: requestData}
+//	response, error := dispatch.Request(serviceName, request, "")
+//	if error != nil {
+//		return nil, error
+//	}
+//	return response.Value, nil
+//}
+//
+//func AsyncHandleMessage(hashKey string, asyncCall *service.AsyncCall) error {
+//	serviceName, ok := seqServiceMapping[asyncCall.ReqID()]
+//	if !ok {
+//		return errors.New(fmt.Sprintf("un expect request id %v", asyncCall.ReqID()))
+//	}
+//	return dispatch.AsyncRequest(serviceName, hashKey, asyncCall)
+//}
+//
+////发送到指定节点
+//func AsyncHandleNodeMessage(serviceID string, asyncCall *service.AsyncCall) error {
+//	serviceName, ok := seqServiceMapping[asyncCall.ReqID()]
+//	if !ok {
+//		return errors.New(fmt.Sprintf("un expect request id %v", asyncCall.ReqID()))
+//	}
+//	return dispatch.AsyncRequestNode(serviceName, serviceID, asyncCall)
+//}
+//
+//func SendNodeMessage(serviceID string, request *base.Any) error {
+//	serviceName, ok := seqServiceMapping[request.Id]
+//	if !ok {
+//		return errors.New(fmt.Sprintf("un expect request id %v", request.Id))
+//	}
+//	return dispatch.SendNode(serviceName, serviceID, request)
+//}
 
 func SendMessage(request *base.Any, hashKey string) error {
 	serviceName, ok := seqServiceMapping[request.Id]
@@ -89,7 +88,7 @@ func HandleMessage(request *base.Any, hashKey string) (*base.Any, error) {
 	if !ok {
 		return nil, errors.New(fmt.Sprintf("un expect request id %v", request.Id))
 	}
-	response, error := dispatch.Request(serviceName, request, hashKey)
+	response, error := dispatch.Request(serviceName, hashKey, request)
 	if error != nil {
 		return nil, error
 	}

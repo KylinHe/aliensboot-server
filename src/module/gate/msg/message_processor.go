@@ -44,13 +44,16 @@ func (this *MessageProcessor) Unmarshal(data []byte) (interface{}, error) {
 	}
 
 	var id uint16 = 0
+	var seqId uint32 = 0
 	if this.littleEndian {
 		id = binary.LittleEndian.Uint16(data)
+		seqId = binary.LittleEndian.Uint32(data[2:])
 	} else {
 		id = binary.BigEndian.Uint16(data)
+		seqId = binary.BigEndian.Uint32(data[2:])
 	}
 	//log.Debugf("marshal %v - %v", id, data)
-	return &base.Any{Id: id, Value: data[2:]}, nil
+	return &base.Any{Id: id, SeqId: seqId, Value: data[6:]}, nil
 }
 
 // must goroutine safe
@@ -60,11 +63,14 @@ func (this *MessageProcessor) Marshal(msg interface{}) ([][]byte, error) {
 		return nil, errors.New("invalid any type")
 	}
 	id := make([]byte, 2)
+	seqId := make([]byte, 4)
 	if this.littleEndian {
 		binary.LittleEndian.PutUint16(id, any.Id)
+		binary.LittleEndian.PutUint32(seqId, any.SeqId)
 	} else {
 		binary.BigEndian.PutUint16(id, any.Id)
+		binary.BigEndian.PutUint32(seqId, any.SeqId)
 	}
 	//log.Debugf("marshal %v - %v", any.Id, id)
-	return [][]byte{id, any.Value}, nil
+	return [][]byte{id, seqId, any.Value}, nil
 }

@@ -4,6 +4,7 @@ package rpc
 
 import (
 	"github.com/KylinHe/aliensboot-server/protocol"
+	"github.com/KylinHe/aliensboot-core/cluster/center"
 )
 
 var Defaultmodule = &defaultmoduleRPCHandler{&rpcHandler{name:"defaultmodule"}}
@@ -13,6 +14,14 @@ type defaultmoduleRPCHandler struct {
 	*rpcHandler
 }
 
+func (this *defaultmoduleRPCHandler) GetLbsNode(param string) string {
+	service := center.ClusterCenter.AllocService(this.name, param)
+	if service == nil {
+		return ""
+	}
+	return service.GetID()
+}
+
 
 func (this *defaultmoduleRPCHandler) Benchmark(node string, request *protocol.Benchmark) *protocol.BenchmarkRet {
 	message := &protocol.Request{
@@ -20,18 +29,29 @@ func (this *defaultmoduleRPCHandler) Benchmark(node string, request *protocol.Be
 			Benchmark:request,
 		},
 	}
-	messageRet := this.Request(node, message)
+	messageRet, _ := this.Request(node, message)
 	return messageRet.GetBenchmarkRet()
 }
 
 
-func (this *defaultmoduleRPCHandler) TestBenchmark(authId int64, node string, request *protocol.Benchmark) (*protocol.BenchmarkRet, error) {
+func (this *defaultmoduleRPCHandler) BenchmarkAuth(authId int64, hashKey string, request *protocol.Benchmark) (*protocol.BenchmarkRet, error) {
 	message := &protocol.Request{
 		Defaultmodule:&protocol.Request_Benchmark{
 			Benchmark:request,
 		},
 	}
-	messageRet, err := this.TestRequest(authId, node, message)
+	messageRet, err := this.AuthRequest(authId, hashKey, message)
+	return messageRet.GetBenchmarkRet(), err
+}
+
+
+func (this *defaultmoduleRPCHandler) BenchmarkAuthNode(authId int64, node string, request *protocol.Benchmark) (*protocol.BenchmarkRet, error) {
+	message := &protocol.Request{
+		Defaultmodule:&protocol.Request_Benchmark{
+			Benchmark:request,
+		},
+	}
+	messageRet, err := this.AuthNodeRequest(authId, node, message)
 	return messageRet.GetBenchmarkRet(), err
 }
 

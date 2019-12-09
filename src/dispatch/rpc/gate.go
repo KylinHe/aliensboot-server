@@ -4,6 +4,7 @@ package rpc
 
 import (
 	"github.com/KylinHe/aliensboot-server/protocol"
+	"github.com/KylinHe/aliensboot-core/cluster/center"
 )
 
 var Gate = &gateRPCHandler{&rpcHandler{name:"gate"}}
@@ -13,6 +14,14 @@ type gateRPCHandler struct {
 	*rpcHandler
 }
 
+func (this *gateRPCHandler) GetLbsNode(param string) string {
+	service := center.ClusterCenter.AllocService(this.name, param)
+	if service == nil {
+		return ""
+	}
+	return service.GetID()
+}
+
 
 func (this *gateRPCHandler) HealthCheck(node string, request *protocol.HealthCheck) *protocol.HealthCheckRet {
 	message := &protocol.Request{
@@ -20,18 +29,29 @@ func (this *gateRPCHandler) HealthCheck(node string, request *protocol.HealthChe
 			HealthCheck:request,
 		},
 	}
-	messageRet := this.Request(node, message)
+	messageRet, _ := this.Request(node, message)
 	return messageRet.GetHealthCheckRet()
 }
 
 
-func (this *gateRPCHandler) TestHealthCheck(authId int64, node string, request *protocol.HealthCheck) (*protocol.HealthCheckRet, error) {
+func (this *gateRPCHandler) HealthCheckAuth(authId int64, hashKey string, request *protocol.HealthCheck) (*protocol.HealthCheckRet, error) {
 	message := &protocol.Request{
 		Gate:&protocol.Request_HealthCheck{
 			HealthCheck:request,
 		},
 	}
-	messageRet, err := this.TestRequest(authId, node, message)
+	messageRet, err := this.AuthRequest(authId, hashKey, message)
+	return messageRet.GetHealthCheckRet(), err
+}
+
+
+func (this *gateRPCHandler) HealthCheckAuthNode(authId int64, node string, request *protocol.HealthCheck) (*protocol.HealthCheckRet, error) {
+	message := &protocol.Request{
+		Gate:&protocol.Request_HealthCheck{
+			HealthCheck:request,
+		},
+	}
+	messageRet, err := this.AuthNodeRequest(authId, node, message)
 	return messageRet.GetHealthCheckRet(), err
 }
 
@@ -41,18 +61,29 @@ func (this *gateRPCHandler) BindService(node string, request *protocol.BindServi
 			BindService:request,
 		},
 	}
-	messageRet := this.Request(node, message)
+	messageRet, _ := this.Request(node, message)
 	return messageRet.GetBindServiceRet()
 }
 
 
-func (this *gateRPCHandler) TestBindService(authId int64, node string, request *protocol.BindService) (*protocol.BindServiceRet, error) {
+func (this *gateRPCHandler) BindServiceAuth(authId int64, hashKey string, request *protocol.BindService) (*protocol.BindServiceRet, error) {
 	message := &protocol.Request{
 		Gate:&protocol.Request_BindService{
 			BindService:request,
 		},
 	}
-	messageRet, err := this.TestRequest(authId, node, message)
+	messageRet, err := this.AuthRequest(authId, hashKey, message)
+	return messageRet.GetBindServiceRet(), err
+}
+
+
+func (this *gateRPCHandler) BindServiceAuthNode(authId int64, node string, request *protocol.BindService) (*protocol.BindServiceRet, error) {
+	message := &protocol.Request{
+		Gate:&protocol.Request_BindService{
+			BindService:request,
+		},
+	}
+	messageRet, err := this.AuthNodeRequest(authId, node, message)
 	return messageRet.GetBindServiceRet(), err
 }
 
@@ -62,18 +93,29 @@ func (this *gateRPCHandler) GetAuthNode(node string, request *protocol.GetAuthNo
 			GetAuthNode:request,
 		},
 	}
-	messageRet := this.Request(node, message)
+	messageRet, _ := this.Request(node, message)
 	return messageRet.GetGetAuthNodeRet()
 }
 
 
-func (this *gateRPCHandler) TestGetAuthNode(authId int64, node string, request *protocol.GetAuthNode) (*protocol.GetAuthNodeRet, error) {
+func (this *gateRPCHandler) GetAuthNodeAuth(authId int64, hashKey string, request *protocol.GetAuthNode) (*protocol.GetAuthNodeRet, error) {
 	message := &protocol.Request{
 		Gate:&protocol.Request_GetAuthNode{
 			GetAuthNode:request,
 		},
 	}
-	messageRet, err := this.TestRequest(authId, node, message)
+	messageRet, err := this.AuthRequest(authId, hashKey, message)
+	return messageRet.GetGetAuthNodeRet(), err
+}
+
+
+func (this *gateRPCHandler) GetAuthNodeAuthNode(authId int64, node string, request *protocol.GetAuthNode) (*protocol.GetAuthNodeRet, error) {
+	message := &protocol.Request{
+		Gate:&protocol.Request_GetAuthNode{
+			GetAuthNode:request,
+		},
+	}
+	messageRet, err := this.AuthNodeRequest(authId, node, message)
 	return messageRet.GetGetAuthNodeRet(), err
 }
 

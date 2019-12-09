@@ -3,110 +3,99 @@
 package service
 
 import (
-    "github.com/KylinHe/aliensboot-core/chanrpc"
-    "github.com/KylinHe/aliensboot-core/cluster/center/service"
-    "github.com/KylinHe/aliensboot-core/cluster/center"
-    "github.com/KylinHe/aliensboot-core/exception"
-    "github.com/KylinHe/aliensboot-core/protocol/base"
     "github.com/KylinHe/aliensboot-server/module/gate/conf"
     "github.com/KylinHe/aliensboot-server/protocol"
-    "github.com/gogo/protobuf/proto"
+    "github.com/KylinHe/aliensboot-core/chanrpc"
+    "github.com/KylinHe/aliensboot-core/cluster/center"
+    "github.com/KylinHe/aliensboot-core/cluster/center/service"
+    "github.com/KylinHe/aliensboot-core/exception"
 )
 
 var instance service.IService = nil
 
-var handlers = make(map[uint16]func(request *base.Any)*base.Any)
+var handlers = make(map[uint16]func(ctx *service.Context))
+
+//register self handler
+func RegisterHandler(msgID uint16, handler func(ctx *service.Context)) {
+	handlers[msgID] = handler
+}
+
+func handleInternal(ctx *service.Context) bool {
+	handler := handlers[ctx.GetMsgId()]
+	if handler == nil {
+		return false
+	}
+	handler(ctx)
+	return true
+}
 
 func Init(chanRpc *chanrpc.Server) {
-	instance = center.PublicService(conf.Config.Service, service.NewRpcHandler(chanRpc, handle))
+	instance = center.PublicService(conf.Config.Service, service.NewRpcHandler(chanRpc, handle, &protocol.MsgProcessor{}))
 }
 
 func Close() {
 	center.ReleaseService(instance)
 }
 
-
-//register self handler
-func RegisterHandler(msgID uint16, handler func(request *base.Any)*base.Any) {
-	handlers[msgID] = handler
-}
-
-func handleInternal(request *base.Any) (bool, *base.Any) {
-	handler := handlers[request.Id]
-	if handler == nil {
-		return false, nil
-	}
-	response := handler(request)
-	return true, response
-}
-
 func handle(ctx *service.Context) {
-    ok, _ := handleInternal(ctx.Request)
-    if ok {
-    	return
-    }
-	requestProxy := &protocol.Request{}
-	responseProxy := &protocol.Response{}
-	isResponse := false
-	defer func() {
+    isResponse := false
+    request := ctx.Request.(*protocol.Request)
+    response := ctx.Response.(*protocol.Response)
+    defer func() {
 		//处理消息异常
 		if err := recover(); err != nil {
 			switch err.(type) {
 			case protocol.Code:
-				responseProxy.Code = err.(protocol.Code)
+				response.Code = err.(protocol.Code)
 				break
-			case *protocol.CodeMessage:
-			    responseProxy.CodeMessage = err.(*protocol.CodeMessage)
-			    break
 			default:
 				exception.PrintStackDetail(err)
-				responseProxy.Code = protocol.Code_ServerException
+				response.Code = protocol.Code_ServerException
 			}
 			isResponse = true
 		}
 		if isResponse {
-            _ = ctx.GOGOProto(responseProxy)
+            ctx.WriteResponse()
         }
 	}()
-	error := proto.Unmarshal(ctx.Request.Value, requestProxy)
-	if error != nil {
-		exception.GameException(protocol.Code_InvalidRequest)
-	}
-	responseProxy.Session = requestProxy.GetSession()
-	isResponse = handleRequest(ctx.Request.GetAuthId(), ctx.Request.GetGateId(), requestProxy, responseProxy)
+    ok := handleInternal(ctx)
+    if ok {
+    	return
+    }
+	isResponse = handleRequest(ctx, request, response)
 }
 
-func handleRequest(authID int64, gateID string, request *protocol.Request, response *protocol.Response) bool {
+func handleRequest(ctx *service.Context, request *protocol.Request, response *protocol.Response) bool {
 	
 	if request.GetHealthCheck() != nil {
 		messageRet := &protocol.HealthCheckRet{}
-		handleHealthCheck(authID, gateID, request.GetHealthCheck(), messageRet)
+		handleHealthCheck(ctx, request.GetHealthCheck(), messageRet)
 		response.Gate = &protocol.Response_HealthCheckRet{messageRet}
 		return true
 	}
 	
 	if request.GetBindService() != nil {
 		messageRet := &protocol.BindServiceRet{}
-		handleBindService(authID, gateID, request.GetBindService(), messageRet)
+		handleBindService(ctx, request.GetBindService(), messageRet)
 		response.Gate = &protocol.Response_BindServiceRet{messageRet}
 		return true
 	}
 	
 	if request.GetGetAuthNode() != nil {
 		messageRet := &protocol.GetAuthNodeRet{}
-		handleGetAuthNode(authID, gateID, request.GetGetAuthNode(), messageRet)
+		handleGetAuthNode(ctx, request.GetGetAuthNode(), messageRet)
 		response.Gate = &protocol.Response_GetAuthNodeRet{messageRet}
 		return true
 	}
 	
 	
     if request.GetKickOut() != nil {
-    	handleKickOut(authID, gateID, request.GetKickOut())
+    	handleKickOut(ctx, request.GetKickOut())
     	return false
     }
     
     if request.GetPushMessage() != nil {
-    	handlePushMessage(authID, gateID, request.GetPushMessage())
+    	handlePushMessage(ctx, request.GetPushMessage())
     	return false
     }
     

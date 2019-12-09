@@ -5,9 +5,10 @@ package service
 import (
 	"github.com/KylinHe/aliensboot-server/module/gate/network"
 	"github.com/KylinHe/aliensboot-server/protocol"
+	"github.com/KylinHe/aliensboot-core/cluster/center/service"
 )
 
 //
-func handleBindService(authID int64, gateID string, request *protocol.BindService, response *protocol.BindServiceRet) {
+func handleBindService(ctx *service.Context, request *protocol.BindService, response *protocol.BindServiceRet) {
 	response.Result = network.Manager.BindService(request.GetAuthId(), request.GetBinds())
 }

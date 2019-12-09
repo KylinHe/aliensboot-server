@@ -11,11 +11,12 @@ import (
 	"github.com/KylinHe/aliensboot-server/module/gate/util"
 	"github.com/KylinHe/aliensboot-server/protocol"
 	"github.com/KylinHe/aliensboot-core/cluster/center"
+	"github.com/KylinHe/aliensboot-core/cluster/center/service"
 	"github.com/KylinHe/aliensboot-core/protocol/base"
 )
 
 //
-func handlePushMessage(authID int64, gateID string, request *protocol.PushMessage) {
+func handlePushMessage(ctx *service.Context, request *protocol.PushMessage) {
 	msgID := route.GetServiceSeq(request.GetService())
 	if msgID == 0 {
 		msgID = constant.SystemMsgId
@@ -27,18 +28,18 @@ func handlePushMessage(authID int64, gateID string, request *protocol.PushMessag
 		// 允许转发 需要查找路由转发
 		if request.GetRelay() {
 			routes := make(util.String2Int64)
-			for _, authID := range request.GetAuthId() {
-				node := cache.GetAuthGateID(authID)
+			for _, authId := range request.GetAuthId() {
+				node := cache.GetAuthGateID(authId)
 				if node != "" {
-					routes.Put(node, authID)
+					routes.Put(node, authId)
 				}
 			}
-			for node, authIDs := range routes {
+			for node, authIds := range routes {
 				if node == center.ClusterCenter.GetNodeID() {
-					network.Manager.PushMulti(authIDs, msg)
+					network.Manager.PushMulti(authIds, msg)
 				} else {
 					pushMessage := &protocol.PushMessage{
-						AuthId:  authIDs,
+						AuthId:  authIds,
 						Data:    request.GetData(),
 						Service: request.GetService(),
 					}

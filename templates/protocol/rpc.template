@@ -4,6 +4,7 @@ package rpc
 
 import (
 	"github.com/KylinHe/aliensboot-server/protocol"
+	"github.com/KylinHe/aliensboot-core/cluster/center"
 )
 
 var ${Module} = &${module}RPCHandler{&rpcHandler{name:"${module}"}}
@@ -13,6 +14,14 @@ type ${module}RPCHandler struct {
 	*rpcHandler
 }
 
+func (this *${module}RPCHandler) GetLbsNode(param string) string {
+	service := center.ClusterCenter.AllocService(this.name, param)
+	if service == nil {
+		return ""
+	}
+	return service.GetID()
+}
+
 <message>
 func (this *${module}RPCHandler) ${o_request}(node string, request *${package}.${o_request_type}) *${package}.${o_response_type} {
 	message := &${package}.Request{
@@ -20,18 +29,29 @@ func (this *${module}RPCHandler) ${o_request}(node string, request *${package}.$
 			${o_request}:request,
 		},
 	}
-	messageRet := this.Request(node, message)
+	messageRet, _ := this.Request(node, message)
 	return messageRet.Get${o_response}()
 }
 
 
-func (this *${module}RPCHandler) Test${o_request}(authId int64, node string, request *${package}.${o_request_type}) (*${package}.${o_response_type}, error) {
+func (this *${module}RPCHandler) ${o_request}Auth(authId int64, hashKey string, request *${package}.${o_request_type}) (*${package}.${o_response_type}, error) {
 	message := &${package}.Request{
 		${Module}:&${package}.Request_${o_request}{
 			${o_request}:request,
 		},
 	}
-	messageRet, err := this.TestRequest(authId, node, message)
+	messageRet, err := this.AuthRequest(authId, hashKey, message)
+	return messageRet.Get${o_response}(), err
+}
+
+
+func (this *${module}RPCHandler) ${o_request}AuthNode(authId int64, node string, request *${package}.${o_request_type}) (*${package}.${o_response_type}, error) {
+	message := &${package}.Request{
+		${Module}:&${package}.Request_${o_request}{
+			${o_request}:request,
+		},
+	}
+	messageRet, err := this.AuthNodeRequest(authId, node, message)
 	return messageRet.Get${o_response}(), err
 }
 <message>

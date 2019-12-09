@@ -2,11 +2,14 @@
 // source: defaultmodule_interface.proto
 package service
 
-import "github.com/KylinHe/aliensboot-server/protocol"
+import (
+    "github.com/KylinHe/aliensboot-core/cluster/center/service"
+    "github.com/KylinHe/aliensboot-server/protocol"
+)
 
 
 //
-func handleBenchmark(authID int64, gateID string, request *protocol.Benchmark, response *protocol.BenchmarkRet) {
+func handleBenchmark(context *service.Context, request *protocol.Benchmark, response *protocol.BenchmarkRet) {
     response.RespContent = request.RequestContent
     return
 }
