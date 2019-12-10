@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  etcd:
+    image: bitnami/etcd:3.4.2
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+    ports:
+      - "2379:2379"
+  redis:
+    image: redis:5.0.6
+    ports:
+      - "6379:6379"
+  mongodb:
+    image: mongo:4
+    ports:
+      - "27017:27017"
+#  slg-server:
+#    image: registry.cn-shenzhen.aliyuncs.com/aliensidea/slg-server:latest
+#    ports:
+#      - "28107:28107"
+#      - "8718:8718"
+#    environment:
+#      - DBAddress=mongodb://host.docker.internal:27017
+#      - DBName=slg-dev-game
+#      - CacheAddress=host.docker.internal:6379
+#      - ClusterAddress=host.docker.internal:2379
+#      - ClusterName=slg-local
+#    depends_on:
+#      - etcd
+#      - redis
+#      - mongodb
