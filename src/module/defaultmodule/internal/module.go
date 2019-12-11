@@ -22,7 +22,7 @@ func (m *Module) GetConfig() interface{} {
 
 func (m *Module) OnInit() {
 	m.Skeleton = base.NewSkeleton()
-	conf.Init()
+	conf.Init(m.Skeleton)
 	db.Init()
 	cache.Init()
 	service.Init(m.ChanRPCServer)

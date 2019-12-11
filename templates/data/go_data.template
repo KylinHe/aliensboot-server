@@ -1,0 +1,57 @@
+//generate by aliensboot
+package conf
+
+import (
+	"github.com/KylinHe/aliensboot-server/data"
+	"github.com/KylinHe/aliensboot-server/protocol"
+	"encoding/json"
+	"github.com/KylinHe/aliensboot-core/cluster/center"
+	"github.com/KylinHe/aliensboot-core/exception"
+	"github.com/KylinHe/aliensboot-core/log"
+	"github.com/KylinHe/aliensboot-core/module/base"
+	"strconv"
+)
+
+func Init(skeleton *base.Skeleton) {
+    <table>
+    // [${table_alias}]
+    center.ClusterCenter.SubscribeConfig("${table_name}", center.NewDataProxy("${table_name}", skeleton, Update${table_fixname}Data).OnDataChange)
+    </table>
+}
+
+func Close() {
+}
+
+var (
+    <table>
+    // [${table_alias}]
+    ${table_fixname}Data map[int32]*data.${table_fixname}
+    </table>
+)
+
+    <table>
+func Update${table_fixname}Data(content []byte, init bool) {
+	var dataArray []*data.${table_fixname}
+	err := json.Unmarshal(content, &dataArray)
+	if err != nil {
+		log.Errorf("update data %v, err %v","${table_name}", err)
+	}
+	results := make(map[int32]*data.${table_fixname})
+	for _, data := range dataArray {
+		results[data.Tid] = data
+	}
+	${table_fixname}Data = results
+}
+
+func Get${table_fixname}Data(id int32) *data.${table_fixname} {
+	if ${table_fixname}Data == nil {
+		exception.GameException(protocol.Code_ConfigException)
+	    exception.GameException(&protocol.CodeMessage{
+            Code: protocol.Code_ConfigException,
+            Param: []string{"${table_fixname}",strconv.Itoa(int(id))},
+        })
+	}
+	return ${table_fixname}Data[id]
+}
+    </table>
+
