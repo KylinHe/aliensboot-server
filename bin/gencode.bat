@@ -1,11 +1,12 @@
-call env.bat
+cd ../
+set PROJECT_PATH=%cd%
+set SRC_PATH=%PROJECT_PATH%/src
 
-:生成protobuf go协议代码
 cd %SRC_PATH%/protocol/
 set GOGOPATH=%GOPATH%/src
 protoc --proto_path=%GOPATH%;%GOGOPATH%;./; --gogofast_out=plugins=grpc:. *.proto
 
-:生成服务代码
+
 cd %PROJECT_PATH%
 set modules=game gate passport defaultmodule
 
