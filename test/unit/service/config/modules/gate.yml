@@ -1,0 +1,69 @@
+# -------------------------------- Service ---------------------------
+service:
+  name: gate
+  port: 10107
+  #
+  # registered in the service center [zookeepr or etcd], exposed to the
+  # external address information
+  #
+  address:
+  #
+  # service lbs strategy options[Polling,HashRing]
+  #
+  lbs: Polling
+
+# ---------------------------------- Network --------------------------
+#
+#
+#tcp configuration
+tcp:
+  address: :3579
+  maxconnnum: 20000
+  pendingwritenum: 2000
+  lenmsglen: 2
+  minmsglen: 0
+  maxmsglen: 4096
+  littleendian: true
+
+#kcp configuration
+#kcp:
+#  address: :28129
+#  maxconnnum: 20000
+#  pendingwritenum: 2000
+#  lenmsglen: 2
+#  minmsglen: 0
+#  maxmsglen: 4096
+#  littleendian: true
+
+#websocket configuration
+websocket:
+  address: :28107
+  maxconnnum: 20000
+  pendingwritenum: 2000
+  maxmsglen: 409600
+  httptimeout: 10
+  certfile:
+  keyfile:
+
+#http configuration
+#http:
+#  address: :8712
+#  prefix: /aliens
+cache:
+  address: 127.0.0.1:6379
+  password:
+  wait: true
+# ---------------------------------- Routes ---------------------------
+#
+# service name - message seq
+#
+routes: {gate: 1000, passport: 1, game: 2, battle: 3, chat: 4, mail: 5, match: 6, explore: 7, fight: 8, social: 9, union: 10}
+#
+# when network close , the service need to notify
+session: ["game", "battle", "chat"]
+#
+# ---------------------------------- check -----------------------------
+#
+authtimeout: 0
+heartbeattimeout: 0
+

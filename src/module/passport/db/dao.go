@@ -15,6 +15,10 @@ import (
 	"time"
 )
 
+func TestDropCollections() {
+	_ = _db.DropCollections()
+}
+
 func CreateUser(username string, password string, channel string, channelUid string, openId string, avatar string) *protocol.User {
 	user := &protocol.User{
 		Username:   username,

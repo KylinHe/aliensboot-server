@@ -1,0 +1,62 @@
+#=========================== AliensBoot Configuration ============================
+#
+# NOTE: AliensBoot comes with reasonable defaults for most settings.
+#       Before you set out to tweak and tune the configuration, make sure you
+#       understand what are you trying to accomplish and the consequences.
+#
+# The primary way of configuring a node is via this file. This template lists
+# the most important settings you may want to configure for a production cluster.
+#
+# Please consult the documentation for further information on configuration options:
+# https://www.aliensboot.com/guide/en/index.html
+#
+# ---------------------------------- Cluster -----------------------------------
+cluster:
+  #
+  # Use a descriptive name for your cluster:
+  #
+  name: aliensboot-local
+  #
+  # cluster center address，support[etcd,zookeeper]
+  #
+  servers: ["127.0.0.1:2379"]
+  #
+  # TTL is the advisory time-to-live in seconds. Expired lease will return -1.
+  #
+  ttl: 20
+  #
+  # Timeout is the timeout for failing to establish a connection.
+  #
+  timeout: 10
+  username:
+  password:
+  #
+  # Use a descriptive name for the node:
+  #
+  node: node-1
+# ----------------------------------- Paths ------------------------------------
+#
+# Path to log files:
+#
+path.log: log
+path.profile:
+#
+# ----------------------------------- Debug ------------------------------------
+#
+console.port: 6666
+console.prompt: tgoc-pprof
+#
+# ---------------------------------- Statistics -----------------------------
+#
+# Elastic configuration
+#
+#elastic.enable: false
+#elastic.url: ["http://127.0.0.1:9200"]
+#elastic.username:
+#elastic.password:
+#
+# ---------------------------------- Message Queue -----------------------------
+#
+#mq.enable: false
+#mq.type: kafka
+#mq.address:
